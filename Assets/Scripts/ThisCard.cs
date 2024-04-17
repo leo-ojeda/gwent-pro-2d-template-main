@@ -31,6 +31,10 @@ public class ThisCard : MonoBehaviour
     public GameObject Hand;
     public int NumberOfCardsIdDeck;
 
+    public bool canBeSummon;
+    public bool summoned;
+    public GameObject battleZone;
+
     void SelectRandomCard()
     {
         
@@ -52,6 +56,9 @@ public class ThisCard : MonoBehaviour
     {
         SelectRandomCard();
         NumberOfCardsIdDeck = PlayerDeck.deck;
+
+        canBeSummon=false;
+        summoned = false;
     }
 
     void Update()
@@ -86,12 +93,34 @@ public class ThisCard : MonoBehaviour
 
         if (this.tag == "first")
         {
-            Debug.Log("entro");
+            //Debug.Log("entro");
             thisCard[0] = PlayerDeck.staticDeck[NumberOfCardsIdDeck - 1];
             NumberOfCardsIdDeck -= 1;
             PlayerDeck.deck -= 1;
             cardBack = false;
             //this.tag = "Untagged";
         }
+      //  if(TurnSystem.IsYourTurn== true && summoned==false)
+      //  {
+      //      canBeSummon= true;
+//
+      //  }
+      //  else canBeSummon=false;
+      //  if(canBeSummon==true)
+      //  {
+      //      gameObject.GetComponent<Draggable>().enabled=true;
+      //  }
+      //  else gameObject.GetComponent<Draggable>().enabled=false;
+//
+      //  battleZone = GameObject.Find("MeleeZone");
+//
+      //  if(summoned== false && this.transform.parent== battleZone.transform)
+      //  {
+      //      Summon();
+      //  }
     }
+    //public void Summon()
+    //{
+    //    summoned= true;
+    //}
 }

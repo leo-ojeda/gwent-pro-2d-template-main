@@ -7,16 +7,15 @@ using UnityEngine.UI;
 
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public bool isDraggable = true; // Variable para controlar si la carta se puede arrastrar
     public Transform parentToReturnTo = null;
     public Transform placeholderParent = null;
-
 
     GameObject placeholder = null;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        //Debug.Log("On beginDrag");
-
+        if (!isDraggable) return; // Si la carta no es arrastrable, salir del método
 
         placeholder = new GameObject();
         placeholder.transform.SetParent(this.transform.parent);
@@ -26,19 +25,19 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         le.flexibleWidth = 0;
         le.flexibleHeight = 0;
 
-
-        placeholder.transform.SetSiblingIndex(this.transform.GetSiblingIndex()  );
+        placeholder.transform.SetSiblingIndex(this.transform.GetSiblingIndex());
 
         parentToReturnTo = this.transform.parent;
         placeholderParent = parentToReturnTo;
         this.transform.SetParent(this.transform.parent.parent);
 
         GetComponent<CanvasGroup>().blocksRaycasts = false;
-
     }
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!isDraggable) return; // Si la carta no es arrastrable, salir del método
+
         this.transform.position = eventData.position;
 
         if (placeholder.transform.parent != placeholderParent)
@@ -63,12 +62,12 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
         }
 
-      placeholder.transform.SetSiblingIndex(newSiblingIndex);
+        placeholder.transform.SetSiblingIndex(newSiblingIndex);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        //Debug.Log("OnEndDrag");
+        if (!isDraggable) return; // Si la carta no es arrastrable, salir del método
 
         this.transform.SetParent(parentToReturnTo);
         this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
@@ -77,4 +76,8 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         Destroy(placeholder);
     }
 
+    public void SetDraggable(bool draggable)
+    {
+        isDraggable = draggable;
+    }
 }

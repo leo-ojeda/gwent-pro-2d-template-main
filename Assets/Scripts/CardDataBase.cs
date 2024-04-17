@@ -19,11 +19,11 @@ public class CardDatabase : MonoBehaviour
     void InitializeCardList()
       {
         cardList.Add(new Card(0, "none", 0, "none", "none", Resources.Load <Sprite>("1"), "none"));
-        cardList.Add(new Card(1, "Baron Steelheard", 5, "none", "Golden", Resources.Load <Sprite>("2"), "Melee"));
-        cardList.Add(new Card(2, "Sir Bladefury", 6, "none", "Golden", Resources.Load <Sprite>("3"), "Melee"));
+        cardList.Add(new Card(1, "Baron Steelheard", 5, "none", "Golden", Resources.Load <Sprite>("2"), "Clima"));
+        cardList.Add(new Card(2, "Sir Bladefury", 6, "none", "Golden", Resources.Load <Sprite>("3"), "Clima"));
         cardList.Add(new Card(3, "Siege Colossus", 4, "none", "Silver", Resources.Load <Sprite>("4"), "Siege"));
-        cardList.Add(new Card(4, "Knight Ironclaver", 6, "none", "Silver", Resources.Load <Sprite>("5"), "Melee"));
-        cardList.Add(new Card(5, "Sir Bananathor", 4, "none", "Silver", Resources.Load <Sprite>("6"), "Clim"));
+        cardList.Add(new Card(4, "Knight Ironclaver", 6, "none", "Silver", Resources.Load <Sprite>("5"), "Clima"));
+        cardList.Add(new Card(5, "Sir Bananathor", 4, "none", "Silver", Resources.Load <Sprite>("6"), "Clima"));
         cardList.Add(new Card(6, "Grand Wizard", 3, "none", "Silver", Resources.Load <Sprite>("7"), "Range"));
         cardList.Add(new Card(7, "Baron Spellweaver", 4, "none", "Silver", Resources.Load <Sprite>("8"), "Range"));
         cardList.Add(new Card(8, "Siege Golossus", 5, "none", "Golden", Resources.Load <Sprite>("9"), "Siege"));

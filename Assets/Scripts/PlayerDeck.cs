@@ -28,15 +28,69 @@ public class PlayerDeck : MonoBehaviour
 
     void Start()
     {
-        deck = 25;
-        x = 0;
-        for (int i = 0; i < deck; i++)
-        {
-            x = Random.Range(1, 15);
-            Deck[i] = CardDatabase.cardList[x];
+      deck = 25;
+    List<Card> deckCards = new List<Card>(); // Lista para almacenar las cartas que ya se han agregado al mazo
+    bool leaderCardAdded = false; // Indica si se ha agregado la carta líder
 
+    // Contadores para el número de cartas golden y silver con el mismo nombre que se han agregado al mazo
+    Dictionary<string, int> goldenCount = new Dictionary<string, int>();
+    Dictionary<string, int> silverCount = new Dictionary<string, int>();
+
+    for (int i = 0; i < deck; i++)
+    {
+        Card randomCard = null;
+        bool cardAdded = false;
+
+        while (!cardAdded)
+        {
+            // Obtener una carta aleatoria que no esté ya en el mazo
+            int randomIndex = Random.Range(0, CardDatabase.cardList.Count);
+            randomCard = CardDatabase.cardList[randomIndex];
+
+            // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
+            if (randomCard.CardType == "Leader" && !leaderCardAdded)
+            {
+                Deck[i] = randomCard;
+                leaderCardAdded = true;
+                cardAdded = true;
+            }
+            // Verificar si la carta seleccionada es golden
+            else if (randomCard.CardType == "Golden")
+            {
+                // Verificar si ya hay una carta golden con el mismo nombre en el mazo
+                if (!goldenCount.ContainsKey(randomCard.CardName))
+                {
+                    Deck[i] = randomCard;
+                    goldenCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta golden en el mazo
+                    cardAdded = true;
+                }
+            }
+            // Verificar si la carta seleccionada es silver
+            else if (randomCard.CardType == "Silver")
+            {
+                // Verificar si ya hay tres cartas silver con el mismo nombre en el mazo
+                if (!silverCount.ContainsKey(randomCard.CardName) || silverCount[randomCard.CardName] < 3)
+                {
+                    Deck[i] = randomCard;
+                    if (!silverCount.ContainsKey(randomCard.CardName))
+                    {
+                        silverCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta silver en el mazo
+                    }
+                    else
+                    {
+                        silverCount[randomCard.CardName]++; // Incrementar el contador de esta carta silver en el mazo
+                    }
+                    cardAdded = true;
+                }
+            }
         }
-        StartCoroutine(StartGame());
+
+        // Agregar la carta al mazo
+        deckCards.Add(randomCard);
+    }
+
+    StartCoroutine(StartGame());
+
     }
 
     // Update is called once per frame

@@ -18,7 +18,7 @@ public class CardToHand : MonoBehaviour
          Hand = GameObject.Find("Hand");
          if(It.tag=="first")
          {
-            Debug.Log("Activo CardtoMand");
+            //Debug.Log("Activo CardtoMand");
             
         It.transform.SetParent(Hand.transform);
         It.transform.localScale = Vector3.one;
