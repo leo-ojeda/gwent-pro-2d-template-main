@@ -86,6 +86,7 @@ public class PlayerDeck : MonoBehaviour
     {
         for (int i = 0; i < deck; i++)
         {
+            Debug.Log("shuffle");
             Container[0] = Deck[i];
             int RandomIndex = Random.Range(i, deck);
             Deck[i] = Deck[RandomIndex];

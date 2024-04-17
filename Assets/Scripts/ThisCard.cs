@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class ThisCard : MonoBehaviour
 {
     public List<Card> thisCard;
-    public static int thisId;
+    public int thisId;
 
     public int Id;
     public string CardName;
-    public int Cost;
+    public string CardType;
     public int Power;
-    public string CardDescription;
+    public string Efect;
+    public string Attack;
     public Text NameText;
     public Text PowerText;
     public Text DescriptionText;
     public Text CostText;
+   
 
     public Sprite ThisSprite;
     public Image ThatImage;
@@ -28,24 +31,26 @@ public class ThisCard : MonoBehaviour
     public GameObject Hand;
     public int NumberOfCardsIdDeck;
 
-
-    void Awake()
+    void SelectRandomCard()
     {
-        thisCard = new List<Card>();
-    }
-
-    void Start()
-    {
-        thisId=Random.Range(1,15);
+        
         if (thisId >= 0 && thisId < CardDatabase.cardList.Count)
         {
             // Se asigna la carta correspondiente desde la base de datos
             thisCard.Add(CardDatabase.cardList[thisId]);
         }
-        else
-        {
-            Debug.LogError("thisId fuera del rango de CardDatabase.cardList");
-        }
+
+    }
+    
+    void Awake()
+    {
+        thisCard = new List<Card>();
+    }
+   
+
+    void Start()
+    {
+        SelectRandomCard();
         NumberOfCardsIdDeck = PlayerDeck.deck;
     }
 
@@ -60,9 +65,10 @@ public class ThisCard : MonoBehaviour
 
         Id = thisCard[0].Id;
         CardName = thisCard[0].CardName;
-        Cost = thisCard[0].Cost;
+        CardType = thisCard[0].CardType;
         Power = thisCard[0].Power;
-        CardDescription = thisCard[0].CardDescription;
+        Efect = thisCard[0].Efect;
+        Attack = thisCard[0].Attack;
 
         ThisSprite = thisCard[0].Imagen;
 
@@ -70,20 +76,22 @@ public class ThisCard : MonoBehaviour
 
         NameText.text = "" + CardName;
         PowerText.text = "" + Power;
-        CostText.text = "" + Cost;
-        DescriptionText.text = " " + CardDescription;
+        CostText.text = "" + CardType;
+        DescriptionText.text = " " + Efect;
+    
 
         ThatImage.sprite = ThisSprite;
 
         cardB = cardBack;
 
-        if (this.tag == "clone")
+        if (this.tag == "first")
         {
+            Debug.Log("entro");
             thisCard[0] = PlayerDeck.staticDeck[NumberOfCardsIdDeck - 1];
             NumberOfCardsIdDeck -= 1;
             PlayerDeck.deck -= 1;
             cardBack = false;
-            this.tag = "Untagged";
+            //this.tag = "Untagged";
         }
     }
 }
