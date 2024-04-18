@@ -12,6 +12,7 @@ public class Card
     public int Power;
     public string Efect;
     public string CardType;
+    public int Cost;
 
     public string Attack;
 
@@ -20,7 +21,7 @@ public class Card
     {
 
     }
-    public Card(int id,string cardName,int power, string efect,string cardtype,Sprite imagen,string attack)
+    public Card(int id,string cardName,int power, string efect,string cardtype,Sprite imagen,string attack, int cost)
     {
         Id=id;
         CardName=cardName;
@@ -29,5 +30,6 @@ public class Card
         CardType=cardtype;
         Imagen = imagen;
         Attack = attack;
+        Cost = cost;
     }
 }

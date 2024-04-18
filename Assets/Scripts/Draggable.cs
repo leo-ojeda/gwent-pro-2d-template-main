@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public bool isDraggable = true; // Variable para controlar si la carta se puede arrastrar
@@ -79,5 +80,12 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public void SetDraggable(bool draggable)
     {
         isDraggable = draggable;
+    }
+     public void EnableDraggable(bool enable)
+    {
+        if (isDraggable && this.enabled != enable)
+        {
+            this.enabled = enable;
+        }
     }
 }

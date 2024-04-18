@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using JetBrains.Annotations;
 
 public class ThisCard : MonoBehaviour
 {
@@ -16,11 +17,12 @@ public class ThisCard : MonoBehaviour
     public int Power;
     public string Efect;
     public string Attack;
+    public int Cost;
     public Text NameText;
     public Text PowerText;
     public Text DescriptionText;
     public Text CostText;
-   
+
 
     public Sprite ThisSprite;
     public Image ThatImage;
@@ -35,9 +37,10 @@ public class ThisCard : MonoBehaviour
     public bool summoned;
     public GameObject battleZone;
 
+
     void SelectRandomCard()
     {
-        
+
         if (thisId >= 0 && thisId < CardDatabase.cardList.Count)
         {
             // Se asigna la carta correspondiente desde la base de datos
@@ -45,19 +48,19 @@ public class ThisCard : MonoBehaviour
         }
 
     }
-    
+
     void Awake()
     {
         thisCard = new List<Card>();
     }
-   
+
 
     void Start()
     {
         SelectRandomCard();
         NumberOfCardsIdDeck = PlayerDeck.deck;
 
-        canBeSummon=false;
+        canBeSummon = false;
         summoned = false;
     }
 
@@ -76,6 +79,7 @@ public class ThisCard : MonoBehaviour
         Power = thisCard[0].Power;
         Efect = thisCard[0].Efect;
         Attack = thisCard[0].Attack;
+        Cost = thisCard[0].Cost;
 
         ThisSprite = thisCard[0].Imagen;
 
@@ -85,7 +89,7 @@ public class ThisCard : MonoBehaviour
         PowerText.text = "" + Power;
         CostText.text = "" + CardType;
         DescriptionText.text = " " + Efect;
-    
+
 
         ThatImage.sprite = ThisSprite;
 
@@ -100,27 +104,30 @@ public class ThisCard : MonoBehaviour
             cardBack = false;
             //this.tag = "Untagged";
         }
-      //  if(TurnSystem.IsYourTurn== true && summoned==false)
-      //  {
-      //      canBeSummon= true;
+       // if (TurnSystem.CurrentMana >= Cost && summoned == false)
+       // {
+       //     canBeSummon = true;
+       // }
+       // else canBeSummon = false;
 //
-      //  }
-      //  else canBeSummon=false;
-      //  if(canBeSummon==true)
-      //  {
-      //      gameObject.GetComponent<Draggable>().enabled=true;
-      //  }
-      //  else gameObject.GetComponent<Draggable>().enabled=false;
+       // if (canBeSummon == true)
+       // {
+       //     gameObject.GetComponent<Draggable>().enabled = true;
+       // }
+       // else gameObject.GetComponent<Draggable>().enabled = false;
 //
-      //  battleZone = GameObject.Find("MeleeZone");
+       // battleZone = GameObject.Find("Zone");
 //
-      //  if(summoned== false && this.transform.parent== battleZone.transform)
-      //  {
-      //      Summon();
-      //  }
+       // if (summoned == false && this.transform.parent == battleZone.transform)
+       // {
+       //     Summon();
+       // }
+//
     }
-    //public void Summon()
-    //{
-    //    summoned= true;
-    //}
+      //  public void Summon()
+      //  {
+      //      TurnSystem.CurrentMana -= Cost;
+      //      summoned = true;
+      //  }
+
 }

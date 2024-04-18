@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Subsystems;
 
@@ -28,68 +29,68 @@ public class PlayerDeck : MonoBehaviour
 
     void Start()
     {
-      deck = 25;
-    List<Card> deckCards = new List<Card>(); // Lista para almacenar las cartas que ya se han agregado al mazo
-    bool leaderCardAdded = false; // Indica si se ha agregado la carta líder
+        deck = 25;
+        List<Card> deckCards = new List<Card>(); // Lista para almacenar las cartas que ya se han agregado al mazo
+        bool leaderCardAdded = false; // Indica si se ha agregado la carta líder
 
-    // Contadores para el número de cartas golden y silver con el mismo nombre que se han agregado al mazo
-    Dictionary<string, int> goldenCount = new Dictionary<string, int>();
-    Dictionary<string, int> silverCount = new Dictionary<string, int>();
+        // Contadores para el número de cartas golden y silver con el mismo nombre que se han agregado al mazo
+        Dictionary<string, int> goldenCount = new Dictionary<string, int>();
+        Dictionary<string, int> silverCount = new Dictionary<string, int>();
 
-    for (int i = 0; i < deck; i++)
-    {
-        Card randomCard = null;
-        bool cardAdded = false;
-
-        while (!cardAdded)
+        for (int i = 0; i < deck; i++)
         {
-            // Obtener una carta aleatoria que no esté ya en el mazo
-            int randomIndex = Random.Range(0, CardDatabase.cardList.Count);
-            randomCard = CardDatabase.cardList[randomIndex];
+            Card randomCard = null;
+            bool cardAdded = false;
 
-            // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
-            if (randomCard.CardType == "Leader" && !leaderCardAdded)
+            while (!cardAdded)
             {
-                Deck[i] = randomCard;
-                leaderCardAdded = true;
-                cardAdded = true;
-            }
-            // Verificar si la carta seleccionada es golden
-            else if (randomCard.CardType == "Golden")
-            {
-                // Verificar si ya hay una carta golden con el mismo nombre en el mazo
-                if (!goldenCount.ContainsKey(randomCard.CardName))
+                // Obtener una carta aleatoria que no esté ya en el mazo
+                int randomIndex = Random.Range(0, CardDatabase.cardList.Count);
+                randomCard = CardDatabase.cardList[randomIndex];
+
+                // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
+                if (randomCard.CardType == "Leader" && !leaderCardAdded)
                 {
                     Deck[i] = randomCard;
-                    goldenCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta golden en el mazo
+                    leaderCardAdded = true;
                     cardAdded = true;
                 }
-            }
-            // Verificar si la carta seleccionada es silver
-            else if (randomCard.CardType == "Silver")
-            {
-                // Verificar si ya hay tres cartas silver con el mismo nombre en el mazo
-                if (!silverCount.ContainsKey(randomCard.CardName) || silverCount[randomCard.CardName] < 3)
+                // Verificar si la carta seleccionada es golden
+                else if (randomCard.CardType == "Golden")
                 {
-                    Deck[i] = randomCard;
-                    if (!silverCount.ContainsKey(randomCard.CardName))
+                    // Verificar si ya hay una carta golden con el mismo nombre en el mazo
+                    if (!goldenCount.ContainsKey(randomCard.CardName))
                     {
-                        silverCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta silver en el mazo
+                        Deck[i] = randomCard;
+                        goldenCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta golden en el mazo
+                        cardAdded = true;
                     }
-                    else
+                }
+                // Verificar si la carta seleccionada es silver
+                else if (randomCard.CardType == "Silver")
+                {
+                    // Verificar si ya hay tres cartas silver con el mismo nombre en el mazo
+                    if (!silverCount.ContainsKey(randomCard.CardName) || silverCount[randomCard.CardName] < 3)
                     {
-                        silverCount[randomCard.CardName]++; // Incrementar el contador de esta carta silver en el mazo
+                        Deck[i] = randomCard;
+                        if (!silverCount.ContainsKey(randomCard.CardName))
+                        {
+                            silverCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta silver en el mazo
+                        }
+                        else
+                        {
+                            silverCount[randomCard.CardName]++; // Incrementar el contador de esta carta silver en el mazo
+                        }
+                        cardAdded = true;
                     }
-                    cardAdded = true;
                 }
             }
+
+            // Agregar la carta al mazo
+            deckCards.Add(randomCard);
         }
 
-        // Agregar la carta al mazo
-        deckCards.Add(randomCard);
-    }
-
-    StartCoroutine(StartGame());
+        StartCoroutine(StartGame());
 
     }
 
@@ -116,6 +117,11 @@ public class PlayerDeck : MonoBehaviour
             CardInDeck4.SetActive(false);
         }
 
+        if (TurnSystem.StartTurn == true)
+        {
+            StartCoroutine(Draw(2));
+            TurnSystem.StartTurn = false;
+        }
     }
     IEnumerator Example()
     {
@@ -149,5 +155,15 @@ public class PlayerDeck : MonoBehaviour
         Instantiate(CardBack, transform.position, transform.rotation);
         StartCoroutine(Example());
     }
+    IEnumerator Draw(int x)
+    {
+        for (int i = 0; i < x; i++)
+        {
+            Debug.Log("Mas 2");
+            yield return new WaitForSeconds(1);
+            Instantiate(CardToHand, transform.position, transform.rotation);
+        }
+    }
+
 }
 

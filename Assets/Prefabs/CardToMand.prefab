@@ -571,14 +571,19 @@ MonoBehaviour:
   - Id: 0
     CardName: 
     Power: 0
-    CardDescription: 
+    Efect: 
+    CardType: 
     Cost: 0
+    Attack: 
     Imagen: {fileID: 0}
+  thisId: 0
   Id: 0
   CardName: 
-  Cost: 0
+  CardType: 
   Power: 0
-  CardDescription: 
+  Efect: 
+  Attack: 
+  Cost: 0
   NameText: {fileID: 2383295072683846362}
   PowerText: {fileID: 1525185069986421987}
   DescriptionText: {fileID: 6075875306610851010}
@@ -588,6 +593,9 @@ MonoBehaviour:
   cardBack: 0
   Hand: {fileID: 0}
   NumberOfCardsIdDeck: 0
+  canBeSummon: 0
+  summoned: 0
+  battleZone: {fileID: 0}
 --- !u!114 &2912969443987201344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,6 +679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b44e2a6604f4648bd8e84b850fdb3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDraggable: 1
   parentToReturnTo: {fileID: 0}
   placeholderParent: {fileID: 0}
 --- !u!114 &5815441246833244208
