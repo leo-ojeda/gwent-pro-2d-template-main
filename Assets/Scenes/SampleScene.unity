@@ -1164,6 +1164,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thisCard: []
   thisId: 0
+  CardSummon: []
   Id: 0
   CardName: 
   CardType: 
@@ -1182,7 +1183,7 @@ MonoBehaviour:
   NumberOfCardsIdDeck: 0
   canBeSummon: 0
   summoned: 0
-  battleZone: {fileID: 0}
+  BattleZone: {fileID: 0}
 --- !u!114 &587217358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1377,6 +1378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thisCard: []
   thisId: 0
+  CardSummon: []
   Id: 0
   CardName: 
   CardType: 
@@ -1395,7 +1397,7 @@ MonoBehaviour:
   NumberOfCardsIdDeck: 0
   canBeSummon: 0
   summoned: 0
-  battleZone: {fileID: 0}
+  BattleZone: {fileID: 0}
 --- !u!114 &629641756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2565,6 +2567,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thisCard: []
   thisId: 0
+  CardSummon: []
   Id: 0
   CardName: 
   CardType: 
@@ -2583,7 +2586,7 @@ MonoBehaviour:
   NumberOfCardsIdDeck: 0
   canBeSummon: 0
   summoned: 0
-  battleZone: {fileID: 0}
+  BattleZone: {fileID: 0}
 --- !u!114 &853536407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2694,7 +2697,6 @@ MonoBehaviour:
   TurnText: {fileID: 145628504}
   Round: 0
   RoundText: {fileID: 823042760}
-  MaxMana: 0
   ManaText: {fileID: 1634645699}
   CemeteryPanel: {fileID: 1856077226}
 --- !u!4 &886938678
@@ -3095,6 +3097,122 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 957995100}
   m_CullTransparentMesh: 1
+--- !u!1 &1027414641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1027414642}
+  - component: {fileID: 1027414645}
+  - component: {fileID: 1027414644}
+  - component: {fileID: 1027414643}
+  - component: {fileID: 1027414646}
+  m_Layer: 5
+  m_Name: LeaderZone 1
+  m_TagString: Leader
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1027414642
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027414641}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1626180800}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -737.5375, y: -215}
+  m_SizeDelta: {x: -1793.6849, y: -939.4394}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1027414643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027414641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!114 &1027414644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027414641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1027414645
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027414641}
+  m_CullTransparentMesh: 1
+--- !u!114 &1027414646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1027414641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b8133a486ad5aa499687b379954aa4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowMultipleCards: 1
 --- !u!1 &1069177606
 GameObject:
   m_ObjectHideFlags: 0
@@ -3163,6 +3281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thisCard: []
   thisId: 0
+  CardSummon: []
   Id: 0
   CardName: 
   CardType: 
@@ -3181,7 +3300,7 @@ MonoBehaviour:
   NumberOfCardsIdDeck: 0
   canBeSummon: 0
   summoned: 0
-  battleZone: {fileID: 0}
+  BattleZone: {fileID: 0}
 --- !u!114 &1069177612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3326,7 +3445,7 @@ GameObject:
   - component: {fileID: 1097259257}
   - component: {fileID: 1097259256}
   m_Layer: 5
-  m_Name: 'SiegeZone 1 '
+  m_Name: SiegeZone 1
   m_TagString: Siege
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4823,6 +4942,7 @@ RectTransform:
   - {fileID: 929572842}
   - {fileID: 778412596}
   - {fileID: 1856077227}
+  - {fileID: 1027414642}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5432,6 +5552,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1310696258}
     - target: {fileID: 8938635376492939271, guid: 1fbd8a652527c4f4eb5147fe57c4710e, type: 3}
+      propertyPath: Hand
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8938635376492939271, guid: 1fbd8a652527c4f4eb5147fe57c4710e, type: 3}
       propertyPath: thisId
       value: 1
       objectReference: {fileID: 0}
@@ -5459,6 +5583,10 @@ PrefabInstance:
       propertyPath: AttackText
       value: 
       objectReference: {fileID: 934707727030077342, guid: a6414feab93e37a45a2ae2779bf4ae0c, type: 3}
+    - target: {fileID: 8938635376492939271, guid: 1fbd8a652527c4f4eb5147fe57c4710e, type: 3}
+      propertyPath: TotalPower
+      value: 
+      objectReference: {fileID: 3537627621543168510, guid: 8adc0748f5113cf45b02d3edd67d3a5c, type: 3}
     - target: {fileID: 8938635376492939271, guid: 1fbd8a652527c4f4eb5147fe57c4710e, type: 3}
       propertyPath: DescriptionText
       value: 
@@ -6450,9 +6578,17 @@ PrefabInstance:
       value: 1.2454
       objectReference: {fileID: 0}
     - target: {fileID: 5240068546267096299, guid: 6312a6eaf6e047744ac6ae60f16f77ee, type: 3}
+      propertyPath: Hand
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5240068546267096299, guid: 6312a6eaf6e047744ac6ae60f16f77ee, type: 3}
       propertyPath: AttackText
       value: 
       objectReference: {fileID: 934707727030077342, guid: a6414feab93e37a45a2ae2779bf4ae0c, type: 3}
+    - target: {fileID: 5240068546267096299, guid: 6312a6eaf6e047744ac6ae60f16f77ee, type: 3}
+      propertyPath: TotalPower
+      value: 
+      objectReference: {fileID: 3537627621543168510, guid: 8adc0748f5113cf45b02d3edd67d3a5c, type: 3}
     - target: {fileID: 8942134100862503516, guid: 6312a6eaf6e047744ac6ae60f16f77ee, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

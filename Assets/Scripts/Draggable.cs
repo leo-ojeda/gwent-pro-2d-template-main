@@ -81,11 +81,5 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         isDraggable = draggable;
     }
-     public void EnableDraggable(bool enable)
-    {
-        if (isDraggable && this.enabled != enable)
-        {
-            this.enabled = enable;
-        }
-    }
+   
 }

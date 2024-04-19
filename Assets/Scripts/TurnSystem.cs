@@ -14,7 +14,7 @@ public class TurnSystem : MonoBehaviour
     public Text TurnText;
     public int Round;
     public Text RoundText;
-    public int MaxMana;
+    public static int MaxMana;
     public static int CurrentMana;
     public Text ManaText;
 
@@ -120,6 +120,7 @@ public class TurnSystem : MonoBehaviour
         CardsCemetery("Range");
         CardsCemetery("Siege");
         CardsCemetery("Clima");
+        CardsCemetery("Leader");
     }
  void CardsCemetery(string zoneTag)
 {

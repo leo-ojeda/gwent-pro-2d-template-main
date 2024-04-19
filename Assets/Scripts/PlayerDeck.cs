@@ -159,7 +159,7 @@ public class PlayerDeck : MonoBehaviour
     {
         for (int i = 0; i < x; i++)
         {
-            Debug.Log("Mas 2");
+            //Debug.Log("Mas 2");
             yield return new WaitForSeconds(1);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }

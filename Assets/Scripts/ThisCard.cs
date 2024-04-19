@@ -5,11 +5,13 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 
 public class ThisCard : MonoBehaviour
 {
     public List<Card> thisCard;
     public int thisId;
+    public List<Card> CardSummon = new List<Card>();
 
     public int Id;
     public string CardName;
@@ -24,6 +26,7 @@ public class ThisCard : MonoBehaviour
     public Text CostText;
 
 
+
     public Sprite ThisSprite;
     public Image ThatImage;
     public bool cardBack;
@@ -35,7 +38,10 @@ public class ThisCard : MonoBehaviour
 
     public bool canBeSummon;
     public bool summoned;
-    public GameObject battleZone;
+    public GameObject BattleZone;
+
+    private int PowerTotal;
+
 
 
     void SelectRandomCard()
@@ -58,8 +64,9 @@ public class ThisCard : MonoBehaviour
     void Start()
     {
         SelectRandomCard();
+        FindBattleZones();
+        CardSummon = new List<Card>();
         NumberOfCardsIdDeck = PlayerDeck.deck;
-
         canBeSummon = false;
         summoned = false;
     }
@@ -91,6 +98,7 @@ public class ThisCard : MonoBehaviour
         DescriptionText.text = " " + Efect;
 
 
+
         ThatImage.sprite = ThisSprite;
 
         cardB = cardBack;
@@ -104,30 +112,106 @@ public class ThisCard : MonoBehaviour
             cardBack = false;
             //this.tag = "Untagged";
         }
-       // if (TurnSystem.CurrentMana >= Cost && summoned == false)
-       // {
-       //     canBeSummon = true;
-       // }
-       // else canBeSummon = false;
-//
-       // if (canBeSummon == true)
-       // {
-       //     gameObject.GetComponent<Draggable>().enabled = true;
-       // }
-       // else gameObject.GetComponent<Draggable>().enabled = false;
-//
-       // battleZone = GameObject.Find("Zone");
-//
-       // if (summoned == false && this.transform.parent == battleZone.transform)
-       // {
-       //     Summon();
-       // }
-//
-    }
-      //  public void Summon()
-      //  {
-      //      TurnSystem.CurrentMana -= Cost;
-      //      summoned = true;
-      //  }
+        // Verificar si tienes suficiente mana para invocar cartas
+        Draggable h = GetComponent<Draggable>();
+        if (TurnSystem.CurrentMana >= Cost && summoned == false)
+        {
+            canBeSummon = true;
+            if (h != null)
+            {
+                //Debug.Log("Activado");
+                h.SetDraggable(true); // Activar la función de arrastrar la carta
+            }
+        }
+        else
+        {
+            canBeSummon = false;
+            if (h != null)
+            {
+                //Debug.Log("Desactivado");
+                h.SetDraggable(false); // Desactivar la función de arrastrar la carta
+            }
+        }
+        // Realizar operaciones para cada zona de batalla
+        PerformOperationsForBattleZones();
 
+
+    }
+    public void Summon(Card SumonedCard)
+    {
+        TurnSystem.CurrentMana -= Cost;
+        summoned = true;
+        CardSummon.Add(SumonedCard);
+        PowerTotal += SumonedCard.Power;
+        if (SumonedCard.Efect == "3")
+        {
+            MaxMana(1);
+        }
+       // if (SumonedCard.Efect == "1")
+       // {
+       //     StartCoroutine(DrawE(1));
+       // }
+    }
+
+    // Diccionario para almacenar las zonas de batalla según su tag
+    Dictionary<string, GameObject> battleZones = new Dictionary<string, GameObject>();
+
+    // Llenar el diccionario con las zonas de batalla encontradas
+    void FindBattleZones()
+    {
+        string[] zoneTags = { "Melee", "Range", "Clima", "Siege", "Leader" };
+        foreach (string tag in zoneTags)
+        {
+            GameObject zone = GameObject.FindGameObjectWithTag(tag);
+            if (zone != null)
+            {
+                // Añadir la zona al diccionario con su tag como clave
+                battleZones[tag] = zone;
+                //Debug.Log("Zona añadida");
+            }
+        }
+    }
+
+    void PerformOperationsForBattleZones()
+    {
+        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone 1", "ClimaZone 2", "ClimaZone 3", "LeaderZone 1", "SiegeZone 1" };
+
+        foreach (string zoneName in battleZoneNames)
+        {
+            BattleZone = GameObject.Find(zoneName);
+
+            if (this.transform.parent == BattleZone.transform)
+            {
+                // Si la carta puede ser invocada en esta zona, la invocamos y la agregamos a CardSummon
+                if (canBeSummon)
+                {
+                    Summon(thisCard[0]);
+                    foreach (var card in CardSummon)
+                    {
+                        Debug.Log("Carta: " + card.CardName);
+                    }
+                }
+            }
+            //Debug.Log(PowerTotal);
+            //  Debug.Log("Cartas invocadas: " + CardSummon.Count);
+        }
+    }
+    public void MaxMana(int x = 1)
+    {
+        TurnSystem.MaxMana += x;
+        TurnSystem.CurrentMana += x;
+    }
+   //  IEnumerator DrawE(int x)
+   // {
+   //     for (int i = 0; i < x; i++)
+   //     {
+   //         //Debug.Log("Mas 2");
+   //         yield return new WaitForSeconds(1);
+   //         Instantiate(CardToHand, transform.position, transform.rotation);
+   //     }
+   // }
 }
+
+
+
+
