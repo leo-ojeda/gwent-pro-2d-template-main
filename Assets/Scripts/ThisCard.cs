@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +12,7 @@ public class ThisCard : MonoBehaviour
 {
     public List<Card> thisCard;
     public int thisId;
-    public List<Card> CardSummon = new List<Card>();
+    public static List<Card> CardSummon = new List<Card>();
 
     public int Id;
     public string CardName;
@@ -40,9 +42,7 @@ public class ThisCard : MonoBehaviour
     public GameObject BattleZone;
 
     private int PowerTotal;
-
-
-
+    private bool Zone;
     void SelectRandomCard()
     {
 
@@ -53,23 +53,19 @@ public class ThisCard : MonoBehaviour
         }
 
     }
-
     void Awake()
     {
         thisCard = new List<Card>();
     }
-
-
     void Start()
     {
         SelectRandomCard();
         FindBattleZones();
-        CardSummon = new List<Card>();
         NumberOfCardsIdDeck = PlayerDeck.deck;
         canBeSummon = false;
         summoned = false;
+        Zone = true;
     }
-
     void Update()
     {
         Hand = GameObject.Find("Hand");
@@ -77,8 +73,6 @@ public class ThisCard : MonoBehaviour
         {
             cardBack = false;
         }
-
-
         Id = thisCard[0].Id;
         CardName = thisCard[0].CardName;
         CardType = thisCard[0].CardType;
@@ -89,14 +83,10 @@ public class ThisCard : MonoBehaviour
 
         ThisSprite = thisCard[0].Imagen;
 
-
-
         NameText.text = "" + CardName;
         PowerText.text = "" + Power;
         CostText.text = "" + CardType;
         DescriptionText.text = " " + Efect;
-
-
 
         ThatImage.sprite = ThisSprite;
 
@@ -113,7 +103,7 @@ public class ThisCard : MonoBehaviour
         }
         // Verificar si tienes suficiente mana para invocar cartas
         Draggable h = GetComponent<Draggable>();
-        if (TurnSystem.CurrentMana >= Cost && summoned == false)
+        if (TurnSystem.CurrentMana >= Cost && summoned == false && TurnSystem.IsYourTurn == true)
         {
             canBeSummon = true;
             if (h != null)
@@ -132,16 +122,13 @@ public class ThisCard : MonoBehaviour
             }
         }
         // Realizar operaciones para cada zona de batalla
-        PerformOperationsForBattleZones();
-
-
+        OperationsForBattleZones();
     }
     public void Summon(Card SumonedCard)
     {
         TurnSystem.CurrentMana -= Cost;
         summoned = true;
         CardSummon.Add(SumonedCard);
-        PowerTotal += SumonedCard.Power;
         if (SumonedCard.Efect == "3")
         {
             MaxMana(1);
@@ -158,7 +145,7 @@ public class ThisCard : MonoBehaviour
     // Llenar el diccionario con las zonas de batalla encontradas
     void FindBattleZones()
     {
-        string[] zoneTags = { "Melee", "Range", "Clima", "Siege", "Leader" };
+        string[] zoneTags = { "Melee", "Range", "Clima", "Siege", "Leader", "Increase" };
         foreach (string tag in zoneTags)
         {
             GameObject zone = GameObject.FindGameObjectWithTag(tag);
@@ -171,14 +158,12 @@ public class ThisCard : MonoBehaviour
         }
     }
 
-    void PerformOperationsForBattleZones()
+    void OperationsForBattleZones()
     {
-        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone 1", "ClimaZone 2", "ClimaZone 3", "LeaderZone 1", "SiegeZone 1" };
-
+        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone 1", "ClimaZone 2", "ClimaZone 3", "LeaderZone 1", "SiegeZone 1", "IncrementoZone 1", "IncrementoZone 2", "IncrementoZone 3" };
         foreach (string zoneName in battleZoneNames)
         {
             BattleZone = GameObject.Find(zoneName);
-
             if (this.transform.parent == BattleZone.transform)
             {
                 // Si la carta puede ser invocada en esta zona, la invocamos y la agregamos a CardSummon
@@ -188,12 +173,24 @@ public class ThisCard : MonoBehaviour
                     foreach (var card in CardSummon)
                     {
                         Debug.Log("Carta: " + card.CardName);
+                        Debug.Log(CardSummon.Count);
+                        Debug.Log(PowerTotal += card.Power);
                     }
                 }
             }
-            //Debug.Log(PowerTotal);
-            //  Debug.Log("Cartas invocadas: " + CardSummon.Count);
         }
+        if (TurnSystem.Round == 2 && Zone == true)
+        {
+            Debug.Log("Ronda 2 a comenzado");
+            CardSummon.Clear();
+            Zone = false;
+        }
+            if (TurnSystem.Round == 3 && Zone == false)
+            {
+                Debug.Log("Ronda 3 a comenzado");
+                CardSummon.Clear();
+                Zone = true;
+            }
     }
     public void MaxMana(int x = 1)
     {

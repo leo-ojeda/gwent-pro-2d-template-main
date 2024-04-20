@@ -12,7 +12,7 @@ public class TurnSystem : MonoBehaviour
     public int YourTurn;
     public int YourOponnentTurn;
     public Text TurnText;
-    public int Round;
+    public static int Round;
     public Text RoundText;
     public static int MaxMana;
     public static int CurrentMana;
@@ -40,9 +40,10 @@ public class TurnSystem : MonoBehaviour
         surrenderedPlayer1 = 0;
         surrenderedPlayer2 = 0;
     }
-
+    
     void Update()
     {
+      Draggable K = GetComponent<Draggable>();
         if (IsYourTurn)
         {
             TurnText.text = "TurnoP1";
@@ -79,6 +80,7 @@ public class TurnSystem : MonoBehaviour
             Debug.Log("es tu turno");
             surrenderedPlayer1 = 1;
             StartNextRound();
+            IsYourTurn=false;
         }
     }
     public void Surrenderp2()
@@ -90,6 +92,7 @@ public class TurnSystem : MonoBehaviour
 
             surrenderedPlayer2 = 1;
             StartNextRound();
+            IsYourTurn=true;
         }
     }
     public void StartNextRound()
@@ -98,6 +101,10 @@ public class TurnSystem : MonoBehaviour
         {
             Debug.Log("Se cambio de ronda");
             NextRound();
+            if(Round==3)
+            {
+                Debug.Log("Se acabo lo que se daba");
+            }
         }
 
     }
