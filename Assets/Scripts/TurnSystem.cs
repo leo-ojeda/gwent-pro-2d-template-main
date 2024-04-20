@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class TurnSystem : MonoBehaviour
 {
-    public bool IsYourTurn;
+    public static bool IsYourTurn;
 
     public int YourTurn;
     public int YourOponnentTurn;
@@ -56,9 +56,9 @@ public class TurnSystem : MonoBehaviour
     }
 
     public void EndYourTurn()
-    {
+    {    
         IsYourTurn = false;
-
+        Debug.Log("False");
         YourOponnentTurn += 1;
     }
 

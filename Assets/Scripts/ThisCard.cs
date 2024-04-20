@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
+
+
+
+
 
 public class ThisCard : MonoBehaviour
 {
@@ -147,10 +146,10 @@ public class ThisCard : MonoBehaviour
         {
             MaxMana(1);
         }
-       // if (SumonedCard.Efect == "1")
-       // {
-       //     StartCoroutine(DrawE(1));
-       // }
+        // if (SumonedCard.Efect == "1")
+        // {
+        //     StartCoroutine(DrawE(1));
+        // }
     }
 
     // Diccionario para almacenar las zonas de batalla según su tag
@@ -201,15 +200,16 @@ public class ThisCard : MonoBehaviour
         TurnSystem.MaxMana += x;
         TurnSystem.CurrentMana += x;
     }
-   //  IEnumerator DrawE(int x)
-   // {
-   //     for (int i = 0; i < x; i++)
-   //     {
-   //         //Debug.Log("Mas 2");
-   //         yield return new WaitForSeconds(1);
-   //         Instantiate(CardToHand, transform.position, transform.rotation);
-   //     }
-   // }
+
+    //  IEnumerator DrawE(int x)
+    // {
+    //     for (int i = 0; i < x; i++)
+    //     {
+    //         //Debug.Log("Mas 2");
+    //         yield return new WaitForSeconds(1);
+    //         Instantiate(CardToHand, transform.position, transform.rotation);
+    //     }
+    // }
 }
 
 

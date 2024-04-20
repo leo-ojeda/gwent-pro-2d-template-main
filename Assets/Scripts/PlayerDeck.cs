@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Subsystems;
+
 
 public class PlayerDeck : MonoBehaviour
 {
@@ -45,7 +43,7 @@ public class PlayerDeck : MonoBehaviour
             while (!cardAdded)
             {
                 // Obtener una carta aleatoria que no esté ya en el mazo
-                int randomIndex = Random.Range(0, CardDatabase.cardList.Count);
+                int randomIndex = Random.Range(1, CardDatabase.cardList.Count);
                 randomCard = CardDatabase.cardList[randomIndex];
 
                 // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
