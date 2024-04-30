@@ -115,7 +115,7 @@ public class PlayerDeck : MonoBehaviour
             CardInDeck4.SetActive(false);
         }
 
-        if (TurnSystem.StartTurn == true)
+        if (TurnSystem.StartTurn == true && TurnSystem.Round <= 3)
         {
             StartCoroutine(Draw(2));
             TurnSystem.StartTurn = false;

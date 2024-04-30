@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8666316628691753142}
   m_Layer: 0
   m_Name: CardBack
-  m_TagString: Untagged
+  m_TagString: Clone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -52,6 +52,7 @@ MonoBehaviour:
     Power: 0
     Efect: 
     CardType: 
+    Cost: 0
     Attack: 
     Imagen: {fileID: 0}
   thisId: 0
@@ -61,6 +62,7 @@ MonoBehaviour:
   Power: 0
   Efect: 
   Attack: 
+  Cost: 0
   NameText: {fileID: 2383295072683846362, guid: c3e028090c92c2a4ea0f886fdccaa1fe, type: 3}
   PowerText: {fileID: 1525185069986421987, guid: c3e028090c92c2a4ea0f886fdccaa1fe, type: 3}
   DescriptionText: {fileID: 6075875306610851010, guid: c3e028090c92c2a4ea0f886fdccaa1fe, type: 3}
@@ -70,6 +72,9 @@ MonoBehaviour:
   cardBack: 0
   Hand: {fileID: 0}
   NumberOfCardsIdDeck: 0
+  canBeSummon: 0
+  summoned: 0
+  BattleZone: {fileID: 0}
 --- !u!114 &7219515842848306610
 MonoBehaviour:
   m_ObjectHideFlags: 0

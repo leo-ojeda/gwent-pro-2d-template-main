@@ -41,9 +41,9 @@ public class ThisCard : MonoBehaviour
     public bool summoned;
     public GameObject BattleZone;
 
-    private int PowerTotal;
+    public static int PowerTotal;
     private bool Zone;
-    void SelectRandomCard()
+    void SelectCard()
     {
 
         if (thisId >= 0 && thisId < CardDatabase.cardList.Count)
@@ -59,7 +59,7 @@ public class ThisCard : MonoBehaviour
     }
     void Start()
     {
-        SelectRandomCard();
+        SelectCard();
         FindBattleZones();
         NumberOfCardsIdDeck = PlayerDeck.deck;
         canBeSummon = false;
@@ -127,6 +127,7 @@ public class ThisCard : MonoBehaviour
     public void Summon(Card SumonedCard)
     {
         TurnSystem.CurrentMana -= Cost;
+        PowerTotal+=SumonedCard.Power;
         summoned = true;
         CardSummon.Add(SumonedCard);
         if (SumonedCard.Efect == "3")
@@ -172,9 +173,10 @@ public class ThisCard : MonoBehaviour
                     Summon(thisCard[0]);
                     foreach (var card in CardSummon)
                     {
+                        
                         Debug.Log("Carta: " + card.CardName);
                         Debug.Log(CardSummon.Count);
-                        Debug.Log(PowerTotal += card.Power);
+                        Debug.Log(PowerTotal);
                     }
                 }
             }
@@ -185,12 +187,12 @@ public class ThisCard : MonoBehaviour
             CardSummon.Clear();
             Zone = false;
         }
-            if (TurnSystem.Round == 3 && Zone == false)
-            {
-                Debug.Log("Ronda 3 a comenzado");
-                CardSummon.Clear();
-                Zone = true;
-            }
+        if (TurnSystem.Round == 3 && Zone == false)
+        {
+            Debug.Log("Ronda 3 a comenzado");
+            CardSummon.Clear();
+            Zone = true;
+        }
     }
     public void MaxMana(int x = 1)
     {

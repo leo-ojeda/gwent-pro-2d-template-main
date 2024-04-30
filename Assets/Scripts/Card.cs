@@ -2,7 +2,7 @@ using UnityEngine;
 [System.Serializable]
 
 
-public class Card 
+public class Card
 {
     public int Id;
     public string CardName;
@@ -18,13 +18,13 @@ public class Card
     {
 
     }
-    public Card(int id,string cardName,int power, string efect,string cardtype,Sprite imagen,string attack, int cost)
+    public Card(int id, string cardName, int power, string efect, string cardtype, Sprite imagen, string attack, int cost)
     {
-        Id=id;
-        CardName=cardName;
-        Power=power;
-        Efect=efect;
-        CardType=cardtype;
+        Id = id;
+        CardName = cardName;
+        Power = power;
+        Efect = efect;
+        CardType = cardtype;
         Imagen = imagen;
         Attack = attack;
         Cost = cost;

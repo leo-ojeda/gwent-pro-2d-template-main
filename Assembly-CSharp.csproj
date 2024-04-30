@@ -64,17 +64,20 @@
     <Analyzer Include="C:\Program Files\Unity 2022.3.15f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AI.cs" />
     <Compile Include="Assets\Scripts\CardBackPrefab.cs" />
     <Compile Include="Assets\Scripts\ThisCard.cs" />
     <Compile Include="Assets\Scripts\CardDataBase.cs" />
     <Compile Include="Assets\Scripts\CardToHand.cs" />
     <Compile Include="Assets\Menuinicial.cs" />
+    <Compile Include="Assets\Scripts\CardPreview.cs" />
     <Compile Include="Assets\Scripts\Card.cs" />
     <Compile Include="Assets\Scripts\CardBack.cs" />
     <Compile Include="Assets\Scripts\TurnSystem.cs" />
     <Compile Include="Assets\Scripts\Draggable.cs" />
     <Compile Include="Assets\Scripts\DropZone.cs" />
     <Compile Include="Assets\Scripts\PlayerDeck.cs" />
+    <Compile Include="Assets\Scripts\AICardToHand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
