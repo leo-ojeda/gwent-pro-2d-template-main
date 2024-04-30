@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - CardBack
     - CardBackPrefab
     - CardDatabase
+    - CardPreview
     - CardToHand
     - Draggable
     - DropZone
@@ -133,19 +134,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3090}
     - Class: 114
-      Script: {instanceID: 4078}
+      Script: {instanceID: 4080}
     - Class: 114
-      Script: {instanceID: 4316}
+      Script: {instanceID: 4318}
     - Class: 114
-      Script: {instanceID: 4328}
+      Script: {instanceID: 4330}
     - Class: 114
-      Script: {instanceID: 5012}
+      Script: {instanceID: 5014}
     - Class: 114
-      Script: {instanceID: 5552}
+      Script: {instanceID: 5554}
     - Class: 114
-      Script: {instanceID: 5700}
+      Script: {instanceID: 5702}
     - Class: 114
-      Script: {instanceID: 6012}
+      Script: {instanceID: 6014}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -174,6 +175,8 @@ ScriptsOnlyBuild:
     - Class: 28
       Script: {instanceID: 0}
     - Class: 48
+      Script: {instanceID: 0}
+    - Class: 65
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
@@ -204,25 +207,27 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3562}
     - Class: 114
-      Script: {instanceID: 4716}
+      Script: {instanceID: 3824}
     - Class: 114
-      Script: {instanceID: 5012}
+      Script: {instanceID: 4718}
     - Class: 114
-      Script: {instanceID: 5234}
+      Script: {instanceID: 5014}
     - Class: 114
-      Script: {instanceID: 5500}
+      Script: {instanceID: 5236}
     - Class: 114
-      Script: {instanceID: 5552}
+      Script: {instanceID: 5502}
     - Class: 114
-      Script: {instanceID: 5700}
+      Script: {instanceID: 5554}
     - Class: 114
-      Script: {instanceID: 6012}
+      Script: {instanceID: 5702}
     - Class: 114
-      Script: {instanceID: 6500}
+      Script: {instanceID: 6014}
     - Class: 114
-      Script: {instanceID: 6862}
+      Script: {instanceID: 6502}
     - Class: 114
-      Script: {instanceID: 7048}
+      Script: {instanceID: 6864}
+    - Class: 114
+      Script: {instanceID: 7050}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -586,7 +591,7 @@ ScriptsOnlyBuild:
     className: CardBackPrefab
   - hash:
       serializedVersion: 2
-      Hash: 38d43d451726549ec56e6ed2e3fa1e16
+      Hash: 2ec054c0cfed363fa00acc33580bfd80
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: TurnSystem
@@ -608,6 +613,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnPointerExitMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 7ff3289e0cb46e1543043c78dcc9ccd2
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CardPreview
   - hash:
       serializedVersion: 2
       Hash: b747f5d40674055dd70e18552f1b0447

@@ -69,7 +69,7 @@ public class TurnSystem : MonoBehaviour
         ManaText.text = CurrentMana + "/" + MaxMana;
         ManaEnemyText.text = CurrentEnemyMana + "/" + EnemyMaxMana;
         RoundText.text = Round + "/" + 3;
-        RoundVtext.text = RoundEV + "      /      " + RoundPV;
+        RoundVtext.text = RoundPV + "      /      " + RoundEV;
         if (CurrentEnemyMana == 0 && IsYourTurn == false)
         {
             EndYourOpponentTurn();
@@ -149,7 +149,7 @@ public class TurnSystem : MonoBehaviour
             NextRound();
             if (Round > 3 || RoundEV == 2 || RoundPV == 2)
             {
-                Debug.Log("Se acabo lo que se daba");
+                //Debug.Log("Se acabo lo que se daba");
                 //new
                 if (RoundPV > RoundEV)
                 {
