@@ -1,5 +1,6 @@
 
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -35,11 +36,12 @@ public class TurnSystem : MonoBehaviour
     public bool point;
 
     public string menu;
-   
+
 
 
     void Start()
     {
+
 
         AudioSource = GetComponent<AudioSource>();
         point = true;
@@ -155,14 +157,15 @@ public class TurnSystem : MonoBehaviour
             {
                 //Debug.Log("Se acabo lo que se daba");
                 //new
+                Victory.gameObject.SetActive(true);
                 if (RoundPV > RoundEV)
                 {
-                    Victory.text = "You Win";
+                    Victory.text = "Has Ganado";
                     StartCoroutine(ReturnToMenu());
                 }
                 else
                 {
-                    Victory.text = "You Lose";
+                    Victory.text = "Has Perdido";
                     StartCoroutine(ReturnToMenu());
                 }
             }
