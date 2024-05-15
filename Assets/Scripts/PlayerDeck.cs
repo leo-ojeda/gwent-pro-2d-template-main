@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 
 public class PlayerDeck : MonoBehaviour
@@ -20,6 +21,7 @@ public class PlayerDeck : MonoBehaviour
     public GameObject CardBack;
     public GameObject Dek;
     public GameObject[] Clones;
+    private Card Leader;
 
 
     public GameObject Hand;
@@ -28,8 +30,11 @@ public class PlayerDeck : MonoBehaviour
     void Start()
     {
         deck = 25;
-        List<Card> deckCards = new List<Card>(); // Lista para almacenar las cartas que ya se han agregado al mazo
+        List<Card> deckCards = Menuinicial.cardList; // Lista para almacenar las cartas que ya se han agregado al mazo
         bool leaderCardAdded = false; // Indica si se ha agregado la carta líder
+        Leader = deckCards[0];
+
+        Debug.Log(deckCards[0].CardName);
 
         // Contadores para el número de cartas golden y silver con el mismo nombre que se han agregado al mazo
         Dictionary<string, int> goldenCount = new Dictionary<string, int>();
@@ -45,16 +50,17 @@ public class PlayerDeck : MonoBehaviour
                 // Obtener una carta aleatoria que no esté ya en el mazo
                 int randomIndex = Random.Range(1, CardDatabase.cardList.Count);
                 randomCard = CardDatabase.cardList[randomIndex];
+                //Debug.Log(randomCard.CardName);
 
                 // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
-                if (randomCard.CardType == "Leader" && !leaderCardAdded)
+                if (randomCard.CardType == "Leader" && !leaderCardAdded && randomCard.Faccion == Leader.Faccion)
                 {
                     Deck[i] = randomCard;
                     leaderCardAdded = true;
                     cardAdded = true;
                 }
                 // Verificar si la carta seleccionada es golden
-                else if (randomCard.CardType == "Golden")
+                else if (randomCard.CardType == "Golden" && randomCard.Faccion == Leader.Faccion)
                 {
                     // Verificar si ya hay una carta golden con el mismo nombre en el mazo
                     if (!goldenCount.ContainsKey(randomCard.CardName))
@@ -65,7 +71,7 @@ public class PlayerDeck : MonoBehaviour
                     }
                 }
                 // Verificar si la carta seleccionada es silver
-                else if (randomCard.CardType == "Silver")
+                else if (randomCard.CardType == "Silver" && randomCard.Faccion == Leader.Faccion)
                 {
                     // Verificar si ya hay tres cartas silver con el mismo nombre en el mazo
                     if (!silverCount.ContainsKey(randomCard.CardName) || silverCount[randomCard.CardName] < 3)
@@ -136,7 +142,7 @@ public class PlayerDeck : MonoBehaviour
     {
         for (int i = 0; i <= 9; i++)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.5f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }
@@ -158,7 +164,7 @@ public class PlayerDeck : MonoBehaviour
         for (int i = 0; i < x; i++)
         {
             //Debug.Log("Mas 2");
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.5f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }

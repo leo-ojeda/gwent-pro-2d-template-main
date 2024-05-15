@@ -11,7 +11,8 @@ public class CardPreview : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     // Este método se llama cuando el puntero del mouse entra en el área de la carta
     public void OnPointerEnter(PointerEventData eventData)
     {
-        previewPanel = GameObject.Find("VistaPreview");
+
+        previewPanel = GameObject.Find("Preview");
         // Verificar si la carta prefab y el panel de vista previa son válidos
         if (cardPrefab != null && previewPanel != null)
         {
@@ -39,6 +40,7 @@ public class CardPreview : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (instantiatedCard != null)
         {
             Destroy(instantiatedCard);
-        }      
+        }
+
     }
 }

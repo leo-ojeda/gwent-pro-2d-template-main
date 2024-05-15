@@ -11,6 +11,8 @@ public class AI : MonoBehaviour
     //New
     public List<Card> CardsInHand = new List<Card>();
     //end
+    private AudioSource audioSource;
+    private int debug;
 
 
     public GameObject Hand;
@@ -48,6 +50,7 @@ public class AI : MonoBehaviour
 
     public int HowManyCards;
     public static int EnemyPowerTotal;
+    private Card Leader;
 
     void Start()
     {
@@ -67,6 +70,23 @@ public class AI : MonoBehaviour
         Dictionary<string, int> goldenCountAI = new Dictionary<string, int>();
         Dictionary<string, int> silverCountAI = new Dictionary<string, int>();
 
+        // Obtener una carta líder aleatoria que no esté ya en el mazo
+        while (!leaderCardAdded)
+        {
+            Card randomCard;
+
+            int randomIndex = Random.Range(1, CardDatabase.cardList.Count);
+            randomCard = CardDatabase.cardList[randomIndex];
+
+            // Verificar si la carta seleccionada es una carta líder
+            if (randomCard.CardType == "Leader")
+            {
+                Leader = randomCard; // Establecer la carta líder
+                leaderCardAdded = true; // Indicar que se ha agregado la carta líder
+                Debug.Log(Leader.CardName);
+            }
+        }
+
         for (int i = 0; i < deckSize; i++)
         {
             Card randomCard = null;
@@ -78,15 +98,8 @@ public class AI : MonoBehaviour
                 int randomIndex = Random.Range(1, CardDatabase.cardList.Count);
                 randomCard = CardDatabase.cardList[randomIndex];
 
-                // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
-                if (randomCard.CardType == "Leader" && !leaderCardAdded)
-                {
-                    Deck[i] = randomCard;
-                    leaderCardAdded = true;
-                    cardAdded = true;
-                }
                 // Verificar si la carta seleccionada es golden
-                else if (randomCard.CardType == "Golden")
+                if (randomCard.CardType == "Golden" && randomCard.Faccion == Leader.Faccion)
                 {
                     // Verificar si ya hay una carta golden con el mismo nombre en el mazo
                     if (!goldenCountAI.ContainsKey(randomCard.CardName))
@@ -97,7 +110,7 @@ public class AI : MonoBehaviour
                     }
                 }
                 // Verificar si la carta seleccionada es silver
-                else if (randomCard.CardType == "Silver" && randomCard.Attack != "Clima" && randomCard.Attack != "Increase")
+                else if (randomCard.CardType == "Silver" && randomCard.Attack != "Clima" && randomCard.Attack != "Increase" && randomCard.Attack != "Señuelo" && randomCard.Attack != "Aumento" && randomCard.Faccion == Leader.Faccion && randomCard.Attack != "Despeje")
                 {
                     // Verificar si ya hay tres cartas silver con el mismo nombre en el mazo
                     if (!silverCountAI.ContainsKey(randomCard.CardName) || silverCountAI[randomCard.CardName] < 3)
@@ -162,7 +175,6 @@ public class AI : MonoBehaviour
             }
             foreach (Transform child in Hand.transform)
             {
-
                 CardsInHand[j] = child.GetComponent<AICardToHand>().ThisCard[0];
                 j++;
             }
@@ -173,7 +185,6 @@ public class AI : MonoBehaviour
                     CardsInHand[i] = CardDatabase.cardList[0];
                 }
             }
-            j = 0;
         }
         //Really Better
 
@@ -213,10 +224,7 @@ public class AI : MonoBehaviour
             DrawPhase = false;
             SummonPhase = false;
             EndPhase = false;
-
         }
-
-
         if (SummonPhase == true)
         {
             summonID = 0;
@@ -243,6 +251,7 @@ public class AI : MonoBehaviour
                     {
                         //Debug.Log("VAmo a calmarno 2");
                         summonID = cardsID[i];
+                        cardsID[i] = 0;
                     }
                 }
             }
@@ -250,51 +259,72 @@ public class AI : MonoBehaviour
 
         }
         SummonThisId = summonID;
-        
+
         if (EnemyPowerTotal >= 13)
         {
             //Debug.Log("Suficiente");
             TurnSystem.surrenderedPlayer2 = true;
+            DrawPhase = false;
+            SummonPhase = false;
         }
-        foreach (Transform child in Hand.transform)
+        if (DrawPhase == true)
         {
+            Debug.Log("El pepe");
 
-            if (child.GetComponent<AICardToHand>().Id == SummonThisId && CardDatabase.cardList[SummonThisId].Cost <= CurrentMana && TurnSystem.IsYourTurn == false && TurnSystem.surrenderedPlayer2 == false)
+            foreach (Transform child in Hand.transform)
             {
-                //Debug.Log(SummonThisId);
-                if (CardDatabase.cardList[SummonThisId].Attack == "Melee")
-                {
-                    //Debug.Log("Zona Melee");
-                    child.transform.SetParent(ZoneM.transform);
-                }
-                if (CardDatabase.cardList[SummonThisId].Attack == "Range")
-                {
-                    //Debug.Log("Zona Range");
-                    child.transform.SetParent(ZoneR.transform);
-                }
-                if (CardDatabase.cardList[SummonThisId].Attack == "Siege")
-                {
-                    //Debug.Log("Zone Siege");
-                    child.transform.SetParent(ZoneS.transform);
-                }
-                if (CardDatabase.cardList[SummonThisId].Attack == "Leader")
-                {
-                    Debug.Log("Zona Leader");
-                    child.transform.SetParent(ZoneL.transform);
-                }
-                else
-                {
-                    Debug.Log("La carta es " + CardDatabase.cardList[SummonThisId].Attack);
-                }
-                TurnSystem.CurrentEnemyMana -= CardDatabase.cardList[SummonThisId].Cost;
-                EnemyPowerTotal += CardDatabase.cardList[SummonThisId].Power;
-                Debug.Log("PowerTotalEnemy" + EnemyPowerTotal);
-                break;
+                //Debug.Log("Ojala");
+                Debug.Log(CardDatabase.cardList[SummonThisId].CardName);
 
+                if (child.GetComponent<AICardToHand>().Id == SummonThisId && CardDatabase.cardList[SummonThisId].Cost <= CurrentMana && TurnSystem.IsYourTurn == false && TurnSystem.surrenderedPlayer2 == false)
+                {
+                    Debug.Log("invocando carta ...");
+                    //Debug.Log(SummonThisId);
+                    if (CardDatabase.cardList[SummonThisId].Attack == "Melee")
+                    {
+                        //Debug.Log("Zona Melee");
+                        child.transform.SetParent(ZoneM.transform);
+                        PlayMusic();
+
+                    }
+                    if (CardDatabase.cardList[SummonThisId].Attack == "Range")
+                    {
+                        //Debug.Log("Zona Range");
+                        child.transform.SetParent(ZoneR.transform);
+                        PlayMusic();
+
+                    }
+                    if (CardDatabase.cardList[SummonThisId].Attack == "Siege")
+                    {
+                        //Debug.Log("Zone Siege");
+                        child.transform.SetParent(ZoneS.transform);
+                        PlayMusic();
+
+                    }
+                    if (CardDatabase.cardList[SummonThisId].Attack == "Leader")
+                    {
+                        //Debug.Log("Zona Leader");
+                        child.transform.SetParent(ZoneL.transform);
+                        PlayMusic();
+
+                    }
+                    else
+                    {
+                        Debug.Log("La carta es " + CardDatabase.cardList[SummonThisId].Attack);
+                    }
+                    TurnSystem.CurrentEnemyMana -= CardDatabase.cardList[SummonThisId].Cost;
+                    EnemyPowerTotal += CardDatabase.cardList[SummonThisId].Power;
+                    Debug.Log("PowerTotalEnemy" + EnemyPowerTotal);
+                    SummonThisId = 0;
+                    break;
+                }
+                SummonPhase = false;
             }
-
         }
-        SummonPhase = false;
+        if (SummonPhase == false)
+        {
+            DrawPhase = false;
+        }
 
     }
     public void Shuffle()
@@ -317,7 +347,7 @@ public class AI : MonoBehaviour
     {
         for (int i = 0; i <= 9; i++)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.5f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }
@@ -337,15 +367,23 @@ public class AI : MonoBehaviour
         for (int i = 0; i < x; i++)
         {
             //Debug.Log("Mas 2");
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.5f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }
 
     IEnumerator WaitForSummonPhase()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(0.5f);
         SummonPhase = true;
+        // Debug.Log("aquitamo");
+    }
+    void PlayMusic()
+    {
+        audioSource = GetComponent<AudioSource>();
+        AudioClip musicClip = Resources.Load<AudioClip>("100");
+        audioSource.clip = musicClip;
+        audioSource.Play();
     }
 
 }

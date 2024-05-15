@@ -14,11 +14,12 @@ public class Card
     public string Attack;
 
     public Sprite Imagen;
+    public string Faccion;
     public Card()
     {
 
     }
-    public Card(int id, string cardName, int power, string efect, string cardtype, Sprite imagen, string attack, int cost)
+    public Card(int id, string cardName, int power, string efect, string cardtype, Sprite imagen, string attack, int cost,string faccion)
     {
         Id = id;
         CardName = cardName;
@@ -28,5 +29,6 @@ public class Card
         Imagen = imagen;
         Attack = attack;
         Cost = cost;
+        Faccion = faccion;
     }
 }

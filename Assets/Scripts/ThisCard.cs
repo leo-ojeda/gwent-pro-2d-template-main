@@ -21,10 +21,11 @@ public class ThisCard : MonoBehaviour
     public string Efect;
     public string Attack;
     public int Cost;
-    public Text NameText;
-    public Text PowerText;
-    public Text DescriptionText;
-    public Text CostText;
+    public string Faccion;
+    //public Text NameText;
+    //public Text PowerText;
+    //public Text DescriptionText;
+    //public Text CostText;
 
 
 
@@ -43,6 +44,7 @@ public class ThisCard : MonoBehaviour
 
     public static int PowerTotal;
     private bool Zone;
+    private AudioSource audioSource;
     void SelectCard()
     {
 
@@ -80,13 +82,14 @@ public class ThisCard : MonoBehaviour
         Efect = thisCard[0].Efect;
         Attack = thisCard[0].Attack;
         Cost = thisCard[0].Cost;
+        Faccion = thisCard[0].Faccion;
 
         ThisSprite = thisCard[0].Imagen;
 
-        NameText.text = "" + CardName;
-        PowerText.text = "" + Power;
-        CostText.text = "" + CardType;
-        DescriptionText.text = " " + Efect;
+       // NameText.text = "" + CardName;
+       // PowerText.text = "" + Power;
+       // CostText.text = "" + CardType;
+       // DescriptionText.text = " " + Efect;
 
         ThatImage.sprite = ThisSprite;
 
@@ -130,10 +133,12 @@ public class ThisCard : MonoBehaviour
         PowerTotal+=SumonedCard.Power;
         summoned = true;
         CardSummon.Add(SumonedCard);
-        if (SumonedCard.Efect == "3")
-        {
-            MaxMana(1);
-        }
+        audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
+       // if (SumonedCard.Efect == "3")
+       // {
+       //     MaxMana(1);
+       // }
         // if (SumonedCard.Efect == "1")
         // {
         //     StartCoroutine(DrawE(1));

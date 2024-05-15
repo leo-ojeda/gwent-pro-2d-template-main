@@ -1,15 +1,14 @@
-using System;
+
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
 
 public class TurnSystem : MonoBehaviour
 {
     public static bool IsYourTurn;
+    private AudioSource AudioSource;
 
     //new
     public Text TurnText;
@@ -35,8 +34,14 @@ public class TurnSystem : MonoBehaviour
     public GameObject EnemyCementeryPanel;
     public bool point;
 
+    public string menu;
+   
+
+
     void Start()
     {
+
+        AudioSource = GetComponent<AudioSource>();
         point = true;
         RoundEV = 0;
         RoundPV = 0;
@@ -83,17 +88,19 @@ public class TurnSystem : MonoBehaviour
 
     public void EndYourTurn()
     {
+        PlayMusic("s468");
         if (surrenderedPlayer2 == true)
         {
             Debug.Log("Continuar TurnoP1");
             IsYourTurn = true;
-            MaxMana += 1;
+
             CurrentMana = MaxMana;
         }
         else
         {
+
             IsYourTurn = false;
-            Debug.Log("False");
+            //Debug.Log("False");
         }
     }
 
@@ -103,16 +110,12 @@ public class TurnSystem : MonoBehaviour
         {
             Debug.Log("Continuar Turno");
             IsYourTurn = false;
-            MaxMana += 1;
-            EnemyMaxMana += 1;
             CurrentEnemyMana = EnemyMaxMana;
         }
         else
         {
             IsYourTurn = true;
-            MaxMana += 1;
             CurrentMana = MaxMana;
-            EnemyMaxMana += 1;
             CurrentEnemyMana = EnemyMaxMana;
         }
     }
@@ -123,6 +126,7 @@ public class TurnSystem : MonoBehaviour
         // Verificar el turno actual y marcar al jugador correspondiente como rendido
         if (IsYourTurn)
         {
+            PlayMusic("s468");
             Debug.Log("es tu turno");
             surrenderedPlayer1 = true;
             StartNextRound();
@@ -154,10 +158,12 @@ public class TurnSystem : MonoBehaviour
                 if (RoundPV > RoundEV)
                 {
                     Victory.text = "You Win";
+                    StartCoroutine(ReturnToMenu());
                 }
                 else
                 {
                     Victory.text = "You Lose";
+                    StartCoroutine(ReturnToMenu());
                 }
             }
         }
@@ -188,7 +194,7 @@ public class TurnSystem : MonoBehaviour
             Debug.Log("Empieza P1");
             IsYourTurn = true;
         }
-        else
+        if (RoundPV < RoundEV)
         {
             Debug.Log("Empieza P2");
             IsYourTurn = false;
@@ -250,6 +256,7 @@ public class TurnSystem : MonoBehaviour
                 }
                 else
                 {
+                    PlayMusic("s3200");
                     // No se encontraron más cartas con los tags especificados en esta zona
                     cardsRemaining = false;
                 }
@@ -261,5 +268,19 @@ public class TurnSystem : MonoBehaviour
         yield return new WaitForSeconds(5);
         StartNextRound();
     }
+    string PlayMusic(string x)
+    {
+        AudioSource = GetComponent<AudioSource>();
+        AudioClip musicClip = Resources.Load<AudioClip>(x);
+        AudioSource.clip = musicClip;
+        AudioSource.Play();
+        return x;
+    }
+    IEnumerator ReturnToMenu()
+    {
+        yield return new WaitForSeconds(10f);
+        SceneManager.LoadScene(menu);
+    }
+
 
 }

@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - CardBack
     - CardBackPrefab
     - CardDatabase
+    - CardPanel
     - CardPreview
     - CardToHand
     - Draggable
@@ -37,6 +38,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
+    - UnityEngine.UI.GridLayoutGroup
     - UnityEngine.UI.HorizontalLayoutGroup
     - UnityEngine.UI.Image
     - UnityEngine.UI.LayoutElement
@@ -80,6 +82,9 @@ ScriptsOnlyBuild:
   methodsToPreserve:
   - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
+    methodName: Card
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
     methodName: Jugar
   - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
@@ -94,12 +99,153 @@ ScriptsOnlyBuild:
     fullTypeName: TurnSystem
     methodName: Surrenderp2
   - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Terminar
+  - assembly: Assembly-CSharp
     fullTypeName: TurnSystem
     methodName: EndYourOpponentTurn
   - assembly: Assembly-CSharp
     fullTypeName: PlayerDeck
     methodName: Shuffle
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Atras
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Deck2
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Deck1
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Deck3
   sceneClasses:
+    Assets/Scenes/Cartas.unity:
+    - Class: 1
+      Script: {instanceID: 0}
+    - Class: 4
+      Script: {instanceID: 0}
+    - Class: 20
+      Script: {instanceID: 0}
+    - Class: 21
+      Script: {instanceID: 0}
+    - Class: 28
+      Script: {instanceID: 0}
+    - Class: 48
+      Script: {instanceID: 0}
+    - Class: 81
+      Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
+    - Class: 89
+      Script: {instanceID: 0}
+    - Class: 104
+      Script: {instanceID: 0}
+    - Class: 108
+      Script: {instanceID: 0}
+    - Class: 114
+      Script: {instanceID: 1564}
+    - Class: 114
+      Script: {instanceID: 1566}
+    - Class: 114
+      Script: {instanceID: 1568}
+    - Class: 114
+      Script: {instanceID: 2602}
+    - Class: 114
+      Script: {instanceID: 2806}
+    - Class: 114
+      Script: {instanceID: 3090}
+    - Class: 114
+      Script: {instanceID: 3824}
+    - Class: 114
+      Script: {instanceID: 4318}
+    - Class: 114
+      Script: {instanceID: 5016}
+    - Class: 114
+      Script: {instanceID: 5556}
+    - Class: 114
+      Script: {instanceID: 5704}
+    - Class: 114
+      Script: {instanceID: 6016}
+    - Class: 114
+      Script: {instanceID: 7328}
+    - Class: 115
+      Script: {instanceID: 0}
+    - Class: 128
+      Script: {instanceID: 0}
+    - Class: 157
+      Script: {instanceID: 0}
+    - Class: 196
+      Script: {instanceID: 0}
+    - Class: 213
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
+      Script: {instanceID: 0}
+    Assets/Scenes/Eleccion.unity:
+    - Class: 1
+      Script: {instanceID: 0}
+    - Class: 4
+      Script: {instanceID: 0}
+    - Class: 20
+      Script: {instanceID: 0}
+    - Class: 21
+      Script: {instanceID: 0}
+    - Class: 28
+      Script: {instanceID: 0}
+    - Class: 48
+      Script: {instanceID: 0}
+    - Class: 81
+      Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
+    - Class: 89
+      Script: {instanceID: 0}
+    - Class: 104
+      Script: {instanceID: 0}
+    - Class: 108
+      Script: {instanceID: 0}
+    - Class: 114
+      Script: {instanceID: 1564}
+    - Class: 114
+      Script: {instanceID: 2602}
+    - Class: 114
+      Script: {instanceID: 2806}
+    - Class: 114
+      Script: {instanceID: 3090}
+    - Class: 114
+      Script: {instanceID: 4318}
+    - Class: 114
+      Script: {instanceID: 5016}
+    - Class: 114
+      Script: {instanceID: 5556}
+    - Class: 114
+      Script: {instanceID: 5704}
+    - Class: 114
+      Script: {instanceID: 6016}
+    - Class: 115
+      Script: {instanceID: 0}
+    - Class: 128
+      Script: {instanceID: 0}
+    - Class: 157
+      Script: {instanceID: 0}
+    - Class: 196
+      Script: {instanceID: 0}
+    - Class: 213
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
+      Script: {instanceID: 0}
     Assets/Scenes/Menu Principal.unity:
     - Class: 1
       Script: {instanceID: 0}
@@ -115,9 +261,19 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 49
       Script: {instanceID: 0}
+    - Class: 74
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
     - Class: 89
+      Script: {instanceID: 0}
+    - Class: 91
+      Script: {instanceID: 0}
+    - Class: 95
       Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
@@ -138,15 +294,15 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4318}
     - Class: 114
-      Script: {instanceID: 4330}
+      Script: {instanceID: 4332}
     - Class: 114
-      Script: {instanceID: 5014}
+      Script: {instanceID: 5016}
     - Class: 114
-      Script: {instanceID: 5554}
+      Script: {instanceID: 5556}
     - Class: 114
-      Script: {instanceID: 5702}
+      Script: {instanceID: 5704}
     - Class: 114
-      Script: {instanceID: 6014}
+      Script: {instanceID: 6016}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -180,6 +336,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
@@ -209,25 +369,27 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3824}
     - Class: 114
-      Script: {instanceID: 4718}
+      Script: {instanceID: 4318}
     - Class: 114
-      Script: {instanceID: 5014}
+      Script: {instanceID: 4720}
     - Class: 114
-      Script: {instanceID: 5236}
+      Script: {instanceID: 5016}
     - Class: 114
-      Script: {instanceID: 5502}
+      Script: {instanceID: 5238}
     - Class: 114
-      Script: {instanceID: 5554}
+      Script: {instanceID: 5504}
     - Class: 114
-      Script: {instanceID: 5702}
+      Script: {instanceID: 5556}
     - Class: 114
-      Script: {instanceID: 6014}
+      Script: {instanceID: 5704}
     - Class: 114
-      Script: {instanceID: 6502}
+      Script: {instanceID: 6016}
     - Class: 114
-      Script: {instanceID: 6864}
+      Script: {instanceID: 6504}
     - Class: 114
-      Script: {instanceID: 7050}
+      Script: {instanceID: 6866}
+    - Class: 114
+      Script: {instanceID: 7052}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -483,7 +645,7 @@ ScriptsOnlyBuild:
     className: Button
   - hash:
       serializedVersion: 2
-      Hash: a5bd2a531d90c90abaa1287922d5bddc
+      Hash: d083ce2fc425eea1408f690aa3016d23
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: PlayerDeck
@@ -567,7 +729,7 @@ ScriptsOnlyBuild:
     className: TextMeshPro
   - hash:
       serializedVersion: 2
-      Hash: 1f8fa9f376add6a6f552f6c9ad4a0263
+      Hash: 710b31d574c87c545c172093d27d666b
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: AI
@@ -591,7 +753,7 @@ ScriptsOnlyBuild:
     className: CardBackPrefab
   - hash:
       serializedVersion: 2
-      Hash: 2ec054c0cfed363fa00acc33580bfd80
+      Hash: 3d762f0bfe665c8f9e7eb4e47e9c7a70
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: TurnSystem
@@ -849,7 +1011,7 @@ ScriptsOnlyBuild:
     className: StateGraphAsset
   - hash:
       serializedVersion: 2
-      Hash: 420ecd72cc43ab4408e67196f15d9b18
+      Hash: d5a83d7d55a1dbfd0486e386e45bbea3
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: ThisCard
@@ -1047,7 +1209,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: f013ea4dfb51be09d486cdeeec1e2ffc
+      Hash: fecd47bdc27a2986cae88f34b295e0d1
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: AICardToHand
@@ -1093,6 +1255,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: Variables
+  - hash:
+      serializedVersion: 2
+      Hash: a3df14696035a7f251fedfd6be39e2d7
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CardPanel
   - hash:
       serializedVersion: 2
       Hash: b30c8635462e66ac20f4241106119f77
@@ -1151,4 +1319,6 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/Menu Principal.unity
   - Assets/Scenes/SampleScene.unity
+  - Assets/Scenes/Cartas.unity
+  - Assets/Scenes/Eleccion.unity
   playerPath: C:/Users/Leonardo/Desktop/Minions/Gwent-pro-3D-template.exe
