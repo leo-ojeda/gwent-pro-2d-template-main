@@ -43,28 +43,28 @@ public class Menuinicial : MonoBehaviour
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card(9, "Knight Thunderclash", 7, "4", "Leader", Resources.Load<Sprite>("13"), "Leader", 1, "Torment"));
+        cardList.Add(new Card( "Knight Thunderclash", 7, "4", "Leader", Resources.Load<Sprite>("13"), new string[]{"Melee"}, 1, "Torment"));
     }
     public void Deck2()
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card(29, "Samurai", 8, "1", "Leader", Resources.Load<Sprite>("32"), "Leader", 1, "Fire"));
+        cardList.Add(new Card( "Samurai", 8, "1", "Leader", Resources.Load<Sprite>("32"), new string[]{"Melee"}, 1, "Fire"));
     }
     public void Deck3()
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card(40, "Leñador", 7, "1", "Leader", Resources.Load<Sprite>("43"), "Leader", 1, "Forest"));
+        cardList.Add(new Card( "Leñador", 7, "1", "Leader", Resources.Load<Sprite>("43"), new string[]{"Melee"}, 1, "Forest"));
     }
     IEnumerator Sound()
     {
-       yield return new WaitForSeconds(0.3f);
+       yield return new WaitForSeconds(0.4f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
     }
     IEnumerator Sound1()
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.4f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 3);
     }
   

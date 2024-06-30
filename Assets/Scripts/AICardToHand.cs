@@ -8,12 +8,11 @@ public class AICardToHand : MonoBehaviour
     public List<Card> ThisCard = new List<Card>();
 
     public int thisId;
-    public int Id;
     public string CardName;
     public string CardType;
     public int Power;
     public string Efect;
-    public string Attack;
+    public string[] Range;
     public int Cost;
     public Text NameText;
     public Text PowerText;
@@ -76,12 +75,11 @@ public class AICardToHand : MonoBehaviour
 
 
         }
-        Id = ThisCard[0].Id;
-        CardName = ThisCard[0].CardName;
-        CardType = ThisCard[0].CardType;
+        CardName = ThisCard[0].Name;
+        CardType = ThisCard[0].Type;
         Power = ThisCard[0].Power;
         Efect = ThisCard[0].Efect;
-        Attack = ThisCard[0].Attack;
+        Range = ThisCard[0].Range;
         Cost = ThisCard[0].Cost;
 
         ThisSprite = ThisCard[0].Imagen;

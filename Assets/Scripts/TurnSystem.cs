@@ -1,6 +1,5 @@
 
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -25,11 +24,12 @@ public class TurnSystem : MonoBehaviour
     private int RoundPV;
     public Text RoundVtext;
     public Text Victory;
+    public Text Power;
 
     public static bool StartTurn;
 
     // Contadores para llevar la cuenta de cuántos jugadores han cedido el turno en la ronda actual
-    private bool surrenderedPlayer1;
+    public static bool surrenderedPlayer1;
     public static bool surrenderedPlayer2;
     public GameObject CemeteryPanel;
     public GameObject EnemyCementeryPanel;
@@ -50,6 +50,9 @@ public class TurnSystem : MonoBehaviour
         IsYourTurn = true;
         StartTurn = false;
 
+
+
+
         MaxMana = 1;
         EnemyMaxMana = 1;
         CurrentMana = 1;
@@ -64,6 +67,8 @@ public class TurnSystem : MonoBehaviour
 
     void Update()
     {
+        Power.text = ThisCard.PowerTotal + "            " + AI.EnemyPowerTotal;
+
         Draggable K = GetComponent<Draggable>();
         if (IsYourTurn)
         {
@@ -86,11 +91,6 @@ public class TurnSystem : MonoBehaviour
             StartCoroutine(Wait());
 
         }
-    }
-
-    public void EndYourTurn()
-    {
-        PlayMusic("s468");
         if (surrenderedPlayer2 == true)
         {
             Debug.Log("Continuar TurnoP1");
@@ -98,13 +98,12 @@ public class TurnSystem : MonoBehaviour
 
             CurrentMana = MaxMana;
         }
-        else
+        else if (CurrentMana == 0)
         {
-
             IsYourTurn = false;
-            //Debug.Log("False");
         }
     }
+
 
     public void EndYourOpponentTurn()
     {
@@ -220,7 +219,7 @@ public class TurnSystem : MonoBehaviour
         surrenderedPlayer2 = false;
         point = true;
         CardsCemetery("Melee");
-        CardsCemetery("Range");
+        CardsCemetery("Ranged");
         CardsCemetery("Siege");
         CardsCemetery("Clima");
         CardsCemetery("Leader");

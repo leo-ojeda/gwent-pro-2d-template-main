@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -45,7 +46,7 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     return;
                 }
 
-                if (gameObject.tag == card.Attack)
+                if (card.Range.Contains(gameObject.tag))
                 {
                     d.parentToReturnTo = this.transform;
                     d.OnEndDrag(eventData);

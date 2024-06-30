@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
-
 
 public class PlayerDeck : MonoBehaviour
 {
@@ -25,7 +23,6 @@ public class PlayerDeck : MonoBehaviour
 
 
     public GameObject Hand;
-    // Start is called before the first frame update
 
     void Start()
     {
@@ -34,7 +31,7 @@ public class PlayerDeck : MonoBehaviour
         bool leaderCardAdded = false; // Indica si se ha agregado la carta líder
         Leader = deckCards[0];
 
-        Debug.Log(deckCards[0].CardName);
+        Debug.Log(deckCards[0].Name);
 
         // Contadores para el número de cartas golden y silver con el mismo nombre que se han agregado al mazo
         Dictionary<string, int> goldenCount = new Dictionary<string, int>();
@@ -53,37 +50,37 @@ public class PlayerDeck : MonoBehaviour
                 //Debug.Log(randomCard.CardName);
 
                 // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
-                if (randomCard.CardType == "Leader" && !leaderCardAdded && randomCard.Faccion == Leader.Faccion)
+                if (randomCard.Type == "Leader" && !leaderCardAdded && randomCard.Faction == Leader.Faction)
                 {
                     Deck[i] = randomCard;
                     leaderCardAdded = true;
                     cardAdded = true;
                 }
                 // Verificar si la carta seleccionada es golden
-                else if (randomCard.CardType == "Golden" && randomCard.Faccion == Leader.Faccion)
+                else if (randomCard.Type == "Golden" && randomCard.Faction == Leader.Faction)
                 {
                     // Verificar si ya hay una carta golden con el mismo nombre en el mazo
-                    if (!goldenCount.ContainsKey(randomCard.CardName))
+                    if (!goldenCount.ContainsKey(randomCard.Name))
                     {
                         Deck[i] = randomCard;
-                        goldenCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta golden en el mazo
+                        goldenCount[randomCard.Name] = 1; // Registrar la presencia de esta carta golden en el mazo
                         cardAdded = true;
                     }
                 }
                 // Verificar si la carta seleccionada es silver
-                else if (randomCard.CardType == "Silver" && randomCard.Faccion == Leader.Faccion)
+                else if (randomCard.Type == "Silver" && randomCard.Faction == Leader.Faction)
                 {
                     // Verificar si ya hay tres cartas silver con el mismo nombre en el mazo
-                    if (!silverCount.ContainsKey(randomCard.CardName) || silverCount[randomCard.CardName] < 3)
+                    if (!silverCount.ContainsKey(randomCard.Name) || silverCount[randomCard.Name] < 3)
                     {
                         Deck[i] = randomCard;
-                        if (!silverCount.ContainsKey(randomCard.CardName))
+                        if (!silverCount.ContainsKey(randomCard.Name))
                         {
-                            silverCount[randomCard.CardName] = 1; // Registrar la presencia de esta carta silver en el mazo
+                            silverCount[randomCard.Name] = 1; // Registrar la presencia de esta carta silver en el mazo
                         }
                         else
                         {
-                            silverCount[randomCard.CardName]++; // Incrementar el contador de esta carta silver en el mazo
+                            silverCount[randomCard.Name]++; // Incrementar el contador de esta carta silver en el mazo
                         }
                         cardAdded = true;
                     }

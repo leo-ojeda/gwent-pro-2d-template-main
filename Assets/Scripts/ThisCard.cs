@@ -1,12 +1,6 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-
-
-
-
 
 public class ThisCard : MonoBehaviour
 {
@@ -14,19 +8,17 @@ public class ThisCard : MonoBehaviour
     public int thisId;
     public static List<Card> CardSummon = new List<Card>();
 
-    public int Id;
     public string CardName;
     public string CardType;
     public int Power;
     public string Efect;
-    public string Attack;
+    public string[] Range;
     public int Cost;
-    public string Faccion;
+    public string Faction;
     //public Text NameText;
     //public Text PowerText;
     //public Text DescriptionText;
     //public Text CostText;
-
 
 
     public Sprite ThisSprite;
@@ -75,14 +67,13 @@ public class ThisCard : MonoBehaviour
         {
             cardBack = false;
         }
-        Id = thisCard[0].Id;
-        CardName = thisCard[0].CardName;
-        CardType = thisCard[0].CardType;
+        CardName = thisCard[0].Name;
+        CardType = thisCard[0].Type;
         Power = thisCard[0].Power;
         Efect = thisCard[0].Efect;
-        Attack = thisCard[0].Attack;
+        Range = thisCard[0].Range;
         Cost = thisCard[0].Cost;
-        Faccion = thisCard[0].Faccion;
+        Faction = thisCard[0].Faction;
 
         ThisSprite = thisCard[0].Imagen;
 
@@ -151,7 +142,7 @@ public class ThisCard : MonoBehaviour
     // Llenar el diccionario con las zonas de batalla encontradas
     void FindBattleZones()
     {
-        string[] zoneTags = { "Melee", "Range", "Clima", "Siege", "Leader", "Increase" };
+        string[] zoneTags = { "Melee", "Ranged", "Clima", "Siege", "Leader", "Increase" };
         foreach (string tag in zoneTags)
         {
             GameObject zone = GameObject.FindGameObjectWithTag(tag);
@@ -179,7 +170,7 @@ public class ThisCard : MonoBehaviour
                     foreach (var card in CardSummon)
                     {
                         
-                        Debug.Log("Carta: " + card.CardName);
+                        Debug.Log("Carta: " + card.Name);
                         Debug.Log(CardSummon.Count);
                         Debug.Log(PowerTotal);
                     }

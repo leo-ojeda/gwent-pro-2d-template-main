@@ -4,31 +4,30 @@ using UnityEngine;
 
 public class Card
 {
-    public int Id;
-    public string CardName;
+    public string Name;
     public int Power;
     public string Efect;
-    public string CardType;
+    public string Type;
     public int Cost;
 
-    public string Attack;
+    public string[] Range;
 
     public Sprite Imagen;
-    public string Faccion;
+    public string Faction;
     public Card()
     {
 
     }
-    public Card(int id, string cardName, int power, string efect, string cardtype, Sprite imagen, string attack, int cost,string faccion)
+    public Card( string name, int power, string efect, string type, Sprite imagen, string[] range, int cost,string faction)
     {
-        Id = id;
-        CardName = cardName;
+
+        Name = name;
         Power = power;
         Efect = efect;
-        CardType = cardtype;
+        Type = type;
         Imagen = imagen;
-        Attack = attack;
+        Range = range;
         Cost = cost;
-        Faccion = faccion;
+        Faction = faction;
     }
 }
