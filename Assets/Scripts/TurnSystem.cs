@@ -267,7 +267,7 @@ public class TurnSystem : MonoBehaviour
     }
     IEnumerator Wait()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
         StartNextRound();
     }
     string PlayMusic(string x)

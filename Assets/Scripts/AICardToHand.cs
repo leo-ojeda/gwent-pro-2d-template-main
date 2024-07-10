@@ -13,7 +13,6 @@ public class AICardToHand : MonoBehaviour
     public int Power;
     public string Efect;
     public string[] Range;
-    public int Cost;
     public Text NameText;
     public Text PowerText;
     public Text DescriptionText;
@@ -80,9 +79,8 @@ public class AICardToHand : MonoBehaviour
         Power = ThisCard[0].Power;
         Efect = ThisCard[0].Efect;
         Range = ThisCard[0].Range;
-        Cost = ThisCard[0].Cost;
 
-        ThisSprite = ThisCard[0].Imagen;
+        ThisSprite = Resources.Load<Sprite>(ThisCard[0].Name);
 
         NameText.text = "" + CardName;
         PowerText.text = "" + Power;

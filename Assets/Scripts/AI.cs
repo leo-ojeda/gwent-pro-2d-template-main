@@ -26,15 +26,15 @@ public class AI : MonoBehaviour
     public GameObject CardBack;
 
     public int CurrentMana;
-    public bool[] AIcanSummon;
+    // public bool[] AIcanSummon;
     public bool DrawPhase;
     public bool SummonPhase;
     public bool EndPhase;
 
-    public int[] cardsID;
-    public int SummonThisId;
-    public AICardToHand aICardToHand;
-    public int summonID;
+   // public int[] cardsID;
+   // public int SummonThisId;
+   // public AICardToHand aICardToHand;
+   // public int summonID;
     public int HowManyCards;
     public static int EnemyPowerTotal;
     private Card Leader;
@@ -224,7 +224,7 @@ public class AI : MonoBehaviour
                         }
                     }
 
-                    TurnSystem.CurrentEnemyMana -= cardToSummon.Cost;
+                    TurnSystem.CurrentEnemyMana = 0;
                     EnemyPowerTotal += cardToSummon.Power;
                     Debug.Log("PowerTotalEnemy: " + EnemyPowerTotal);
 
@@ -254,7 +254,7 @@ public class AI : MonoBehaviour
         summonableCards.Clear();
         foreach (var card in CardsInHand)
         {
-            if (CurrentMana >= card.Cost)
+            if (CurrentMana > 0)
             {
                 summonableCards.Add(card);
             }
@@ -263,14 +263,14 @@ public class AI : MonoBehaviour
 
     bool ShouldSurrender()
     {
-        return EnemyPowerTotal > ThisCard.PowerTotal || EnemyPowerTotal >= 20 || HowManyCards == 0;
+        return EnemyPowerTotal > ThisCard.PowerTotal || EnemyPowerTotal >= 20 ;//|| HowManyCards == 0;
     }
 
     IEnumerator StartGame()
     {
         for (int i = 0; i <= 9; i++)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.4f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }
@@ -279,14 +279,14 @@ public class AI : MonoBehaviour
     {
         for (int i = 0; i < x; i++)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.4f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }
 
     IEnumerator WaitForSummonPhase()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
         SummonPhase = true;
     }
 

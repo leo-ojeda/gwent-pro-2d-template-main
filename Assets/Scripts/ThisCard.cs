@@ -12,8 +12,7 @@ public class ThisCard : MonoBehaviour
     public string CardType;
     public int Power;
     public string Efect;
-    public string[] Range;
-    public int Cost;
+    public string[] Range; 
     public string Faction;
     //public Text NameText;
     //public Text PowerText;
@@ -72,10 +71,9 @@ public class ThisCard : MonoBehaviour
         Power = thisCard[0].Power;
         Efect = thisCard[0].Efect;
         Range = thisCard[0].Range;
-        Cost = thisCard[0].Cost;
         Faction = thisCard[0].Faction;
 
-        ThisSprite = thisCard[0].Imagen;
+        ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
 
        // NameText.text = "" + CardName;
        // PowerText.text = "" + Power;
@@ -97,7 +95,7 @@ public class ThisCard : MonoBehaviour
         }
         // Verificar si tienes suficiente mana para invocar cartas
         Draggable h = GetComponent<Draggable>();
-        if (TurnSystem.CurrentMana >= Cost && summoned == false && TurnSystem.IsYourTurn == true)
+        if (TurnSystem.CurrentMana > 0 && summoned == false && TurnSystem.IsYourTurn == true && TurnSystem.surrenderedPlayer1 == false)
         {
             canBeSummon = true;
             if (h != null)
@@ -120,20 +118,12 @@ public class ThisCard : MonoBehaviour
     }
     public void Summon(Card SumonedCard)
     {
-        TurnSystem.CurrentMana -= Cost;
+        TurnSystem.CurrentMana = 0;
         PowerTotal+=SumonedCard.Power;
         summoned = true;
         CardSummon.Add(SumonedCard);
         audioSource = GetComponent<AudioSource>();
         audioSource.Play();
-       // if (SumonedCard.Efect == "3")
-       // {
-       //     MaxMana(1);
-       // }
-        // if (SumonedCard.Efect == "1")
-        // {
-        //     StartCoroutine(DrawE(1));
-        // }
     }
 
     // Diccionario para almacenar las zonas de batalla según su tag
