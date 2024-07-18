@@ -5,6 +5,7 @@ using System.Linq;
 
 public class AI : MonoBehaviour
 {
+    Context context;
     public List<Card> Deck = new List<Card>();
     public List<Card> CardsInHand = new List<Card>();
     public static List<Card> StaticEnemyDeck = new List<Card>();
@@ -31,10 +32,10 @@ public class AI : MonoBehaviour
     public bool SummonPhase;
     public bool EndPhase;
 
-   // public int[] cardsID;
-   // public int SummonThisId;
-   // public AICardToHand aICardToHand;
-   // public int summonID;
+    // public int[] cardsID;
+    // public int SummonThisId;
+    // public AICardToHand aICardToHand;
+    // public int summonID;
     public int HowManyCards;
     public static int EnemyPowerTotal;
     private Card Leader;
@@ -44,6 +45,19 @@ public class AI : MonoBehaviour
 
     void Start()
     {
+        context = FindObjectOfType<Context>();
+        if (!context.playerDecks.ContainsKey("Jugador 2"))
+        {
+            context.playerDecks["Jugador 2"] = new List<Card>();
+        }
+        if (!context.playerHands.ContainsKey("Jugador 2"))
+        {
+            context.playerHands["Jugador 2"] = new List<Card>();
+        }
+        if (!context.playerFields.ContainsKey("Jugador 2"))
+        {
+            context.playerFields["Jugador 2"] = new List<Card>();
+        }
         Hand = GameObject.Find("EnemyHand");
         ZoneM = GameObject.Find("MeleeZone AI");
         ZoneR = GameObject.Find("RangeZone AI");
@@ -83,6 +97,9 @@ public class AI : MonoBehaviour
                     if (!goldenCountAI.ContainsKey(randomCard.Name))
                     {
                         Deck[i] = randomCard;
+
+                        context.playerDecks["Jugador 2"].Add(Deck[i]);
+
                         goldenCountAI[randomCard.Name] = 1;
                         cardAdded = true;
                     }
@@ -92,6 +109,8 @@ public class AI : MonoBehaviour
                     if (!silverCountAI.ContainsKey(randomCard.Name) || silverCountAI[randomCard.Name] < 3)
                     {
                         Deck[i] = randomCard;
+                        context.playerDecks["Jugador 2"].Add(Deck[i]);
+
                         if (!silverCountAI.ContainsKey(randomCard.Name))
                         {
                             silverCountAI[randomCard.Name] = 1;
@@ -112,7 +131,7 @@ public class AI : MonoBehaviour
 
     void Update()
     {
-        StaticEnemyDeck = Deck;
+        context.playerDecks["Jugador 2"] = Deck;
         CardInDeck1.SetActive(deckSize >= 20);
         CardInDeck2.SetActive(deckSize >= 13);
         CardInDeck3.SetActive(deckSize >= 6);
@@ -224,8 +243,11 @@ public class AI : MonoBehaviour
                         }
                     }
 
-                    TurnSystem.CurrentEnemyMana = 0;
                     EnemyPowerTotal += cardToSummon.Power;
+                    TurnSystem.CurrentEnemyMana = 0;
+                    context.board.Add(cardInHand);
+                    context.playerFields[cardInHand.Owner].Add(cardInHand);
+                    context.playerHands[cardInHand.Owner].Remove(cardInHand);
                     Debug.Log("PowerTotalEnemy: " + EnemyPowerTotal);
 
                     // Resetea la variable después de invocar
@@ -263,7 +285,7 @@ public class AI : MonoBehaviour
 
     bool ShouldSurrender()
     {
-        return EnemyPowerTotal > ThisCard.PowerTotal || EnemyPowerTotal >= 20 ;//|| HowManyCards == 0;
+        return EnemyPowerTotal > ThisCard.PowerTotal || EnemyPowerTotal >= 20;//|| HowManyCards == 0;
     }
 
     IEnumerator StartGame()

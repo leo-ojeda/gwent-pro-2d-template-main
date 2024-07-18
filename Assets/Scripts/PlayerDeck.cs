@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class PlayerDeck : MonoBehaviour
 {
-
+    //new
+    private Context context;
+    //
     public List<Card> Deck = new List<Card>();
     public List<Card> Container = new List<Card>();
-    public static List<Card> staticDeck = new List<Card>();
+    //public static List<Card> staticDeck = new List<Card>();
     public int x;
 
     public static int deck;
@@ -21,11 +23,12 @@ public class PlayerDeck : MonoBehaviour
     public GameObject[] Clones;
     private Card Leader;
 
-
     public GameObject Hand;
 
     void Start()
     {
+
+        context = FindObjectOfType<Context>();
         deck = 25;
         List<Card> deckCards = Menuinicial.cardList; // Lista para almacenar las cartas que ya se han agregado al mazo
         bool leaderCardAdded = false; // Indica si se ha agregado la carta líder
@@ -52,7 +55,14 @@ public class PlayerDeck : MonoBehaviour
                 // Verificar si la carta seleccionada es una carta líder y si ya se ha agregado una al mazo
                 if (randomCard.Type == "Leader" && !leaderCardAdded && randomCard.Faction == Leader.Faction)
                 {
+
                     Deck[i] = randomCard;
+                    if (!context.playerDecks.ContainsKey("Jugador 1"))
+                    {
+                        context.playerDecks["Jugador 1"] = new List<Card>();
+                    }
+                    context.playerDecks["Jugador 1"].Add(Deck[i]);
+                    //Debug.Log(context.playerDecks.Count);
                     leaderCardAdded = true;
                     cardAdded = true;
                 }
@@ -63,6 +73,12 @@ public class PlayerDeck : MonoBehaviour
                     if (!goldenCount.ContainsKey(randomCard.Name))
                     {
                         Deck[i] = randomCard;
+                        if (!context.playerDecks.ContainsKey("Jugador 1"))
+                        {
+                            context.playerDecks["Jugador 1"] = new List<Card>();
+                        }
+                        context.playerDecks["Jugador 1"].Add(Deck[i]);
+                        // Debug.Log(context.playerDecks.Count);
                         goldenCount[randomCard.Name] = 1; // Registrar la presencia de esta carta golden en el mazo
                         cardAdded = true;
                     }
@@ -74,6 +90,13 @@ public class PlayerDeck : MonoBehaviour
                     if (!silverCount.ContainsKey(randomCard.Name) || silverCount[randomCard.Name] < 3)
                     {
                         Deck[i] = randomCard;
+                        if (!context.playerDecks.ContainsKey("Jugador 1"))
+                        {
+                            context.playerDecks["Jugador 1"] = new List<Card>();
+                        }
+                        context.playerDecks["Jugador 1"].Add(Deck[i]);
+                        //Debug.Log(randomCard.Owner);
+                        //Debug.Log(context.playerDecks.Count);
                         if (!silverCount.ContainsKey(randomCard.Name))
                         {
                             silverCount[randomCard.Name] = 1; // Registrar la presencia de esta carta silver en el mazo
@@ -89,6 +112,8 @@ public class PlayerDeck : MonoBehaviour
 
             // Agregar la carta al mazo
             deckCards.Add(randomCard);
+
+
         }
 
         StartCoroutine(StartGame());
@@ -98,8 +123,8 @@ public class PlayerDeck : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        staticDeck = Deck;
-
+        //staticDeck = Deck;
+        context.playerDecks["Jugador 1"] = Deck;
 
         if (deck < 20)
         {
@@ -139,6 +164,7 @@ public class PlayerDeck : MonoBehaviour
     {
         for (int i = 0; i <= 9; i++)
         {
+            
             yield return new WaitForSeconds(0.4f);
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
@@ -154,7 +180,7 @@ public class PlayerDeck : MonoBehaviour
             Deck[RandomIndex] = Container[0];
         }
         Instantiate(CardBack, transform.position, transform.rotation);
-        StartCoroutine(Example());
+        //StartCoroutine(Example());
     }
     IEnumerator Draw(int x)
     {

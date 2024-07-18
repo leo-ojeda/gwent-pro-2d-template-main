@@ -3,10 +3,12 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 
 public class TurnSystem : MonoBehaviour
 {
+    Context context;
     public static bool IsYourTurn;
     private AudioSource AudioSource;
 
@@ -41,6 +43,15 @@ public class TurnSystem : MonoBehaviour
 
     void Start()
     {
+        context = FindObjectOfType<Context>();
+        if (!context.playerGraveyards.ContainsKey("Jugador 1"))
+        {
+            context.playerGraveyards["Jugador 1"] = new List<Card>();
+        }
+        if (!context.playerGraveyards.ContainsKey("Jugador 2"))
+        {
+            context.playerGraveyards["Jugador 2"] = new List<Card>();
+        }
 
 
         AudioSource = GetComponent<AudioSource>();
@@ -93,7 +104,7 @@ public class TurnSystem : MonoBehaviour
         }
         if (surrenderedPlayer2 == true)
         {
-            Debug.Log("Continuar TurnoP1");
+            //Debug.Log("Continuar TurnoP1");
             IsYourTurn = true;
 
             CurrentMana = MaxMana;
@@ -109,7 +120,7 @@ public class TurnSystem : MonoBehaviour
     {
         if (surrenderedPlayer1 == true)
         {
-            Debug.Log("Continuar Turno");
+            //Debug.Log("Continuar Turno");
             IsYourTurn = false;
             CurrentEnemyMana = EnemyMaxMana;
         }
@@ -128,7 +139,7 @@ public class TurnSystem : MonoBehaviour
         if (IsYourTurn)
         {
             PlayMusic("s468");
-            Debug.Log("es tu turno");
+            // Debug.Log("es tu turno");
             surrenderedPlayer1 = true;
             StartNextRound();
             IsYourTurn = false;
@@ -139,7 +150,7 @@ public class TurnSystem : MonoBehaviour
 
         if (!IsYourTurn)
         {
-            Debug.Log("no es tu turno");
+            //Debug.Log("no es tu turno");
 
             surrenderedPlayer2 = true;
             StartNextRound();
@@ -150,7 +161,7 @@ public class TurnSystem : MonoBehaviour
     {
         if (surrenderedPlayer1 == true && surrenderedPlayer2 == true)
         {
-            Debug.Log("Se cambio de ronda");
+            //Debug.Log("Se cambio de ronda");
             NextRound();
             if (Round > 3 || RoundEV == 2 || RoundPV == 2)
             {
@@ -229,6 +240,21 @@ public class TurnSystem : MonoBehaviour
     }
     void CardsCemetery(string zoneTag)
     {
+
+        foreach (Card card in context.board)
+        {
+
+            if (card.Owner == "Jugador 1")
+            {
+                context.playerGraveyards[card.Owner].Add(card);
+            }
+            else if (card.Owner == "Jugador 2")
+            {
+                Debug.Log("Veces");
+                context.playerGraveyards[card.Owner].Add(card);
+            }
+        }
+
         GameObject[] zones = GameObject.FindGameObjectsWithTag(zoneTag);
         foreach (GameObject zone in zones)
         {
@@ -245,6 +271,7 @@ public class TurnSystem : MonoBehaviour
                     {
                         cardToMove = child;
                         break;
+
                     }
                 }
 
@@ -258,8 +285,12 @@ public class TurnSystem : MonoBehaviour
                 }
                 else
                 {
+
                     PlayMusic("s3200");
-                    // No se encontraron más cartas con los tags especificados en esta zona
+                    context.board.Clear();
+                    context.playerFields.Clear();
+                    context.playerFields["Jugador 1"] = new List<Card>();
+                    context.playerFields["Jugador 2"] = new List<Card>();
                     cardsRemaining = false;
                 }
             }
@@ -283,6 +314,5 @@ public class TurnSystem : MonoBehaviour
         yield return new WaitForSeconds(10f);
         SceneManager.LoadScene(menu);
     }
-
 
 }

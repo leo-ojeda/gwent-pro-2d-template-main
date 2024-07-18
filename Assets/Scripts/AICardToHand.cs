@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class AICardToHand : MonoBehaviour
 {
+    Context context;
     public List<Card> ThisCard = new List<Card>();
 
     public int thisId;
+    public string Owner;
     public string CardName;
     public string CardType;
     public int Power;
-    public string Efect;
+    public List<EffectActivation> Efect;
     public string[] Range;
     public Text NameText;
     public Text PowerText;
@@ -49,6 +51,12 @@ public class AICardToHand : MonoBehaviour
     void Start()
     {
         Hand = GameObject.Find("EnemyHand");
+        Owner = "Jugador 2";
+        context = FindObjectOfType<Context>();
+         if (!context.playerHands.ContainsKey("Jugador 2"))
+        {
+            context.playerHands["Jugador 2"] = new List<Card>();
+        }
         numberofCardsInDeck = AI.deckSize;
         z = 0;
         SelectRandomCard();
@@ -74,10 +82,12 @@ public class AICardToHand : MonoBehaviour
 
 
         }
+
+        ThisCard[0].Owner = Owner;
         CardName = ThisCard[0].Name;
         CardType = ThisCard[0].Type;
         Power = ThisCard[0].Power;
-        Efect = ThisCard[0].Efect;
+        Efect = ThisCard[0].OnActivation;
         Range = ThisCard[0].Range;
 
         ThisSprite = Resources.Load<Sprite>(ThisCard[0].Name);
@@ -92,7 +102,9 @@ public class AICardToHand : MonoBehaviour
         if (this.tag == "AIClone")
         {
             //Debug.Log("Activo");
-            ThisCard[0] = AI.StaticEnemyDeck[numberofCardsInDeck - 1];
+            ThisCard[0] = context.playerDecks[Owner][numberofCardsInDeck - 1];
+            context.playerDecks[Owner].RemoveAt(numberofCardsInDeck - 1);
+            context.playerHands["Jugador 2"].Add(ThisCard[0]);
             numberofCardsInDeck -= 1;
             AI.deckSize -= 1;
             this.tag = "Untagged";

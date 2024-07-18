@@ -4,15 +4,18 @@ using UnityEngine.UI;
 
 public class ThisCard : MonoBehaviour
 {
+    Context context;
     public List<Card> thisCard;
     public int thisId;
     public static List<Card> CardSummon = new List<Card>();
-
+    //new
+    public string Owner;
+    //end
     public string CardName;
     public string CardType;
     public int Power;
-    public string Efect;
-    public string[] Range; 
+    public List<EffectActivation> Efect;
+    public string[] Range;
     public string Faction;
     //public Text NameText;
     //public Text PowerText;
@@ -52,12 +55,23 @@ public class ThisCard : MonoBehaviour
     }
     void Start()
     {
+        context = FindObjectOfType<Context>();
+        if (!context.playerHands.ContainsKey("Jugador 1"))
+        {
+            context.playerHands["Jugador 1"] = new List<Card>();
+        }
+        if (!context.playerFields.ContainsKey("Jugador 1"))
+        {
+            context.playerFields["Jugador 1"] = new List<Card>();
+        }
         SelectCard();
         FindBattleZones();
         NumberOfCardsIdDeck = PlayerDeck.deck;
         canBeSummon = false;
         summoned = false;
         Zone = true;
+        Owner = "Jugador 1";
+
     }
     void Update()
     {
@@ -66,28 +80,31 @@ public class ThisCard : MonoBehaviour
         {
             cardBack = false;
         }
+        thisCard[0].Owner = Owner;
         CardName = thisCard[0].Name;
         CardType = thisCard[0].Type;
         Power = thisCard[0].Power;
-        Efect = thisCard[0].Efect;
         Range = thisCard[0].Range;
         Faction = thisCard[0].Faction;
+        Efect = thisCard[0].OnActivation;
 
         ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
 
-       // NameText.text = "" + CardName;
-       // PowerText.text = "" + Power;
-       // CostText.text = "" + CardType;
-       // DescriptionText.text = " " + Efect;
+        // NameText.text = "" + CardName;
+        // PowerText.text = "" + Power;
+        // CostText.text = "" + CardType;
+        // DescriptionText.text = " " + Efect;
 
         ThatImage.sprite = ThisSprite;
 
         cardB = cardBack;
 
-        if (this.tag == "first")
+        if (tag == "first")
         {
             //Debug.Log("entro");
-            thisCard[0] = PlayerDeck.staticDeck[NumberOfCardsIdDeck - 1];
+            thisCard[0] = context.playerDecks[Owner][NumberOfCardsIdDeck - 1];
+            context.playerDecks[Owner].RemoveAt(NumberOfCardsIdDeck - 1);
+            context.playerHands["Jugador 1"].Add(thisCard[0]);
             NumberOfCardsIdDeck -= 1;
             PlayerDeck.deck -= 1;
             cardBack = false;
@@ -119,7 +136,7 @@ public class ThisCard : MonoBehaviour
     public void Summon(Card SumonedCard)
     {
         TurnSystem.CurrentMana = 0;
-        PowerTotal+=SumonedCard.Power;
+        PowerTotal += SumonedCard.Power;
         summoned = true;
         CardSummon.Add(SumonedCard);
         audioSource = GetComponent<AudioSource>();
@@ -147,7 +164,7 @@ public class ThisCard : MonoBehaviour
 
     void OperationsForBattleZones()
     {
-        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone 1", "ClimaZone 2", "ClimaZone 3", "LeaderZone 1", "SiegeZone 1", "IncrementoZone 1", "IncrementoZone 2", "IncrementoZone 3" };
+        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone 1", "ClimaZone 2", "ClimaZone 3", "LeaderZone 1", "SiegeZone 1" };//, "IncrementoZone 1", "IncrementoZone 2", "IncrementoZone 3" };
         foreach (string zoneName in battleZoneNames)
         {
             BattleZone = GameObject.Find(zoneName);
@@ -157,9 +174,13 @@ public class ThisCard : MonoBehaviour
                 if (canBeSummon)
                 {
                     Summon(thisCard[0]);
+                    context.board.Add(thisCard[0]);
+                    context.playerFields[thisCard[0].Owner].Add(thisCard[0]);
+                    context.playerHands[Owner].Remove(thisCard[0]);
+
                     foreach (var card in CardSummon)
                     {
-                        
+
                         Debug.Log("Carta: " + card.Name);
                         Debug.Log(CardSummon.Count);
                         Debug.Log(PowerTotal);
@@ -169,13 +190,13 @@ public class ThisCard : MonoBehaviour
         }
         if (TurnSystem.Round == 2 && Zone == true)
         {
-            Debug.Log("Ronda 2 a comenzado");
+            //Debug.Log("Ronda 2 a comenzado");
             CardSummon.Clear();
             Zone = false;
         }
         if (TurnSystem.Round == 3 && Zone == false)
         {
-            Debug.Log("Ronda 3 a comenzado");
+            //Debug.Log("Ronda 3 a comenzado");
             CardSummon.Clear();
             Zone = true;
         }
@@ -186,15 +207,6 @@ public class ThisCard : MonoBehaviour
         TurnSystem.CurrentMana += x;
     }
 
-    //  IEnumerator DrawE(int x)
-    // {
-    //     for (int i = 0; i < x; i++)
-    //     {
-    //         //Debug.Log("Mas 2");
-    //         yield return new WaitForSeconds(1);
-    //         Instantiate(CardToHand, transform.position, transform.rotation);
-    //     }
-    // }
 }
 
 

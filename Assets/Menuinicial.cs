@@ -43,19 +43,19 @@ public class Menuinicial : MonoBehaviour
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card( "Knight Thunderclash", 7, "4", "Leader",  new string[]{"Melee"},  "Torment"));
+        cardList.Add(new Card( "Knight Thunderclash", 7, "Leader",  new string[]{"Melee"},  "Torment",new List<EffectActivation>()," "));
     }
     public void Deck2()
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card( "Samurai", 8, "1", "Leader",  new string[]{"Melee"},  "Fire"));
+        cardList.Add(new Card( "Samurai", 8, "Leader",  new string[]{"Melee"},  "Fire",new List<EffectActivation>()," "));
     }
     public void Deck3()
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card( "Leñador", 7, "1", "Leader",  new string[]{"Melee"},  "Forest"));
+        cardList.Add(new Card( "Leñador", 7,  "Leader",  new string[]{"Melee"},  "Forest",new List<EffectActivation>()," "));
     }
     IEnumerator Sound()
     {
