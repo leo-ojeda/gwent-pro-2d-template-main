@@ -6,29 +6,38 @@ public class CardPanel : MonoBehaviour
 {
     public GameObject cardPrefab; // Prefab de la carta
     public Transform cardPanelParent; // Padre de los paneles de carta
-    public List<Card> cardList = new List<Card>(); // Lista de cartas
 
     void Start()
     {
-        // Instancia cada carta en el panel
         InstantiateCards();
     }
 
     void InstantiateCards()
     {
-
-        // Instancia cada carta y las posiciona una al lado de la otra en el panel
-        for (int i = 0; i < cardList.Count; i++)
+        if (CardDatabase.cardList == null || CardDatabase.cardList.Count == 0)
         {
+            Debug.LogError("CardDatabase.cardList está vacío o es nulo.");
+            return;
+        }
+
+
+        foreach (Card card in CardDatabase.cardList)
+        {
+            if (card == null)
+            {
+                continue;
+            }
+
+
             // Instancia el prefab de la carta en el panel
             GameObject cardInstance = Instantiate(cardPrefab, cardPanelParent);
 
             // Configura la imagen de la carta
-            Image cardImage = cardInstance.GetComponentInChildren<Image>(); // Busca la imagen en los hijos del prefab
+            Image cardImage = cardInstance.GetComponentInChildren<Image>(); // Busca la imagen en los hijos del prefab4
+
             if (cardImage != null)
             {
-                // Carga la imagen de la carta desde la carpeta de recursos
-                string imageName = (i + 2).ToString(); // El nombre de la imagen es el número de la carta
+                string imageName = card.Name;
                 Sprite sprite = Resources.Load<Sprite>(imageName);
                 if (sprite != null)
                 {
