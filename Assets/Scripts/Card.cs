@@ -1,5 +1,4 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -13,10 +12,9 @@ public class Card
     public string Owner;
     public List<EffectActivation> OnActivation;
 
-
     public Card() { }
 
-    public Card(string name, int power, string type, string[] range, string faction, List<EffectActivation> onActivation,string owner)
+    public Card(string name, int power, string type, string[] range, string faction, List<EffectActivation> onActivation, string owner)
     {
         Name = name;
         Power = power;
@@ -25,7 +23,6 @@ public class Card
         Faction = faction;
         OnActivation = onActivation;
         Owner = owner;
-        
     }
 }
 

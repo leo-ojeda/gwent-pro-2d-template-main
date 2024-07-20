@@ -33,7 +33,7 @@ public class ContextTest : MonoBehaviour
     }
     void Update()
     {
-        //  string playerId = "Jugador 2";
+        //  string playerId = "Jugador 1";
         //  if (context.playerDecks.ContainsKey(playerId))
         //  {
         //      int cardCount = context.playerDecks[playerId].Count;

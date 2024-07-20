@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Context : MonoBehaviour
 {
+
+    public GameObject CardPrefab; // Asigna este prefab desde el Inspector
+    public GameObject Hands; // Asigna el objeto de la mano desde el Inspector
     public string TriggerPlayer { get; set; }
     public List<Card> board { get; set; }
     public Dictionary<string, List<Card>> playerHands { get; set; }
@@ -24,6 +27,18 @@ public class Context : MonoBehaviour
         playerFields = new Dictionary<string, List<Card>>();
         playerGraveyards = new Dictionary<string, List<Card>>();
         playerDecks = new Dictionary<string, List<Card>>();
+
+        // Inicializa las listas para todos los jugadores relevantes
+        InitializePlayer("Jugador 1");
+        InitializePlayer("Jugador 2");
+    }
+
+    void InitializePlayer(string player)
+    {
+        playerHands[player] = new List<Card>();
+        playerFields[player] = new List<Card>();
+        playerGraveyards[player] = new List<Card>();
+        playerDecks[player] = new List<Card>();
     }
 
 
@@ -82,5 +97,6 @@ public static class CardListExtensions
     {
         return cards.Where(predicate).ToList();
     }
+
 }
 

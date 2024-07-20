@@ -71,6 +71,7 @@ public class ThisCard : MonoBehaviour
         summoned = false;
         Zone = true;
         Owner = "Jugador 1";
+        PowerTotal = 0;
 
     }
     void Update()
@@ -102,8 +103,8 @@ public class ThisCard : MonoBehaviour
         if (tag == "first")
         {
             //Debug.Log("entro");
-            thisCard[0] = context.playerDecks[Owner][NumberOfCardsIdDeck - 1];
-            context.playerDecks[Owner].RemoveAt(NumberOfCardsIdDeck - 1);
+            thisCard[0] = context.playerDecks[Owner][context.playerDecks[Owner].Count - 1];
+            context.playerDecks[Owner].RemoveAt(context.playerDecks[Owner].Count - 1);
             context.playerHands["Jugador 1"].Add(thisCard[0]);
             NumberOfCardsIdDeck -= 1;
             PlayerDeck.deck -= 1;
@@ -133,16 +134,70 @@ public class ThisCard : MonoBehaviour
         // Realizar operaciones para cada zona de batalla
         OperationsForBattleZones();
     }
-    public void Summon(Card SumonedCard)
+    public void Summon(Card SummonedCard)
     {
         TurnSystem.CurrentMana = 0;
-        PowerTotal += SumonedCard.Power;
         summoned = true;
-        CardSummon.Add(SumonedCard);
+        CardSummon.Add(SummonedCard);
         audioSource = GetComponent<AudioSource>();
         audioSource.Play();
+
+        // Añadir la carta al tablero y a los campos del jugador
+        context.TriggerPlayer = SummonedCard.Owner;
+        context.board.Add(SummonedCard);
+        context.playerFields[SummonedCard.Owner].Add(SummonedCard);
+        context.playerHands[Owner].Remove(SummonedCard);
+
+        ActivateEffects(SummonedCard);
+
+        RecalculatePowerTotal(context.TriggerPlayer);
     }
 
+    private void RecalculatePowerTotal(string player)
+    {
+        PowerTotal = 0;
+
+        List<Card> fieldCards = context.FieldOfPlayer(player);
+        foreach (var card in fieldCards)
+        {
+            PowerTotal += card.Power;
+        }
+
+        //Debug.Log("PowerTotal recalculado a: " + PowerTotal);
+    }
+
+    void ActivateEffects(Card card)
+    {
+        // Asegurarse de que TriggerPlayer esté configurado
+        context.TriggerPlayer = card.Owner;
+
+        foreach (var effectActivation in card.OnActivation)
+        {
+            List<Card> targets;
+
+            switch (effectActivation.selector.source)
+            {
+                case "Field":
+                    targets = context.Field;
+                    break;
+                case "Deck":
+                    targets = context.Deck;
+                    break;
+                case "Hand":
+                    targets = context.Hand;
+                    break;
+                case "Graveyard":
+                    targets = context.Graveyard;
+                    break;
+                default:
+                    targets = new List<Card>(); // Lista vacía si el source no se reconoce
+                    break;
+            }
+
+            // Aplicar el efecto a los objetivos seleccionados
+            effectActivation.Activate(targets, context);
+        }
+    }
     // Diccionario para almacenar las zonas de batalla según su tag
     Dictionary<string, GameObject> battleZones = new Dictionary<string, GameObject>();
 
@@ -174,9 +229,7 @@ public class ThisCard : MonoBehaviour
                 if (canBeSummon)
                 {
                     Summon(thisCard[0]);
-                    context.board.Add(thisCard[0]);
-                    context.playerFields[thisCard[0].Owner].Add(thisCard[0]);
-                    context.playerHands[Owner].Remove(thisCard[0]);
+
 
                     foreach (var card in CardSummon)
                     {
@@ -200,11 +253,6 @@ public class ThisCard : MonoBehaviour
             CardSummon.Clear();
             Zone = true;
         }
-    }
-    public void MaxMana(int x = 1)
-    {
-        TurnSystem.MaxMana += x;
-        TurnSystem.CurrentMana += x;
     }
 
 }

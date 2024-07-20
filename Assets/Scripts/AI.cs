@@ -91,6 +91,19 @@ public class AI : MonoBehaviour
             {
                 int randomIndex = Random.Range(1, CardDatabase.cardList.Count);
                 Card randomCard = CardDatabase.cardList[randomIndex];
+                
+                if (randomCard.Type == "Leader" && randomCard.Faction == Leader.Faction)
+                {
+                    if (!goldenCountAI.ContainsKey(randomCard.Name))
+                    {
+                        Deck[i] = randomCard;
+
+                        context.playerDecks["Jugador 2"].Add(Deck[i]);
+
+                        goldenCountAI[randomCard.Name] = 1;
+                        cardAdded = true;
+                    }
+                }
 
                 if (randomCard.Type == "Golden" && randomCard.Faction == Leader.Faction)
                 {
