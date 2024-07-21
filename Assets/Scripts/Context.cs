@@ -83,7 +83,9 @@ public static class CardListExtensions
     public static Card Pop(this List<Card> cards)
     {
         if (cards.Count == 0) return null;
+        Debug.Log(cards.Count);
         var card = cards[0];
+        Debug.Log(card.Name);
         cards.RemoveAt(0);
         return card;
     }

@@ -6,19 +6,17 @@ public class CardToHand : MonoBehaviour
 {
     public GameObject Hand;
     public GameObject It;
-    public Card thisCard;
-    public string CardName;
-    public string CardType;
-    public int Power;
-    public string[] Range;
-    public string Faction;
-    public List<EffectActivation> Efect;
-    public Sprite ThisSprite;
+    public static GameObject ItName;
 
-    public static void InstantiateCard(GameObject cardPrefab, GameObject hand, Card cardData)
+    public static Card card;
+
+
+    public static void InstantiateCard(GameObject cardPrefab, GameObject hand, Card cards)
     {
         // Instanciar el prefab de la carta
         GameObject cardObject = Instantiate(cardPrefab, Vector3.zero, Quaternion.identity);
+
+        cardObject.name = cards.Name;
 
         // Configurar el objeto de la carta
         CardToHand cardToHand = cardObject.GetComponent<CardToHand>();
@@ -26,27 +24,17 @@ public class CardToHand : MonoBehaviour
         {
             cardToHand = cardObject.AddComponent<CardToHand>();
         }
-        
+
+        card = cards;
         cardToHand.Hand = hand;
         cardToHand.It = cardObject;
-        cardToHand.It.tag = "first"; // Marcar la carta con la etiqueta "first"
+        cardToHand.It.tag = "Three";
 
-        // Asignar las propiedades del objeto de la carta
-        cardToHand.thisCard = cardData;
-        cardToHand.CardName = cardData.Name;
-        cardToHand.CardType = cardData.Type;
-        cardToHand.Power = cardData.Power;
-        cardToHand.Range = cardData.Range;
-        cardToHand.Faction = cardData.Faction;
-        cardToHand.Efect = cardData.OnActivation;
-        cardToHand.ThisSprite = Resources.Load<Sprite>(cardData.Name);
+    }
+    void Awake()
+    {
+        ItName=It;
 
-        // Asignar el sprite al componente Image del objeto de la carta
-        Image imageComponent = cardObject.GetComponent<Image>();
-        if (imageComponent != null)
-        {
-            imageComponent.sprite = cardToHand.ThisSprite;
-        }
     }
 
     void Update()
@@ -56,8 +44,12 @@ public class CardToHand : MonoBehaviour
             Hand = GameObject.Find("Hand");
         }
 
-        if (It.tag == "first")
+        if (It.tag == "first" || It.tag == "Three")
         {
+
+           // It.name = ItName;
+            //Debug.Log(ItName);
+
             It.transform.SetParent(Hand.transform);
             It.transform.localScale = Vector3.one;
             It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);

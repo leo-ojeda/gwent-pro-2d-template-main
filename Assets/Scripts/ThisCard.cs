@@ -1,13 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+
+
 
 public class ThisCard : MonoBehaviour
 {
     Context context;
     public List<Card> thisCard;
+    public List<Card> Card;
     public int thisId;
     public static List<Card> CardSummon = new List<Card>();
+    private List<GameObject> gameObjects = new List<GameObject>();
+
     //new
     public string Owner;
     //end
@@ -55,6 +61,9 @@ public class ThisCard : MonoBehaviour
     }
     void Start()
     {
+        
+
+        List<Card> Card = new List<Card>();
         context = FindObjectOfType<Context>();
         if (!context.playerHands.ContainsKey("Jugador 1"))
         {
@@ -76,10 +85,19 @@ public class ThisCard : MonoBehaviour
     }
     void Update()
     {
+
+        //DestroyGameObjects();
+
+        CalculatePowerTotal();
         Hand = GameObject.Find("Hand");
         if (this.transform.parent == Hand.transform.parent)
         {
             cardBack = false;
+        }
+        if (CardToHand.ItName != null)
+        {
+
+            CardToHand.ItName.name = thisCard[0].Name;
         }
         thisCard[0].Owner = Owner;
         CardName = thisCard[0].Name;
@@ -99,13 +117,18 @@ public class ThisCard : MonoBehaviour
         ThatImage.sprite = ThisSprite;
 
         cardB = cardBack;
+        if (tag == "Three")
+        {
+            thisCard[0] = CardToHand.card;
+        }
 
         if (tag == "first")
         {
             //Debug.Log("entro");
+
             thisCard[0] = context.playerDecks[Owner][context.playerDecks[Owner].Count - 1];
             context.playerDecks[Owner].RemoveAt(context.playerDecks[Owner].Count - 1);
-            context.playerHands["Jugador 1"].Add(thisCard[0]);
+            context.playerHands[Owner].Add(thisCard[0]);
             NumberOfCardsIdDeck -= 1;
             PlayerDeck.deck -= 1;
             cardBack = false;
@@ -131,8 +154,10 @@ public class ThisCard : MonoBehaviour
                 h.SetDraggable(false); // Desactivar la función de arrastrar la carta
             }
         }
+
         // Realizar operaciones para cada zona de batalla
         OperationsForBattleZones();
+        //RemovedCards();
     }
     public void Summon(Card SummonedCard)
     {
@@ -148,22 +173,25 @@ public class ThisCard : MonoBehaviour
         context.playerFields[SummonedCard.Owner].Add(SummonedCard);
         context.playerHands[Owner].Remove(SummonedCard);
 
+
+        GameObject newGameObject = new GameObject(SummonedCard.Name);
+        gameObjects.Add(newGameObject);
+
         ActivateEffects(SummonedCard);
 
-        RecalculatePowerTotal(context.TriggerPlayer);
     }
 
-    private void RecalculatePowerTotal(string player)
+    private void CalculatePowerTotal()
     {
         PowerTotal = 0;
 
-        List<Card> fieldCards = context.FieldOfPlayer(player);
+        List<Card> fieldCards = context.playerFields[Owner];
         foreach (var card in fieldCards)
         {
             PowerTotal += card.Power;
         }
 
-        //Debug.Log("PowerTotal recalculado a: " + PowerTotal);
+        //Debug.Log("PowerTotal Recalculado a: " + PowerTotal);
     }
 
     void ActivateEffects(Card card)
@@ -189,6 +217,21 @@ public class ThisCard : MonoBehaviour
                 case "Graveyard":
                     targets = context.Graveyard;
                     break;
+                case "otherField":
+                    context.TriggerPlayer = "Jugador 2";
+                    targets = context.Field;
+                    break;
+                case "otherDeck":
+                    context.TriggerPlayer = "Jugador 2";
+                    targets = context.Deck;
+                    break;
+                case "otherHand":
+                    context.TriggerPlayer = "Jugador 2";
+                    targets = context.Hand;
+                    break;
+                case "board":
+                    targets = context.board;
+                    break;
                 default:
                     targets = new List<Card>(); // Lista vacía si el source no se reconoce
                     break;
@@ -198,6 +241,11 @@ public class ThisCard : MonoBehaviour
             effectActivation.Activate(targets, context);
         }
     }
+
+
+
+
+
     // Diccionario para almacenar las zonas de batalla según su tag
     Dictionary<string, GameObject> battleZones = new Dictionary<string, GameObject>();
 
@@ -219,7 +267,7 @@ public class ThisCard : MonoBehaviour
 
     void OperationsForBattleZones()
     {
-        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone 1", "ClimaZone 2", "ClimaZone 3", "LeaderZone 1", "SiegeZone 1" };//, "IncrementoZone 1", "IncrementoZone 2", "IncrementoZone 3" };
+        string[] battleZoneNames = { "MeleeZone 1", "RangeZone 1", "ClimaZone", "SiegeZone 1", "IncreaseZone" };
         foreach (string zoneName in battleZoneNames)
         {
             BattleZone = GameObject.Find(zoneName);
@@ -234,9 +282,9 @@ public class ThisCard : MonoBehaviour
                     foreach (var card in CardSummon)
                     {
 
-                        Debug.Log("Carta: " + card.Name);
-                        Debug.Log(CardSummon.Count);
-                        Debug.Log(PowerTotal);
+                        //   Debug.Log("Carta: " + card.Name);
+                        //   Debug.Log(CardSummon.Count);
+                        //   Debug.Log(PowerTotal);
                     }
                 }
             }
@@ -255,7 +303,83 @@ public class ThisCard : MonoBehaviour
         }
     }
 
+
+    void DestroyGameObjects()
+    {
+        List<GameObject> remainingGameObjects = new List<GameObject>();
+        GameObject fieldP1 = GameObject.Find("Field P1");
+
+        // Tags para las zonas dentro de FieldP1
+        string[] zoneTags = { "Melee", "Ranged", "Siege", "Clima", "Increase" };
+
+        // Almacena los nombres de los gameObjects que deben ser destruidos
+        HashSet<string> namesToDestroy = new HashSet<string>();
+
+        foreach (var gameObject in gameObjects)
+        {
+            // Verificar si el objeto debe ser destruido basado en la lista context.board
+            if (!context.board.Exists(card => card.Name == gameObject.name))
+            {
+                namesToDestroy.Add(gameObject.name);
+            }
+        }
+
+        foreach (string zoneTag in zoneTags)
+        {
+            GameObject[] zones = GameObject.FindGameObjectsWithTag(zoneTag);
+            foreach (GameObject zone in zones)
+            {
+                Transform zoneTransform = zone.transform;
+                foreach (Transform child in zoneTransform)
+                {
+
+
+                    if (child.CompareTag("second") && namesToDestroy.Contains(child.name))
+                    {
+                        // Inicia la corutina para destruir el objeto con un retraso
+                        StartCoroutine(DestroyWithDelay(child.gameObject));
+                        // Debug.Log($"{child.gameObject.name} scheduled for destruction from FieldP1");
+                        namesToDestroy.Remove(child.name); // Eliminar el nombre una vez destruido
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Después de destruir los gameObjects en el FieldP1, destruye los que quedan en la lista original
+        foreach (var gameObject in gameObjects)
+        {
+            if (namesToDestroy.Contains(gameObject.name))
+            {
+                Destroy(gameObject);
+                Debug.Log($"{gameObject.name} destroyed from gameObjects");
+            }
+            else
+            {
+                remainingGameObjects.Add(gameObject);
+            }
+        }
+
+        gameObjects = remainingGameObjects;
+    }
+
+
+    private IEnumerator DestroyWithDelay(GameObject obj)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Destroy(obj);
+        Debug.Log($"{obj.name} destroyed with delay.");
+    }
+
+
+
+
 }
+
+
+
+
+
 
 
 

@@ -11,12 +11,12 @@ public class ContextTest : MonoBehaviour
 
         if (context != null)
         {
-            Debug.Log("Context se ha inicializado correctamente.");
+           // Debug.Log("Context se ha inicializado correctamente.");
 
             // Prueba la inicialización de los diccionarios
             if (context.board != null && context.playerHands != null && context.playerFields != null && context.playerGraveyards != null && context.playerDecks != null)
             {
-                Debug.Log("Todos los diccionarios se han inicializado correctamente.");
+                //Debug.Log("Todos los diccionarios se han inicializado correctamente.");
 
                 // Verifica si las zonas del tablero están inicializadas
 
@@ -30,6 +30,7 @@ public class ContextTest : MonoBehaviour
         {
             Debug.LogError("Context no se ha inicializado.");
         }
+        //context.TriggerPlayer = "Jugador 1";
     }
     void Update()
     {
@@ -43,9 +44,9 @@ public class ContextTest : MonoBehaviour
         //  {
         //      Debug.Log($"No se encontró un mazo para el jugador {playerId}.");
         //  }
-
-
+//
         // Debug.Log(context.Board.Count);
+        //Debug.Log(context.Deck.Count);
         //Debug.Log(context.Hand.Count);
         //Debug.Log(" vamo a calmarno" + context.DeckOfPlayer("Jugador 1").Count);
 

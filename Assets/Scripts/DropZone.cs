@@ -46,7 +46,7 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     return;
                 }
 
-                if (card.Range.Contains(gameObject.tag))
+                if (card.Range.Contains(gameObject.tag) && card.CardType != "Increase" && card.CardType != "Clima")
                 {
                     d.parentToReturnTo = this.transform;
                     d.OnEndDrag(eventData);
@@ -60,6 +60,21 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 else
                 {
                     Debug.Log("La carta no puede ser soltada en esta zona.");
+                }
+                if(card.CardType.Contains(gameObject.tag))
+                {
+                     d.parentToReturnTo = this.transform;
+                    d.OnEndDrag(eventData);
+
+                    // Desactivar la funcionalidad de arrastrar y soltar para la carta
+                    d.SetDraggable(false);
+
+                    // Marcar que ya hay una carta en esta zona
+                    hasCard = true;
+                }
+                else
+                {
+                   // Debug.Log("La carta no puede ser soltada en esta zona.");
                 }
             }
         }

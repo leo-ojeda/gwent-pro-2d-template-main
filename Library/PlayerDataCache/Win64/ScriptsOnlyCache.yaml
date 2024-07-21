@@ -3,7 +3,6 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - AI
     - AICardToHand
-    - BattleZone
     - CardBack
     - CardBackPrefab
     - CardDatabase
@@ -162,15 +161,17 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4320}
     - Class: 114
-      Script: {instanceID: 5020}
+      Script: {instanceID: 5022}
     - Class: 114
-      Script: {instanceID: 5560}
+      Script: {instanceID: 5562}
     - Class: 114
       Script: {instanceID: 5710}
     - Class: 114
-      Script: {instanceID: 6022}
+      Script: {instanceID: 6024}
     - Class: 114
-      Script: {instanceID: 7334}
+      Script: {instanceID: 7060}
+    - Class: 114
+      Script: {instanceID: 7336}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -223,13 +224,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4320}
     - Class: 114
-      Script: {instanceID: 5020}
+      Script: {instanceID: 5022}
     - Class: 114
-      Script: {instanceID: 5560}
+      Script: {instanceID: 5562}
     - Class: 114
       Script: {instanceID: 5710}
     - Class: 114
-      Script: {instanceID: 6022}
+      Script: {instanceID: 6024}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -296,13 +297,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4334}
     - Class: 114
-      Script: {instanceID: 5020}
+      Script: {instanceID: 5022}
     - Class: 114
-      Script: {instanceID: 5560}
+      Script: {instanceID: 5562}
     - Class: 114
       Script: {instanceID: 5710}
     - Class: 114
-      Script: {instanceID: 6022}
+      Script: {instanceID: 6024}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -332,7 +333,9 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
-    - Class: 65
+    - Class: 50
+      Script: {instanceID: 0}
+    - Class: 61
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
@@ -346,6 +349,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 1564}
     - Class: 114
       Script: {instanceID: 1566}
+    - Class: 114
+      Script: {instanceID: 1568}
     - Class: 114
       Script: {instanceID: 1570}
     - Class: 114
@@ -373,29 +378,27 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4320}
     - Class: 114
-      Script: {instanceID: 4722}
+      Script: {instanceID: 4724}
     - Class: 114
-      Script: {instanceID: 4914}
+      Script: {instanceID: 4916}
     - Class: 114
-      Script: {instanceID: 5020}
+      Script: {instanceID: 5022}
     - Class: 114
-      Script: {instanceID: 5242}
+      Script: {instanceID: 5244}
     - Class: 114
-      Script: {instanceID: 5508}
+      Script: {instanceID: 5510}
     - Class: 114
-      Script: {instanceID: 5560}
-    - Class: 114
-      Script: {instanceID: 5668}
+      Script: {instanceID: 5562}
     - Class: 114
       Script: {instanceID: 5710}
     - Class: 114
-      Script: {instanceID: 6022}
+      Script: {instanceID: 6024}
     - Class: 114
-      Script: {instanceID: 6510}
+      Script: {instanceID: 6512}
     - Class: 114
-      Script: {instanceID: 6872}
+      Script: {instanceID: 6874}
     - Class: 114
-      Script: {instanceID: 7058}
+      Script: {instanceID: 7060}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -957,7 +960,7 @@ ScriptsOnlyBuild:
     className: Toggle
   - hash:
       serializedVersion: 2
-      Hash: 32cd0a9a224f002bc676d2e20f3dfb76
+      Hash: efcf480b143fa2c6d82db95db295603d
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: Context
@@ -1029,7 +1032,7 @@ ScriptsOnlyBuild:
     className: StateGraphAsset
   - hash:
       serializedVersion: 2
-      Hash: eee673e2c1c365f3f9d8517c3d0ff771
+      Hash: 743f7b87aa3aa2ca14b20a97fe1239fa
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: ThisCard
@@ -1051,12 +1054,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: AspectRatioFitter
-  - hash:
-      serializedVersion: 2
-      Hash: f2ec9a32b33507cec7f960f110e25288
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: BattleZone
   - hash:
       serializedVersion: 2
       Hash: 9637dcdf3068a91dfe653e61bb82f13d
@@ -1281,7 +1278,7 @@ ScriptsOnlyBuild:
     className: Variables
   - hash:
       serializedVersion: 2
-      Hash: 8647a43796ad21d235e66cfa51d24292
+      Hash: 3e00c3e00ce669bc1c9b1e6e48973b96
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: CardPanel
