@@ -90,6 +90,9 @@ ScriptsOnlyBuild:
     methodName: Jugar
   - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
+    methodName: DSL
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
     methodName: Salir
   - assembly: Assembly-CSharp
     fullTypeName: TurnSystem
@@ -118,6 +121,9 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
     methodName: Deck3
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Atras1
   sceneClasses:
     Assets/Scenes/Cartas.unity:
     - Class: 1
@@ -172,6 +178,67 @@ ScriptsOnlyBuild:
       Script: {instanceID: 7060}
     - Class: 114
       Script: {instanceID: 7336}
+    - Class: 115
+      Script: {instanceID: 0}
+    - Class: 128
+      Script: {instanceID: 0}
+    - Class: 157
+      Script: {instanceID: 0}
+    - Class: 196
+      Script: {instanceID: 0}
+    - Class: 213
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
+      Script: {instanceID: 0}
+    Assets/Scenes/DSL.unity:
+    - Class: 1
+      Script: {instanceID: 0}
+    - Class: 4
+      Script: {instanceID: 0}
+    - Class: 20
+      Script: {instanceID: 0}
+    - Class: 21
+      Script: {instanceID: 0}
+    - Class: 28
+      Script: {instanceID: 0}
+    - Class: 48
+      Script: {instanceID: 0}
+    - Class: 81
+      Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
+    - Class: 89
+      Script: {instanceID: 0}
+    - Class: 104
+      Script: {instanceID: 0}
+    - Class: 108
+      Script: {instanceID: 0}
+    - Class: 114
+      Script: {instanceID: 1564}
+    - Class: 114
+      Script: {instanceID: 1570}
+    - Class: 114
+      Script: {instanceID: 2602}
+    - Class: 114
+      Script: {instanceID: 2808}
+    - Class: 114
+      Script: {instanceID: 3092}
+    - Class: 114
+      Script: {instanceID: 4320}
+    - Class: 114
+      Script: {instanceID: 5022}
+    - Class: 114
+      Script: {instanceID: 5562}
+    - Class: 114
+      Script: {instanceID: 5710}
+    - Class: 114
+      Script: {instanceID: 6024}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1032,7 +1099,7 @@ ScriptsOnlyBuild:
     className: StateGraphAsset
   - hash:
       serializedVersion: 2
-      Hash: 743f7b87aa3aa2ca14b20a97fe1239fa
+      Hash: 252d9fa181f46cea60622f60e5be8d54
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: ThisCard
@@ -1342,4 +1409,5 @@ ScriptsOnlyBuild:
   - Assets/Scenes/SampleScene.unity
   - Assets/Scenes/Cartas.unity
   - Assets/Scenes/Eleccion.unity
+  - Assets/Scenes/DSL.unity
   playerPath: C:/Users/Leonardo/Desktop/Minions/Gwent-pro-3D-template.exe

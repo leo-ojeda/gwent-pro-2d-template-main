@@ -87,7 +87,7 @@ public class PlayerDeck : MonoBehaviour
                             cardAdded = true;
                         }
                     }
-                    else if (randomCard.Type == "Increase" || randomCard.Type == "Clima" && randomCard.Faction == Leader.Faction)
+                    else if (randomCard.Type == "Increase" && randomCard.Faction == Leader.Faction || randomCard.Type == "Clima" && randomCard.Faction == Leader.Faction)
                     {
 
                         if (!magicCount.ContainsKey(randomCard.Name) || magicCount[randomCard.Name] < 2)
@@ -145,7 +145,7 @@ public class PlayerDeck : MonoBehaviour
 
             }
 
-        StartCoroutine(StartGame());
+            StartCoroutine(StartGame());
         }
 
     }

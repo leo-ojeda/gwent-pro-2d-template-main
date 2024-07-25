@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class AICardToHand : MonoBehaviour
 {
     Context context;
@@ -15,11 +15,10 @@ public class AICardToHand : MonoBehaviour
     public int Power;
     public List<EffectActivation> Efect;
     public string[] Range;
-    public Text NameText;
-    public Text PowerText;
-    public Text DescriptionText;
-    public Text CostText;
-
+    public TextMeshProUGUI NameText;
+    public TextMeshProUGUI PowerText;
+    public TextMeshProUGUI EfectText;
+    public TextMeshProUGUI RangedText;
     public GameObject Hand;
     public int z;
 
@@ -53,7 +52,7 @@ public class AICardToHand : MonoBehaviour
         Hand = GameObject.Find("EnemyHand");
         Owner = "Jugador 2";
         context = FindObjectOfType<Context>();
-         if (!context.playerHands.ContainsKey("Jugador 2"))
+        if (!context.playerHands.ContainsKey("Jugador 2"))
         {
             context.playerHands["Jugador 2"] = new List<Card>();
         }
@@ -94,8 +93,15 @@ public class AICardToHand : MonoBehaviour
 
         NameText.text = "" + CardName;
         PowerText.text = "" + Power;
-        CostText.text = "" + CardType;
-        DescriptionText.text = " " + Efect;
+        RangedText.text = string.Join(", ", Range);
+
+        string efectText = "";
+        foreach (var efectActivation in Efect)
+        {
+            efectText += "Effect: " + efectActivation.effect.name;
+            efectText += ":  " + efectActivation.selector.source;
+        }
+        EfectText.text = efectText;
         ThatImage.sprite = ThisSprite;
 
 

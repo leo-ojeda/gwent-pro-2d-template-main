@@ -25,6 +25,12 @@ public class Menuinicial : MonoBehaviour
         AudioSource.Play();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 2);
     }
+     public void Atras1()
+    {
+        AudioSource = GetComponent<AudioSource>();
+        AudioSource.Play();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 4);
+    }
     public void Terminar()
     {
         AudioSource = GetComponent<AudioSource>();
@@ -37,6 +43,13 @@ public class Menuinicial : MonoBehaviour
         AudioSource.Play();
         Debug.Log("Salir...");
         Application.Quit();
+    }
+    public void DSL()
+    {
+        AudioSource = GetComponent<AudioSource>();
+        AudioSource.Play();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 4);
+
     }
 
     public void Deck1()

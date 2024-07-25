@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 
 
@@ -23,10 +24,11 @@ public class ThisCard : MonoBehaviour
     public List<EffectActivation> Efect;
     public string[] Range;
     public string Faction;
-    //public Text NameText;
-    //public Text PowerText;
-    //public Text DescriptionText;
-    //public Text CostText;
+    public TextMeshProUGUI NameText;
+    public TextMeshProUGUI PowerText;
+    public TextMeshProUGUI EfectText;
+    public TextMeshProUGUI RangedText;
+    
 
 
     public Sprite ThisSprite;
@@ -84,81 +86,81 @@ public class ThisCard : MonoBehaviour
 
     }
     void Update()
+{
+    //DestroyGameObjects();
+
+    CalculatePowerTotal();
+    Hand = GameObject.Find("Hand");
+    if (this.transform.parent == Hand.transform.parent)
     {
-
-        //DestroyGameObjects();
-
-        CalculatePowerTotal();
-        Hand = GameObject.Find("Hand");
-        if (this.transform.parent == Hand.transform.parent)
-        {
-            cardBack = false;
-        }
-        if (CardToHand.ItName != null)
-        {
-
-            CardToHand.ItName.name = thisCard[0].Name;
-        }
-        thisCard[0].Owner = Owner;
-        CardName = thisCard[0].Name;
-        CardType = thisCard[0].Type;
-        Power = thisCard[0].Power;
-        Range = thisCard[0].Range;
-        Faction = thisCard[0].Faction;
-        Efect = thisCard[0].OnActivation;
-
-        ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
-
-        // NameText.text = "" + CardName;
-        // PowerText.text = "" + Power;
-        // CostText.text = "" + CardType;
-        // DescriptionText.text = " " + Efect;
-
-        ThatImage.sprite = ThisSprite;
-
-        cardB = cardBack;
-        if (tag == "Three")
-        {
-            thisCard[0] = CardToHand.card;
-        }
-
-        if (tag == "first")
-        {
-            //Debug.Log("entro");
-
-            thisCard[0] = context.playerDecks[Owner][context.playerDecks[Owner].Count - 1];
-            context.playerDecks[Owner].RemoveAt(context.playerDecks[Owner].Count - 1);
-            context.playerHands[Owner].Add(thisCard[0]);
-            NumberOfCardsIdDeck -= 1;
-            PlayerDeck.deck -= 1;
-            cardBack = false;
-            //this.tag = "Untagged";
-        }
-        // Verificar si tienes suficiente mana para invocar cartas
-        Draggable h = GetComponent<Draggable>();
-        if (TurnSystem.CurrentMana > 0 && summoned == false && TurnSystem.IsYourTurn == true && TurnSystem.surrenderedPlayer1 == false)
-        {
-            canBeSummon = true;
-            if (h != null)
-            {
-                //Debug.Log("Activado");
-                h.SetDraggable(true); // Activar la función de arrastrar la carta
-            }
-        }
-        else
-        {
-            canBeSummon = false;
-            if (h != null)
-            {
-                //Debug.Log("Desactivado");
-                h.SetDraggable(false); // Desactivar la función de arrastrar la carta
-            }
-        }
-
-        // Realizar operaciones para cada zona de batalla
-        OperationsForBattleZones();
-        //RemovedCards();
+        cardBack = false;
     }
+    if (CardToHand.ItName != null)
+    {
+        CardToHand.ItName.name = thisCard[0].Name;
+    }
+    thisCard[0].Owner = Owner;
+    CardName = thisCard[0].Name;
+    CardType = thisCard[0].Type;
+    Power = thisCard[0].Power;
+    Range = thisCard[0].Range;
+    Faction = thisCard[0].Faction;
+    Efect = thisCard[0].OnActivation;
+
+    ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
+
+    NameText.text = "" + CardName;
+    PowerText.text = "" + Power;
+
+    RangedText.text = string.Join(", ", Range);
+
+     string efectText = "";
+    foreach (var efectActivation in Efect)
+    {
+        efectText += "Effect: " + efectActivation.effect.name ;
+        efectText += ":  "+ efectActivation.selector.source;
+    }
+    EfectText.text = efectText;
+
+    ThatImage.sprite = ThisSprite;
+
+    cardB = cardBack;
+    if (tag == "Three")
+    {
+        thisCard[0] = CardToHand.card;
+    }
+
+    if (tag == "first")
+    {
+        thisCard[0] = context.playerDecks[Owner].Pop();
+        context.playerHands[Owner].Add(thisCard[0]);
+        NumberOfCardsIdDeck -= 1;
+        PlayerDeck.deck -= 1;
+        cardBack = false;
+    }
+
+    // Verificar si tienes suficiente mana para invocar cartas
+    Draggable h = GetComponent<Draggable>();
+    if (TurnSystem.CurrentMana > 0 && summoned == false && TurnSystem.IsYourTurn == true && TurnSystem.surrenderedPlayer1 == false)
+    {
+        canBeSummon = true;
+        if (h != null)
+        {
+            h.SetDraggable(true); // Activar la función de arrastrar la carta
+        }
+    }
+    else
+    {
+        canBeSummon = false;
+        if (h != null)
+        {
+            h.SetDraggable(false); // Desactivar la función de arrastrar la carta
+        }
+    }
+
+    // Realizar operaciones para cada zona de batalla
+    OperationsForBattleZones();
+}
     public void Summon(Card SummonedCard)
     {
         TurnSystem.CurrentMana = 0;

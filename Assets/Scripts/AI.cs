@@ -230,19 +230,19 @@ public class AI : MonoBehaviour
 
                         switch (range)
                         {
-                            case "Melee":
+                            case "M":
                                 targetZone = ZoneM.transform;
                                 break;
 
-                            case "Ranged":
+                            case "R":
                                 targetZone = ZoneR.transform;
                                 break;
 
-                            case "Siege":
+                            case "S":
                                 targetZone = ZoneS.transform;
                                 break;
 
-                            case "Leader":
+                            case "L":
                                 targetZone = ZoneL.transform;
                                 break;
 
