@@ -6,16 +6,13 @@ public class CardDatabase : MonoBehaviour
 {
     public static List<Card> cardList = new List<Card>();
 
-    // Awake es un método de Unity que se llama cuando se inicia el script
     void Awake()
     {
 
-        // Inicializa la lista de cartas
         InitializeCardList();
 
     }
 
-    // Método para inicializar la lista de cartas
     void InitializeCardList()
     {
         var boostEffect = new EffectActivation(EffectLibrary.BoostPower(1), new Selector("Field", false, ""));
