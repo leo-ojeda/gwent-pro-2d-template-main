@@ -214,7 +214,6 @@ public class TurnSystem : MonoBehaviour
         }
         if (point == false)
         {
-
             AI.EnemyPowerTotal = 0;
             ThisCard.PowerTotal = 0;
         }
@@ -229,11 +228,10 @@ public class TurnSystem : MonoBehaviour
         surrenderedPlayer1 = false;
         surrenderedPlayer2 = false;
         point = true;
-        CardsCemetery("Melee");
-        CardsCemetery("Ranged");
-        CardsCemetery("Siege");
+        CardsCemetery("M");
+        CardsCemetery("R");
+        CardsCemetery("S");
         CardsCemetery("Clima");
-        CardsCemetery("Leader");
         CardsCemetery("Increase");
         CardsCemetery("Melee AI");
 
@@ -250,7 +248,6 @@ public class TurnSystem : MonoBehaviour
             }
             else if (card.Owner == "Jugador 2")
             {
-                Debug.Log("Veces");
                 context.playerGraveyards[card.Owner].Add(card);
             }
         }

@@ -53,17 +53,18 @@ public class ContextTest : MonoBehaviour
 
 
 
-        //  string playerId = "Jugador 2";
-        //  if (context.playerHands.ContainsKey(playerId))
-        //  {
-        //      int cardCount = context.playerHands[playerId].Count;
-        //      Debug.Log($"El jugador {playerId} tiene {cardCount} cartas en su mano.");
-        //  }
-        //  else
-        //  {
-        //      Debug.Log($"No se encontró un mazo para el jugador {playerId}.");
-        //  }
-        //
+      //    string playerId = "Jugador 2";
+      //    if (context.playerHands.ContainsKey(playerId))
+      //    {
+      //        int cardCount = context.playerHands[playerId].Count;
+      //        Debug.Log($"El jugador {playerId} tiene {cardCount} cartas en su mano.");
+      //        Debug.Log(AI.Control);
+      //    }
+      //    else
+      //    {
+      //        Debug.Log($"No se encontró un mazo para el jugador {playerId}.");
+      //    }
+        
         //Debug.Log("cartas en el campo" + context.board.Count);
 
 

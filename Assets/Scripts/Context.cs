@@ -6,8 +6,8 @@ using UnityEngine;
 public class Context : MonoBehaviour
 {
 
-    public GameObject CardPrefab; // Asigna este prefab desde el Inspector
-    public GameObject Hands; // Asigna el objeto de la mano desde el Inspector
+    public GameObject CardPrefab; 
+    public GameObject Hands; 
     public string TriggerPlayer { get; set; }
     public List<Card> board { get; set; }
     public Dictionary<string, List<Card>> playerHands { get; set; }

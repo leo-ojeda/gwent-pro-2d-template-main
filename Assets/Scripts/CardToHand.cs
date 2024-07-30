@@ -47,9 +47,6 @@ public class CardToHand : MonoBehaviour
         if (It.tag == "first" || It.tag == "Three")
         {
 
-           // It.name = ItName;
-            //Debug.Log(ItName);
-
             It.transform.SetParent(Hand.transform);
             It.transform.localScale = Vector3.one;
             It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);

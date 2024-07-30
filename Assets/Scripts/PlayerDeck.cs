@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerDeck : MonoBehaviour
@@ -22,6 +23,7 @@ public class PlayerDeck : MonoBehaviour
     public GameObject Dek;
     public GameObject[] Clones;
     private Card Leader;
+    public TextMeshProUGUI Ncard;
 
     public GameObject Hand;
 
@@ -155,23 +157,12 @@ public class PlayerDeck : MonoBehaviour
     {
         //staticDeck = Deck;
         context.playerDecks["Jugador 1"] = Deck;
+        Ncard.text = "" + Deck.Count;
 
-        if (deck < 20)
-        {
-            CardInDeck1.SetActive(false);
-        }
-        if (deck < 13)
-        {
-            CardInDeck2.SetActive(false);
-        }
-        if (deck < 6)
-        {
-            CardInDeck3.SetActive(false);
-        }
-        if (deck < 1)
-        {
-            CardInDeck4.SetActive(false);
-        }
+        CardInDeck1.SetActive(deck >= 20);
+        CardInDeck2.SetActive(deck >= 13);
+        CardInDeck3.SetActive(deck >= 6);
+        CardInDeck4.SetActive(deck >= 1);
 
         if (TurnSystem.StartTurn == true && TurnSystem.Round <= 3)
         {

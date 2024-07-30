@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using TMPro;
 
 public class AI : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class AI : MonoBehaviour
     public bool DrawPhase;
     public bool SummonPhase;
     public bool EndPhase;
+    public static bool Control;
 
     // public int[] cardsID;
     // public int SummonThisId;
@@ -44,8 +46,12 @@ public class AI : MonoBehaviour
     private Card cardToSummon;  // Nueva variable para la carta a invocar
     private List<Card> summonableCards = new List<Card>();
 
+    public TextMeshProUGUI AINcard;
+
     void Start()
     {
+
+        Control = true;
         Owner = "Jugador 2";
         context = FindObjectOfType<Context>();
         if (!context.playerDecks.ContainsKey(Owner))
@@ -146,8 +152,11 @@ public class AI : MonoBehaviour
 
     void Update()
     {
+        //Debug.Log(TurnSystem.surrenderedPlayer2);
         CalculatePowerTotal();
         context.playerDecks[Owner] = Deck;
+        AINcard.text = "" + Deck.Count;
+
         CardInDeck1.SetActive(deckSize >= 20);
         CardInDeck2.SetActive(deckSize >= 13);
         CardInDeck3.SetActive(deckSize >= 6);
@@ -157,6 +166,7 @@ public class AI : MonoBehaviour
         {
             StartCoroutine(Draw(2));
             Debug.Log("Draw");
+            Control = true;
         }
 
         CurrentMana = TurnSystem.CurrentEnemyMana;
@@ -202,7 +212,7 @@ public class AI : MonoBehaviour
 
         if (DrawPhase)
         {
-            ExecuteSummonAction();
+            SummonAction();
         }
     }
 
@@ -211,7 +221,7 @@ public class AI : MonoBehaviour
         cardToSummon = summonableCards.OrderByDescending(card => card.Power).FirstOrDefault();
     }
 
-    void ExecuteSummonAction()
+    void SummonAction()
     {
         if (cardToSummon != null)
         {
@@ -274,6 +284,14 @@ public class AI : MonoBehaviour
             SummonPhase = false;
             DrawPhase = false;
         }
+        if (context.playerHands[Owner].Count == 0 && Control)
+        {
+            TurnSystem.surrenderedPlayer2 = true;
+            Control = false;
+            Debug.Log("AI se rinde porque no tiene cartas en la mano.");
+
+        }
+
     }
 
 
@@ -314,7 +332,8 @@ public class AI : MonoBehaviour
 
     bool ShouldSurrender()
     {
-        return EnemyPowerTotal > ThisCard.PowerTotal || EnemyPowerTotal >= 20;//|| HowManyCards == 0;
+        return EnemyPowerTotal > ThisCard.PowerTotal || EnemyPowerTotal >= 20;
+
     }
 
     IEnumerator StartGame()
@@ -332,6 +351,10 @@ public class AI : MonoBehaviour
         {
             yield return new WaitForSeconds(0.4f);
             Instantiate(CardToHand, transform.position, transform.rotation);
+
+            TurnSystem.surrenderedPlayer2 = false;
+            Control = true;
+
         }
     }
 

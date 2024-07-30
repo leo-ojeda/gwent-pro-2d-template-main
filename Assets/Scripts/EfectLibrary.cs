@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 public class EffectLibrary
 {
-    public static Effect BoostPower(int boostAmount)
+    public static Effect BoostPowerM(int boostAmount)
     {
         return new Effect("Boost Power", new List<Parameter>
         {
@@ -14,8 +15,50 @@ public class EffectLibrary
         {
             foreach (var target in targets)
             {
-                target.Power += boostAmount;
-                Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
+                if (target.Range.Contains("M"))
+                {
+
+                    target.Power += boostAmount;
+                    Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
+                }
+            }
+        });
+    }
+    public static Effect BoostPowerR(int boostAmount)
+    {
+        return new Effect("Boost Power", new List<Parameter>
+        {
+            new Parameter("BoostAmount", ParamType.Number, boostAmount)
+        },
+        (targets, context) =>
+        {
+            foreach (var target in targets)
+            {
+                if (target.Range.Contains("R"))
+                {
+
+                    target.Power += boostAmount;
+                    Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
+                }
+            }
+        });
+    }
+    public static Effect BoostPowerS(int boostAmount)
+    {
+        return new Effect("Boost Power", new List<Parameter>
+        {
+            new Parameter("BoostAmount", ParamType.Number, boostAmount)
+        },
+        (targets, context) =>
+        {
+            foreach (var target in targets)
+            {
+                if (target.Range.Contains("S"))
+                {
+
+                    target.Power += boostAmount;
+                    Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
+                }
             }
         });
     }
@@ -55,7 +98,7 @@ public class EffectLibrary
     }
 
     public static Effect ReturnToDeck()
-    { 
+    {
         return new Effect("ReturnToDeck", new List<Parameter>(),
         (targets, context) =>
         {

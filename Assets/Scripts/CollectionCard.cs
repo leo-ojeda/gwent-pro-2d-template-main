@@ -20,20 +20,20 @@ public class CardPanel : MonoBehaviour
             return;
         }
 
+        HashSet<string> uniqueCards = new HashSet<string>();
 
         foreach (Card card in CardDatabase.cardList)
         {
-            if (card == null)
+            if (card == null || card.Name == "none" || !uniqueCards.Add(card.Name))
             {
                 continue;
             }
-
 
             // Instancia el prefab de la carta en el panel
             GameObject cardInstance = Instantiate(cardPrefab, cardPanelParent);
 
             // Configura la imagen de la carta
-            Image cardImage = cardInstance.GetComponentInChildren<Image>(); // Busca la imagen en los hijos del prefab4
+            Image cardImage = cardInstance.GetComponentInChildren<Image>(); // Busca la imagen en los hijos del prefab
 
             if (cardImage != null)
             {

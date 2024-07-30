@@ -61,9 +61,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 {
                     Debug.Log("La carta no puede ser soltada en esta zona.");
                 }
-                if(card.CardType.Contains(gameObject.tag))
+                if (card.CardType == gameObject.tag)
                 {
-                     d.parentToReturnTo = this.transform;
+                    d.parentToReturnTo = this.transform;
                     d.OnEndDrag(eventData);
 
                     // Desactivar la funcionalidad de arrastrar y soltar para la carta
@@ -74,7 +74,7 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 }
                 else
                 {
-                   // Debug.Log("La carta no puede ser soltada en esta zona.");
+                    // Debug.Log("La carta no puede ser soltada en esta zona.");
                 }
             }
         }

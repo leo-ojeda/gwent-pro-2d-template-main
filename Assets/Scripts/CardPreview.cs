@@ -7,18 +7,20 @@ public class CardPreview : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public GameObject cardPrefab;
 
     private GameObject instantiatedCard; // Carta instanciada en el panel de vista previa
+
     void Start()
-    {
-        //GameObject.Find("Preview").SetActive(true);
+    { 
+
     }
+
     void Update()
     {
-        // previewPanel = GameObject.Find("Preview");
+        
     }
+
     // Este método se llama cuando el puntero del mouse entra en el área de la carta
     public void OnPointerEnter(PointerEventData eventData)
     {
-
         previewPanel = GameObject.Find("Preview");
 
         // Verificar si la carta prefab y el panel de vista previa son válidos
@@ -26,7 +28,7 @@ public class CardPreview : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             // Obtener la carta sobre la cual el mouse está encima
             GameObject hoveredCard = eventData.pointerEnter;
-            if (hoveredCard != null)
+            if (hoveredCard != null && hoveredCard.name != "State" && hoveredCard.name != "AIState")
             {
                 // Instanciar una copia de la carta en el panel de vista previa
                 instantiatedCard = Instantiate(hoveredCard, previewPanel.transform);
@@ -49,6 +51,5 @@ public class CardPreview : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             Destroy(instantiatedCard);
         }
-
     }
 }

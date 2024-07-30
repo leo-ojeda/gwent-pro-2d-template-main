@@ -6,6 +6,7 @@ using TMPro;
 public class AICardToHand : MonoBehaviour
 {
     Context context;
+
     public List<Card> ThisCard = new List<Card>();
 
     public int thisId;
@@ -19,16 +20,20 @@ public class AICardToHand : MonoBehaviour
     public TextMeshProUGUI PowerText;
     public TextMeshProUGUI EfectText;
     public TextMeshProUGUI RangedText;
+    public TextMeshProUGUI TypeText;
     public GameObject Hand;
     public int z;
 
     public GameObject It;
+    public GameObject StateAI;
+
     public int numberofCardsInDeck;
 
 
 
     public Sprite ThisSprite;
     public Image ThatImage;
+    public int InitialPower;
 
     public GameObject CardBack;
     // Start is called before the first frame update
@@ -49,6 +54,7 @@ public class AICardToHand : MonoBehaviour
 
     void Start()
     {
+        InitialPower = -1;
         Hand = GameObject.Find("EnemyHand");
         Owner = "Jugador 2";
         context = FindObjectOfType<Context>();
@@ -81,6 +87,10 @@ public class AICardToHand : MonoBehaviour
 
 
         }
+        if (It != null)
+        {
+            It.name = ThisCard[0].Name;
+        }
 
         ThisCard[0].Owner = Owner;
         CardName = ThisCard[0].Name;
@@ -94,6 +104,8 @@ public class AICardToHand : MonoBehaviour
         NameText.text = "" + CardName;
         PowerText.text = "" + Power;
         RangedText.text = string.Join(", ", Range);
+        TypeText.text = "" + CardType;
+
 
         string efectText = "";
         foreach (var efectActivation in Efect)
@@ -124,5 +136,35 @@ public class AICardToHand : MonoBehaviour
         {
             CardBack.SetActive(false);
         }
+        if (StateAI != null && InitialPower != ThisCard[0].Power)
+        {
+            if (InitialPower == -1)
+            {
+                // Si es la primera vez que se asigna, establecer el poder inicial
+                InitialPower = ThisCard[0].Power;
+            }
+            else
+            {
+                if (InitialPower > ThisCard[0].Power)
+                {
+                    StateAI.GetComponent<Image>().color = Color.red;
+                }
+                else if (InitialPower < ThisCard[0].Power)
+                {
+                    StateAI.GetComponent<Image>().color = Color.green;
+                }
+                else
+                {
+                    StateAI.GetComponent<Image>().color = Color.white;
+                }
+            }
+        }
+
+
     }
+
+
 }
+
+
+
