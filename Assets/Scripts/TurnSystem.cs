@@ -53,7 +53,6 @@ public class TurnSystem : MonoBehaviour
             context.playerGraveyards["Jugador 2"] = new List<Card>();
         }
 
-
         AudioSource = GetComponent<AudioSource>();
         point = true;
         RoundEV = 0;
@@ -61,16 +60,12 @@ public class TurnSystem : MonoBehaviour
         IsYourTurn = true;
         StartTurn = false;
 
-
-
-
         MaxMana = 1;
         EnemyMaxMana = 1;
         CurrentMana = 1;
         CurrentEnemyMana = 1;
         Round = 1;
 
-        // Inicializar los contadores
         surrenderedPlayer1 = false;
         surrenderedPlayer2 = false;
 
@@ -260,11 +255,11 @@ public class TurnSystem : MonoBehaviour
             bool cardsRemaining = true; // Variable para controlar si quedan cartas por mover en la zona
             while (cardsRemaining)
             {
-                // Buscar una carta con el tag "second" o "Untagged"
+                
                 Transform cardToMove = null;
                 foreach (Transform child in zoneTransform)
                 {
-                    if (child.CompareTag("second") || child.CompareTag("Untagged"))
+                    if (child.CompareTag("Hand") || child.CompareTag("Untagged"))
                     {
                         cardToMove = child;
                         break;
@@ -276,7 +271,7 @@ public class TurnSystem : MonoBehaviour
                 if (cardToMove != null)
                 {
                     // Determinar el panel al que se moverá la carta
-                    GameObject destinationPanel = (cardToMove.CompareTag("second")) ? CemeteryPanel : EnemyCementeryPanel;
+                    GameObject destinationPanel = (cardToMove.CompareTag("Hand")) ? CemeteryPanel : EnemyCementeryPanel;
                     // Mover la carta al panel correspondiente
                     cardToMove.SetParent(destinationPanel.transform);
                 }

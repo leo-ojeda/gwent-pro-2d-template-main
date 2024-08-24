@@ -25,7 +25,7 @@ public class PlayerDeck : MonoBehaviour
     private Card Leader;
     public TextMeshProUGUI Ncard;
 
-    public GameObject Hand;
+    
 
     void Start()
     {

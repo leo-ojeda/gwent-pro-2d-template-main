@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 
 public class Menuinicial : MonoBehaviour
 {
     public static List<Card> cardList = new List<Card>();
     private AudioSource AudioSource;
+    public string menu;
+    public string Cards;
+    public string Game;
+    public string Initial;
+
     public void Jugar()
     {
         AudioSource = GetComponent<AudioSource>();
@@ -56,7 +62,7 @@ public class Menuinicial : MonoBehaviour
     {
         cardList = new List<Card>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
-        cardList.Add(new Card( "Knight Thunderclash", 7, "Leader",  new string[]{"Melee"},  "Torment",new List<EffectActivation>()," "));
+        cardList.Add(new Card( "Caballero del Trueno", 7, "Leader",  new string[]{"Melee"},  "Torment",new List<EffectActivation>()," "));
     }
     public void Deck2()
     {

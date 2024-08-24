@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CardToHand : MonoBehaviour
 {
@@ -24,16 +22,26 @@ public class CardToHand : MonoBehaviour
         {
             cardToHand = cardObject.AddComponent<CardToHand>();
         }
+        if (cards.Owner == "Jugador 1")
+        {
+            cardToHand.It.tag = "Three";
+            cardToHand.Hand = hand;
+            card = cards;
+            cardToHand.It = cardObject;
 
-        card = cards;
-        cardToHand.Hand = hand;
-        cardToHand.It = cardObject;
-        cardToHand.It.tag = "Three";
+        }
+        if(cards.Owner == "Jugador 2")
+        {
+             cardToHand.tag = "AIClone";
+             card = cards;
+             Debug.Log(card.Name);
+        }
+
 
     }
     void Awake()
     {
-        ItName=It;
+        ItName = It;
 
     }
 
@@ -51,7 +59,7 @@ public class CardToHand : MonoBehaviour
             It.transform.localScale = Vector3.one;
             It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
             It.transform.eulerAngles = new Vector3(25, 0, 0);
-            It.tag = "second";
+            It.tag = "Hand";
         }
     }
 }

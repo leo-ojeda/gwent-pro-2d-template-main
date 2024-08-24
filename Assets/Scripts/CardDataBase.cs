@@ -21,7 +21,7 @@ public class CardDatabase : MonoBehaviour
         var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, ""));
         var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, ""));
         var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("Field", false, ""));
-        var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(1), new Selector("Field", false, ""));
+        var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, ""));
 
 
         cardList.Add(new Card("none", 0, "none", new string[] { "none" }, "none", new List<EffectActivation>(), " "));
@@ -42,6 +42,7 @@ public class CardDatabase : MonoBehaviour
         cardList.Add(new Card("Maquina de Guerra", 6, "Golden", new string[] { "S" }, "Torment", new List<EffectActivation>{drawEffect }, " "));
         cardList.Add(new Card("Ciudad del Abismo", 0, "Increase", new string[] { "M", "R", "S" }, "Torment", new List<EffectActivation> { IncreaseEffect }, ""));
         cardList.Add(new Card("Banana Del Caos", 0, "Increase", new string[] { "M", "R", "S" }, "Torment", new List<EffectActivation> { IncreaseEffect }, ""));
+        cardList.Add(new Card("Oscuridad", 0, "Clima", new string[] { "M", "R", "S" }, "Torment", new List<EffectActivation> { damageEffect }, ""));
         cardList.Add(new Card( "Sacerdote", 0,  "Clima", new string[] { "M", "R", "S" },  "Torment", new List<EffectActivation> { damageEffect}, ""));
         cardList.Add(new Card( "Ciudad Nublada", 0,  "Clima",  new string[] { "M", "R", "S" },  "Torment", new List<EffectActivation> { damageEffect}, ""));
         cardList.Add(new Card("Catapulta de Fuego", 4, "Silver", new string[] { "S" }, "Fire", new List<EffectActivation>(), " "));
@@ -56,7 +57,9 @@ public class CardDatabase : MonoBehaviour
         cardList.Add(new Card("Samurai", 0, "Leader", new string[] { "M" }, "Fire", new List<EffectActivation>(), " "));
         cardList.Add(new Card("Mini Ninja", 5, "Golden", new string[] { "M" }, "Fire", new List<EffectActivation>{drawEffect }, " "));
         cardList.Add(new Card("Arquero", 3, "Silver", new string[] { "R" }, "Fire", new List<EffectActivation>(), " "));
+        cardList.Add(new Card("Destructor", 6, "Golden", new string[] { "R" }, "Fire", new List<EffectActivation>{damageEffect}, " "));
         cardList.Add(new Card("Caballero Solar", 6, "Golden", new string[] { "M" }, "Fire", new List<EffectActivation>{boostEffectM}, " "));
+        cardList.Add(new Card("Doma Dragones", 6, "Golden", new string[] { "R" }, "Fire", new List<EffectActivation>{boostEffectR}, " "));
         cardList.Add(new Card( "Horda de Fuego", 0,   "Clima",   new string[] { "M", "R", "S" },"Fire",new List<EffectActivation>{ damageEffect}," "));
         cardList.Add(new Card("Escudero", 5, "Golden", new string[] { "M" }, "Fire", new List<EffectActivation>(), " "));
         cardList.Add(new Card( "Esbirro", 0,  "Golden",  new string[] { "M", "R", "S" },  "Fire",new List<EffectActivation>{drawEffect,boostEffectS,damageEffect }," "));

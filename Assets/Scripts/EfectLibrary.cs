@@ -15,7 +15,7 @@ public class EffectLibrary
         {
             foreach (var target in targets)
             {
-                if (target.Range.Contains("M"))
+                if (target.Range.Contains("M") && target.Type != "Golden" && target.Type != "Leader")
                 {
 
                     target.Power += boostAmount;
@@ -34,7 +34,7 @@ public class EffectLibrary
         {
             foreach (var target in targets)
             {
-                if (target.Range.Contains("R"))
+                if (target.Range.Contains("R") && target.Type != "Golden" && target.Type != "Leader")
                 {
 
                     target.Power += boostAmount;
@@ -53,7 +53,7 @@ public class EffectLibrary
         {
             foreach (var target in targets)
             {
-                if (target.Range.Contains("S"))
+                if (target.Range.Contains("S") && target.Type != "Golden" && target.Type != "Leader")
                 {
 
                     target.Power += boostAmount;
@@ -125,7 +125,11 @@ public class EffectLibrary
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    target.Power += 1;
+                    if (target.Type != "Golden" && target.Type != "Leader")
+                    {
+
+                        target.Power += 1;
+                    }
                 }
                 Debug.Log("Increase power of " + target.Name + " by " + amount);
             }

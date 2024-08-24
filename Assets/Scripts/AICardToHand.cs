@@ -21,7 +21,7 @@ public class AICardToHand : MonoBehaviour
     public TextMeshProUGUI EfectText;
     public TextMeshProUGUI RangedText;
     public TextMeshProUGUI TypeText;
-    public GameObject Hand;
+    public GameObject HandAI;
     public int z;
 
     public GameObject It;
@@ -55,7 +55,7 @@ public class AICardToHand : MonoBehaviour
     void Start()
     {
         InitialPower = -1;
-        Hand = GameObject.Find("EnemyHand");
+        HandAI = GameObject.Find("EnemyHand");
         Owner = "Jugador 2";
         context = FindObjectOfType<Context>();
         if (!context.playerHands.ContainsKey("Jugador 2"))
@@ -77,7 +77,7 @@ public class AICardToHand : MonoBehaviour
 
                 //Debug.Log("Activo CardtoMand");
 
-                It.transform.SetParent(Hand.transform);
+                It.transform.SetParent(HandAI.transform);
                 It.transform.localScale = Vector3.one;
                 It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
                 It.transform.eulerAngles = new Vector3(25, 0, 0);
@@ -128,7 +128,7 @@ public class AICardToHand : MonoBehaviour
             this.tag = "Untagged";
         }
 
-        if (this.transform.parent == Hand.transform)
+        if (this.transform.parent == HandAI.transform)
         {
             CardBack.SetActive(true);
         }

@@ -22,7 +22,8 @@ public class AI : MonoBehaviour
     public GameObject ZoneM;
     public GameObject ZoneR;
     public GameObject ZoneS;
-    public GameObject ZoneL;
+    public GameObject ZoneI;
+    public GameObject ZoneC;
 
     public static int deckSize;
     public GameObject CardToHand;
@@ -35,15 +36,11 @@ public class AI : MonoBehaviour
     public bool EndPhase;
     public static bool Control;
 
-    // public int[] cardsID;
-    // public int SummonThisId;
-    // public AICardToHand aICardToHand;
-    // public int summonID;
     public int HowManyCards;
     public static int EnemyPowerTotal;
     private Card Leader;
 
-    private Card cardToSummon;  // Nueva variable para la carta a invocar
+    private Card cardToSummon; 
     private List<Card> summonableCards = new List<Card>();
 
     public TextMeshProUGUI AINcard;
@@ -70,7 +67,8 @@ public class AI : MonoBehaviour
         ZoneM = GameObject.Find("MeleeZone AI");
         ZoneR = GameObject.Find("RangeZone AI");
         ZoneS = GameObject.Find("SiegeZone AI");
-        ZoneL = GameObject.Find("LeaderZone AI");
+        ZoneI = GameObject.Find("IncreaseZone AI");
+        ZoneC = GameObject.Find("ClimaZone AI");
         EnemyPowerTotal = 0;
 
         deckSize = 25;
@@ -79,12 +77,13 @@ public class AI : MonoBehaviour
 
         Dictionary<string, int> goldenCountAI = new Dictionary<string, int>();
         Dictionary<string, int> silverCountAI = new Dictionary<string, int>();
+        Dictionary<string, int> magicCountAI = new Dictionary<string, int>();
 
         while (!leaderCardAdded)
         {
             int randomIndex = Random.Range(1, CardDatabase.cardList.Count);
             Card randomCard = CardDatabase.cardList[randomIndex];
-            if (randomCard.Type == "Leader")
+            if (randomCard.Type == "Leader" && Menuinicial.cardList[0].Name != randomCard.Name)
             {
                 Leader = randomCard;
                 leaderCardAdded = true;
@@ -143,6 +142,24 @@ public class AI : MonoBehaviour
                         cardAdded = true;
                     }
                 }
+                else if (randomCard.Type == "Increase" && randomCard.Faction == Leader.Faction || randomCard.Type == "Clima" && randomCard.Faction == Leader.Faction)
+                {
+                    if (!magicCountAI.ContainsKey(randomCard.Name) || magicCountAI[randomCard.Name] < 2)
+                    {
+                        Deck[i] = randomCard;
+                        context.playerDecks[Owner].Add(Deck[i]);
+
+                        if (!magicCountAI.ContainsKey(randomCard.Name))
+                        {
+                            magicCountAI[randomCard.Name] = 1;
+                        }
+                        else
+                        {
+                            magicCountAI[randomCard.Name]++;
+                        }
+                        cardAdded = true;
+                    }
+                }
             }
             deckCards.Add(Deck[i]);
         }
@@ -154,6 +171,7 @@ public class AI : MonoBehaviour
     {
         //Debug.Log(TurnSystem.surrenderedPlayer2);
         CalculatePowerTotal();
+        context.playerHands[Owner] = CardsInHand;
         context.playerDecks[Owner] = Deck;
         AINcard.text = "" + Deck.Count;
 
@@ -223,57 +241,79 @@ public class AI : MonoBehaviour
 
     void SummonAction()
     {
-        if (cardToSummon != null)
+        if (cardToSummon != null && context.playerHands[Owner].Count > 0)
         {
+            Control = true;
             foreach (Transform child in Hand.transform)
             {
                 AICardToHand cardComponent = child.GetComponent<AICardToHand>();
                 Card cardInHand = cardComponent.ThisCard[0];
 
+
+                if ((cardInHand.Type == "Clima" || cardInHand.Type == "Increase") && Mathf.Abs(ThisCard.PowerTotal - EnemyPowerTotal) > 8 && context.playerHands[Owner].Count != 0)
+                {
+                    cardToSummon = cardInHand;
+                }
+
                 if (cardInHand == cardToSummon && !TurnSystem.IsYourTurn && !TurnSystem.surrenderedPlayer2)
                 {
-                    //Debug.Log("Invocando carta...");
-
                     foreach (var range in cardToSummon.Range)
                     {
                         Transform targetZone = null;
-
-                        switch (range)
+                        if (cardToSummon.Type == "Increase")
                         {
-                            case "M":
-                                targetZone = ZoneM.transform;
-                                break;
+                            targetZone = ZoneI.transform;
+                        }
+                        else if (cardToSummon.Type == "Clima")
+                        {
+                            targetZone = ZoneC.transform;
+                        }
+                        else
+                        {
+                            switch (range)
+                            {
+                                case "M":
+                                    targetZone = ZoneM.transform;
+                                    break;
 
-                            case "R":
-                                targetZone = ZoneR.transform;
-                                break;
+                                case "R":
+                                    targetZone = ZoneR.transform;
+                                    break;
 
-                            case "S":
-                                targetZone = ZoneS.transform;
-                                break;
+                                case "S":
+                                    targetZone = ZoneS.transform;
+                                    break;
 
-                            case "L":
-                                targetZone = ZoneL.transform;
-                                break;
-
-                            default:
-                                Debug.LogWarning("Rango desconocido: " + range);
-                                break;
+                                default:
+                                    Debug.LogWarning("Rango desconocido: " + range);
+                                    break;
+                            }
                         }
 
                         if (targetZone != null)
                         {
                             child.transform.SetParent(targetZone);
-                            PlayMusic();
-                            break; // Solo movemos la carta a una zona
+                            switch (cardInHand.Type)
+                            {
+                                case "Clima":
+                                    PlayMusic("s2033");
+                                    break;
+                                case "Increase":
+                                    PlayMusic("s554");
+                                    break;
+                                default:
+                                    PlayMusic("100");
+                                    break;
+                            }
+                            break;
                         }
                     }
 
-                    //EnemyPowerTotal += cardToSummon.Power;
                     TurnSystem.CurrentEnemyMana = 0;
                     context.board.Add(cardInHand);
                     context.playerFields[cardInHand.Owner].Add(cardInHand);
-                    context.playerHands[cardInHand.Owner].Remove(cardInHand);
+                    // context.playerHands[cardInHand.Owner].Remove(cardInHand);
+                    ActivateEffects(cardInHand);
 
                     // Resetea la variable después de invocar
                     cardToSummon = null;
@@ -289,10 +329,9 @@ public class AI : MonoBehaviour
             TurnSystem.surrenderedPlayer2 = true;
             Control = false;
             Debug.Log("AI se rinde porque no tiene cartas en la mano.");
-
         }
-
     }
+
 
 
     private void CalculatePowerTotal()
@@ -300,8 +339,15 @@ public class AI : MonoBehaviour
         EnemyPowerTotal = 0;
 
         List<Card> fieldCards = context.playerFields[Owner];
+
         foreach (var card in fieldCards)
         {
+            if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase")
+            {
+                card.Power = 0;
+                continue;
+            }
+
             EnemyPowerTotal += card.Power;
         }
 
@@ -364,11 +410,60 @@ public class AI : MonoBehaviour
         SummonPhase = true;
     }
 
-    void PlayMusic()
+    string PlayMusic(string x)
     {
         audioSource = GetComponent<AudioSource>();
-        AudioClip musicClip = Resources.Load<AudioClip>("100");
+        AudioClip musicClip = Resources.Load<AudioClip>(x);
         audioSource.clip = musicClip;
         audioSource.Play();
+        return x;
+    }
+    void ActivateEffects(Card card)
+    {
+
+        // Asegurarse de que TriggerPlayer esté configurado
+        context.TriggerPlayer = card.Owner;
+
+        foreach (var effectActivation in card.OnActivation)
+        {
+            List<Card> targets;
+
+            switch (effectActivation.selector.source)
+            {
+                case "Field":
+                    targets = context.Field;
+                    break;
+                case "Deck":
+                    targets = context.Deck;
+                    break;
+                case "Hand":
+                    targets = context.Hand;
+                    break;
+                case "Graveyard":
+                    targets = context.Graveyard;
+                    break;
+                case "otherField":
+                    context.TriggerPlayer = "Jugador 1";
+                    targets = context.Field;
+                    break;
+                case "otherDeck":
+                    context.TriggerPlayer = "Jugador 1";
+                    targets = context.Deck;
+                    break;
+                case "otherHand":
+                    context.TriggerPlayer = "Jugador 1";
+                    targets = context.Hand;
+                    break;
+                case "board":
+                    targets = context.board;
+                    break;
+                default:
+                    targets = new List<Card>(); // Lista vacía si el source no se reconoce
+                    break;
+            }
+
+            // Aplicar el efecto a los objetivos seleccionados
+            effectActivation.Activate(targets, context);
+        }
     }
 }
