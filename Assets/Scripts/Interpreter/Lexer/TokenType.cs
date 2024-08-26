@@ -7,12 +7,12 @@ namespace DSL.Lexer
         EOF, // End of File
 
         // Delimitadores
-        OpenCurlyBracket,     // {
-        ClosedCurlyBracket,   // }
-        OpenSquareBracket,    // [
-        ClosedSquareBracket,  // ]
-        OpenParenthesis,      // (
-        ClosedParenthesis,    // )
+        OpenBrace,     // {
+        CloseBrace,   // }
+        OpenBracket,    // [
+        CloseBracket,  // ]
+        OpenParen,      // (
+        CloseParen,    // )
         Colon,                // :
         Comma,                // ,
         Equals,               // =
@@ -25,15 +25,19 @@ namespace DSL.Lexer
         Greater,              // >
         LessOrEqual,          // <=
         GreaterOrEqual,       // >=
-        Not,                  // !
+        Exclamation,                  // !
         NotEqual,             // !=
 
         // Tipos de datos
         String,
         Number,
+        Bool,
+        False,
+        True,
 
         // Identificadores
         Identifier,
+        EndOfInput,
 
         // Palabras clave del DSL
         Card,
@@ -44,6 +48,7 @@ namespace DSL.Lexer
         Power,
         Range,
         OnActivation,
+        Selector,
         Params,
         Action,
         Amount,
@@ -55,7 +60,27 @@ namespace DSL.Lexer
         In,
         While,
         Return,
+        Owner,
+        PostAction,
+        // Contexto del juego
+        TriggerPlayer,
+        HandOfPlayer,
+        GraveyardOfPlayer,
+        FieldOfPlayer,
+        DeckOfPlayer,
+        Hand,
+        Field,
+        Graveyard,
+        Deck,
+        Board,
+        Push,
+        SendBottom,
+        Shuffle,
+        Pop,
+        Remove,
+        Find,
 
-        // Agregar otros tipos de tokens según se necesiten
+
+       
     }
 }

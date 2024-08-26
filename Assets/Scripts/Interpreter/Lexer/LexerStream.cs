@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DSL.Lexer
 {
-    internal class LexerStream : IEnumerable<Token>
+    public class LexerStream : IEnumerable<Token>
     {
         private readonly List<Token> _tokens = new();
         private int _position = 0;
@@ -41,9 +41,14 @@ namespace DSL.Lexer
         {
             int newPosition = _position + step;
             if (newPosition >= 0 && newPosition < _tokens.Count)
+            {
                 return _tokens[newPosition];
+            }
 
-            return new Token(TokenType.EOF, "", new Position(0, 0));
+            // Usa la posición del último token o crea una nueva posición por defecto (si aplicable)
+            Position lastTokenPosition = _tokens.Count > 0 ? _tokens.Last().Pos : new Position(0, 0);
+
+            return new Token(TokenType.EOF, "", lastTokenPosition);
         }
 
         // Avanza la posición actual en una cantidad especificada de pasos.
@@ -65,16 +70,6 @@ namespace DSL.Lexer
         // Verifica si el token actual coincide con alguno de los tipos especificados.
         public bool Match(params TokenType[] types) => types.Any(t => t == CurrentToken.Type);
 
-        // Comprueba si una secuencia de tokens coincide con un prefijo especificado.
-        public bool MatchPrefix(params TokenType[] prefix)
-        {
-            for (int i = 0; i < prefix.Length; i++)
-            {
-                if (Peek(i).Type != prefix[i])
-                    return false;
-            }
-            return true;
-        }
 
         // Convierte la secuencia de tokens en una cadena de texto.
         public override string ToString()

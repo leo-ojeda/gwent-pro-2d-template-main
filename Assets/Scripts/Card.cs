@@ -53,9 +53,9 @@ public class Effect
     public List<Parameter> parameters;
     public Action<List<Card>, Context> action;
 
-    public Effect() 
-    { 
-        parameters = new List<Parameter>(); 
+    public Effect()
+    {
+        parameters = new List<Parameter>();
     }
 
     public Effect(string name, List<Parameter> parameters, Action<List<Card>, Context> action)
@@ -104,3 +104,15 @@ public class Selector
         this.predicate = predicate;
     }
 }
+public class PostAction
+{
+    public string Type { get; set; }
+    public Selector Selector { get; set; }
+
+    public PostAction(string type, Selector selector)
+    {
+        Type = type;
+        Selector = selector;
+    }
+}
+
