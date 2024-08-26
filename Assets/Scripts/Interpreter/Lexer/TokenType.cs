@@ -7,26 +7,42 @@ namespace DSL.Lexer
         EOF, // End of File
 
         // Delimitadores
-        OpenBrace,     // {
-        CloseBrace,   // }
+        OpenBrace,      // {
+        CloseBrace,     // }
         OpenBracket,    // [
-        CloseBracket,  // ]
+        CloseBracket,   // ]
         OpenParen,      // (
-        CloseParen,    // )
-        Colon,                // :
-        Comma,                // ,
-        Equals,               // =
-        Plus,                 // +
-        Minus,                // -
-        Multiply,             // *
-        Slash,                // /
-        Modulus,              // %
-        Less,                 // <
-        Greater,              // >
-        LessOrEqual,          // <=
-        GreaterOrEqual,       // >=
-        Exclamation,                  // !
-        NotEqual,             // !=
+        CloseParen,     // )
+        Colon,          // :
+        Comma,          // ,
+        Dot,            // .
+
+        // Operadores aritméticos
+        Plus,           // +
+        Minus,          // -
+        Multiply,       // *
+        Slash,          // /
+        Modulus,        // %
+        Increment,      // ++
+
+        // Operadores de comparación
+        Equals,             // =
+        EqualsEquals,       // ==
+        NotEqual,           // !=
+        Less,               // <
+        Greater,            // >
+        LessOrEqual,        // <=
+        GreaterOrEqual,     // >=
+
+        // Operadores lógicos
+        And,            // &&
+        Or,             // ||
+        Exclamation,    // !
+
+        // Operadores de asignación y otros
+        Arrow,          // =>
+        At,             // @
+        DoubleAt,       // @@
 
         // Tipos de datos
         String,
@@ -34,6 +50,7 @@ namespace DSL.Lexer
         Bool,
         False,
         True,
+        None,
 
         // Identificadores
         Identifier,
@@ -62,6 +79,7 @@ namespace DSL.Lexer
         Return,
         Owner,
         PostAction,
+
         // Contexto del juego
         TriggerPlayer,
         HandOfPlayer,
@@ -79,8 +97,5 @@ namespace DSL.Lexer
         Pop,
         Remove,
         Find,
-
-
-       
     }
 }

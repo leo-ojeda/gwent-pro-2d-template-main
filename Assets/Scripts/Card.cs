@@ -31,13 +31,15 @@ public class EffectActivation
 {
     public Effect effect;
     public Selector selector;
+    public PostAction postAction;
 
     public EffectActivation() { }
 
-    public EffectActivation(Effect effect, Selector selector)
+    public EffectActivation(Effect effect, Selector selector, PostAction postAction)
     {
         this.effect = effect;
         this.selector = selector;
+        this.postAction = postAction;
     }
 
     public void Activate(List<Card> targets, Context context)
@@ -61,7 +63,7 @@ public class Effect
     public Effect(string name, List<Parameter> parameters, Action<List<Card>, Context> action)
     {
         this.name = name;
-        this.parameters = parameters;
+        this.parameters = parameters ?? new List<Parameter>();
         this.action = action;
     }
 }
@@ -73,9 +75,9 @@ public class Parameter
     public ParamType type;
     public object value;
 
-    public Parameter(string paramName, ParamType type, object value)
+    public Parameter( ParamType type, object value)
     {
-        this.paramName = paramName;
+       // this.paramName = paramName;
         this.type = type;
         this.value = value;
     }
@@ -104,6 +106,8 @@ public class Selector
         this.predicate = predicate;
     }
 }
+
+[System.Serializable]
 public class PostAction
 {
     public string Type { get; set; }
@@ -115,4 +119,3 @@ public class PostAction
         Selector = selector;
     }
 }
-

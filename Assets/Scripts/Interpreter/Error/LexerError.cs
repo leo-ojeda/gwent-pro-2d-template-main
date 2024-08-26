@@ -2,8 +2,7 @@ using System;
 
 namespace DSL.Lexer
 {
-    // Clase para representar errores específicos del Lexer
-    public class LexerError : Exception
+      public class LexerError : Exception
     {
         // Posición en el texto donde ocurrió el error
         public Position Position { get; }
@@ -19,12 +18,12 @@ namespace DSL.Lexer
         {
         }
 
-        // Sobrescribir el método ToString para dar información detallada sobre el error
+        // Sobrescribe el método ToString para dar información detallada sobre el error
         public override string ToString()
         {
             if (Position != null)
             {
-                return $"LexerError: {Message} at {Position}";
+                return $"LexerError: {Message} en {Position}";
             }
             else
             {

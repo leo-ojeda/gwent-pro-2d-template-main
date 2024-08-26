@@ -9,7 +9,7 @@ public class EffectLibrary
     {
         return new Effect("Boost Power", new List<Parameter>
         {
-            new Parameter("BoostAmount", ParamType.Number, boostAmount)
+            new Parameter( ParamType.Number, boostAmount)
         },
         (targets, context) =>
         {
@@ -28,7 +28,7 @@ public class EffectLibrary
     {
         return new Effect("Boost Power", new List<Parameter>
         {
-            new Parameter("BoostAmount", ParamType.Number, boostAmount)
+            new Parameter( ParamType.Number, boostAmount)
         },
         (targets, context) =>
         {
@@ -47,7 +47,7 @@ public class EffectLibrary
     {
         return new Effect("Boost Power", new List<Parameter>
         {
-            new Parameter("BoostAmount", ParamType.Number, boostAmount)
+            new Parameter( ParamType.Number, boostAmount)
         },
         (targets, context) =>
         {
@@ -67,7 +67,7 @@ public class EffectLibrary
     {
         return new Effect("Damage", new List<Parameter>
         {
-            new Parameter("Amount", ParamType.Number, amount)
+            new Parameter( ParamType.Number, amount)
         },
         (targets, context) =>
         {
@@ -117,7 +117,7 @@ public class EffectLibrary
     {
         return new Effect("Increase", new List<Parameter>
         {
-            new Parameter("Amount", ParamType.Number, amount)
+            new Parameter( ParamType.Number, amount)
         },
         (targets, context) =>
         {
