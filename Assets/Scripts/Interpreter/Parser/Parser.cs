@@ -19,11 +19,10 @@ namespace DSL.Parser
         {
             try
             {
-                LogCurrentToken("Parsing card");
-
+                // Inicializa el parsing de la carta
                 if (_lexerStream.CurrentToken.Type != TokenType.Card)
                 {
-                    ThrowSyntaxError($"Expected 'card' at the beginning, but found '{_lexerStream.CurrentToken.Value}'");
+                    ThrowSyntaxError($"Expected 'card' but found '{_lexerStream.CurrentToken.Value}'");
                 }
 
                 Consume(TokenType.Card);
@@ -36,46 +35,36 @@ namespace DSL.Parser
                 List<string> range = new List<string>();
                 List<EffectActivation> onActivation = new List<EffectActivation>();
 
-                int openBraces = 1; // Contador para las llaves
-
-                while (openBraces > 0)
+                while (!Match(TokenType.CloseBrace))
                 {
-                    if (Match(TokenType.OpenBrace))
-                    {
-                        openBraces++;
-                    }
-                    else if (Match(TokenType.CloseBrace))
-                    {
-                        openBraces--;
-                    }
-                    else if (Match(TokenType.Type))
+                    if (Match(TokenType.Type))
                     {
                         type = ParseProperty(TokenType.Type);
+                        Consume(TokenType.Comma); // Maneja la coma después del tipo
                     }
                     else if (Match(TokenType.Name))
                     {
                         name = ParseProperty(TokenType.Name);
+                        Consume(TokenType.Comma); // Maneja la coma después del nombre
                     }
                     else if (Match(TokenType.Faction))
                     {
                         faction = ParseProperty(TokenType.Faction);
+                        Consume(TokenType.Comma); // Maneja la coma después de la facción
                     }
                     else if (Match(TokenType.Power))
                     {
                         power = ParseIntegerProperty(TokenType.Power);
+                        Consume(TokenType.Comma); // Maneja la coma después del poder
                     }
                     else if (Match(TokenType.Range))
                     {
                         range = ParseListProperty(TokenType.Range);
+                        Consume(TokenType.Comma); // Maneja la coma después del rango
                     }
                     else if (Match(TokenType.OnActivation))
                     {
                         onActivation = ParseEffectActivationList();
-                    }
-                    else if (Match(TokenType.Comma))
-                    {
-                        // Ignorar la coma y continuar
-                        Consume(TokenType.Comma);
                     }
                     else
                     {
@@ -85,13 +74,7 @@ namespace DSL.Parser
 
                 Consume(TokenType.CloseBrace);
 
-                // Verificar que todos los delimitadores estén balanceados
-                if (openBraces != 0)
-                {
-                    ThrowSyntaxError("Mismatched braces detected.");
-                }
-
-                return new Card(name, power, type, range.ToArray(), faction, onActivation, null);
+                return new Card(name, power, type, range.ToArray(), faction, onActivation, "");
             }
             catch (LexerError ex)
             {
@@ -100,23 +83,25 @@ namespace DSL.Parser
             }
         }
 
+
         private string ParseProperty(TokenType propertyType)
         {
             Consume(propertyType);
             Consume(TokenType.Colon);
 
             // Usar ConsumeAny para manejar diferentes tipos de valores
-            Token valueToken = ConsumeAny(TokenType.String, TokenType.Identifier);
-            if (valueToken.Type == TokenType.String || valueToken.Type == TokenType.Identifier)
+            Token valueToken = ConsumeAny(TokenType.String, TokenType.Identifier, TokenType.Number, TokenType.False, TokenType.True);
+            if (valueToken.Type == TokenType.String || valueToken.Type == TokenType.Identifier || valueToken.Type == TokenType.Number || valueToken.Type == TokenType.False || valueToken.Type == TokenType.True)
             {
                 return valueToken.Value;
             }
             else
             {
-                ThrowSyntaxError($"Expected 'String' or 'Identifier' for property '{propertyType}', but found '{valueToken.Type}'");
+                ThrowSyntaxError($"Expected 'String', 'Identifier', or 'Number' for property '{propertyType}', but found '{valueToken.Type}'");
                 return null; // Este retorno nunca se alcanzará, es solo para evitar errores de compilación
             }
         }
+
 
         private List<string> ParseListProperty(TokenType propertyType)
         {
@@ -140,6 +125,7 @@ namespace DSL.Parser
             return items;
         }
 
+
         private List<EffectActivation> ParseEffectActivationList()
         {
             List<EffectActivation> activations = new List<EffectActivation>();
@@ -148,7 +134,6 @@ namespace DSL.Parser
             Consume(TokenType.OnActivation);
             Consume(TokenType.Colon);
             Consume(TokenType.OpenBracket);
-
 
             // Procesar el contenido dentro del corchete
             while (!Match(TokenType.CloseBracket))
@@ -175,7 +160,8 @@ namespace DSL.Parser
 
         private EffectActivation ParseEffectActivation()
         {
-            Consume(TokenType.OpenBrace); // Espera el inicio del bloque de activación
+            // Consume el token de apertura del bloque de activación (si no se ha consumido en ParseCardEffect)
+            Consume(TokenType.OpenBrace);
 
             Effect effect = null;
             Selector selector = null;
@@ -194,6 +180,7 @@ namespace DSL.Parser
                     case TokenType.PostAction:
                         postAction = ParsePostAction();
                         break;
+
                     default:
                         ThrowSyntaxError($"Token inesperado '{_lexerStream.CurrentToken.Value}' en EffectActivation");
                         break;
@@ -203,8 +190,17 @@ namespace DSL.Parser
             }
 
             Consume(TokenType.CloseBrace); // Espera el final del bloque de activación
+
+            // Aquí verificamos si hay una coma después de 'CloseBrace'
+            if (Match(TokenType.Comma))
+            {
+                Consume(TokenType.Comma);
+            }
+
             return new EffectActivation(effect, selector, postAction);
         }
+
+
 
 
 
@@ -250,7 +246,7 @@ namespace DSL.Parser
 
             while (!Match(TokenType.CloseBrace))
             {
-                
+
                 Consume(TokenType.Colon);
                 string paramType = Consume(TokenType.Identifier).Value;
 
@@ -261,7 +257,7 @@ namespace DSL.Parser
                     paramValue = ParseParameterValue(ParseParamType(paramType)); // Nuevo método para obtener el valor basado en el tipo
                 }
 
-                parameters.Add(new Parameter( ParseParamType(paramType), paramValue));
+                parameters.Add(new Parameter(ParseParamType(paramType), paramValue));
 
                 if (Match(TokenType.Comma))
                 {
@@ -338,14 +334,21 @@ namespace DSL.Parser
             bool single = false;
             string predicate = null;
 
+            bool hasSource = false;
+            bool hasSingle = false;
+            bool hasPredicate = false;
+
             while (!Match(TokenType.CloseBrace))
             {
                 switch (_lexerStream.CurrentToken.Type)
                 {
                     case TokenType.Source:
+                        if (hasSource) ThrowSyntaxError("Duplicate 'Source' property in Selector");
                         source = ParseProperty(TokenType.Source);
+                        hasSource = true;
                         break;
                     case TokenType.Single:
+                        if (hasSingle) ThrowSyntaxError("Duplicate 'Single' property in Selector");
                         string singleValue = ParseProperty(TokenType.Single);
                         if (bool.TryParse(singleValue, out bool parsedSingle))
                         {
@@ -355,22 +358,38 @@ namespace DSL.Parser
                         {
                             ThrowSyntaxError($"Expected 'Bool' for property 'Single', but found '{singleValue}'");
                         }
+                        hasSingle = true;
                         break;
                     case TokenType.Predicate:
-                        predicate = ParseProperty(TokenType.Predicate);
+                        if (hasPredicate) ThrowSyntaxError("Duplicate 'Predicate' property in Selector");
+                        predicate = ParsePredicate();
+                        hasPredicate = true;
                         break;
                     default:
                         ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Selector");
                         break;
                 }
 
-                _lexerStream.Advance();
+                // Verifica si hay más propiedades y si se debe consumir una coma
+                if (!Match(TokenType.CloseBrace) && !Match(TokenType.Comma))
+                {
+                    ThrowSyntaxError($"Expected a comma or closing brace in Selector, but found '{_lexerStream.CurrentToken.Value}'");
+                }
+
+                if (Match(TokenType.Comma))
+                {
+                    Consume(TokenType.Comma);
+                }
             }
 
             Consume(TokenType.CloseBrace);
 
             return new Selector(source, single, predicate);
         }
+
+
+
+
         private PostAction ParsePostAction()
         {
             Consume(TokenType.PostAction);
@@ -380,54 +399,109 @@ namespace DSL.Parser
             string type = null;
             Selector selector = null;
 
+            bool hasType = false;
+            bool hasSelector = false;
+
             while (!Match(TokenType.CloseBrace))
             {
                 switch (_lexerStream.CurrentToken.Type)
                 {
                     case TokenType.Type:
+                        if (hasType) ThrowSyntaxError("Duplicate 'Type' property in PostAction");
                         type = ParseProperty(TokenType.Type);
+                        hasType = true;
                         break;
                     case TokenType.Selector:
+                        if (hasSelector) ThrowSyntaxError("Duplicate 'Selector' property in PostAction");
                         selector = ParseSelector();
+                        hasSelector = true;
                         break;
                     default:
                         ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in PostAction");
                         break;
                 }
 
-                _lexerStream.Advance();
+                // Verifica si hay más propiedades y si se debe consumir una coma
+                if (!Match(TokenType.CloseBrace) && !Match(TokenType.Comma))
+                {
+                    ThrowSyntaxError($"Expected a comma or closing brace in PostAction, but found '{_lexerStream.CurrentToken.Value}'");
+                }
+
+                if (Match(TokenType.Comma))
+                {
+                    Consume(TokenType.Comma);
+                }
             }
 
             Consume(TokenType.CloseBrace);
 
             return new PostAction(type, selector);
         }
+
+
         private string ParsePredicate()
         {
-            Consume(TokenType.OpenParen);
+            // Confirmamos que hemos encontrado el token 'Predicate'
+            Consume(TokenType.Predicate);
+            Consume(TokenType.Colon);
+            Consume(TokenType.OpenParen); // Consume '('
+
             var predicate = new StringBuilder();
 
-            while (!Match(TokenType.CloseParen))
-            {
-                var token = Consume(LookAhead().Type);
+            // Consumimos el token Unit (ej. 'unit')
+            var paramToken = Consume(TokenType.Unit); // Esto debería ser 'unit' o cualquier otro parámetro específico
+            predicate.Append(paramToken.Value);
 
-                if (token.Type == TokenType.Identifier || token.Type == TokenType.String || token.Type == TokenType.Number)
+            Consume(TokenType.CloseParen); // Consume ')'
+
+            // Verificamos si sigue una expresión lambda
+            if (Match(TokenType.Arrow)) // TokenType.Arrow es '=>'
+            {
+                Consume(TokenType.Arrow);
+                predicate.Append(" => ");
+
+                // Consumimos el cuerpo de la expresión lambda
+                while (!Match(TokenType.CloseBrace))
                 {
-                    predicate.Append(token.Value);
-                }
-                else if (IsOperator(token.Type))
-                {
-                    predicate.Append($" {token.Value} ");
-                }
-                else
-                {
-                    throw new LexerError($"Unexpected token '{token.Value}' at position {token.Pos}.");
+                    var token = Consume(LookAhead().Type);
+
+                    // Maneja identificadores específicos y operadores
+                    if (token.Type == TokenType.Unit || token.Type == TokenType.Identifier ||
+                        token.Type == TokenType.String || token.Type == TokenType.Number ||
+                        token.Type == TokenType.Faction || token.Type == TokenType.Power) // <-- Aseguramos que Faction es válido
+                    {
+                        predicate.Append(token.Value);
+                    }
+                    else if (IsOperator(token.Type))
+                    {
+                        predicate.Append($" {token.Value} ");
+                    }
+                    else if (token.Type == TokenType.EqualsEquals)
+                    {
+                        predicate.Append(" == ");
+                    }
+                    else if (token.Type == TokenType.And)
+                    {
+                        predicate.Append(" && ");
+                    }
+                    else if (token.Type == TokenType.Or)
+                    {
+                        predicate.Append(" || ");
+                    }
+                    else
+                    {
+                        throw new LexerError($"Unexpected token '{token.Value}' at position {token.Pos}.");
+                    }
                 }
             }
+            else
+            {
+                throw new LexerError("Expected '=>' after the parameter list in the predicate.");
+            }
 
-            Consume(TokenType.CloseParen);
-            return predicate.ToString();
+            return predicate.ToString().Trim(); // Retorna el predicado como una cadena de texto
         }
+
 
         private bool IsOperator(TokenType type)
         {
@@ -535,59 +609,86 @@ namespace DSL.Parser
         {
             Consume(TokenType.Effect);
             Consume(TokenType.Colon);
-            Consume(TokenType.OpenBrace);
 
-            string effectName = null;
-            int? amount = null;
-            List<Parameter> parameters = new List<Parameter>();
-            Action<List<Card>, Context> action = null;
-            PostAction postAction = null;
-
-            while (!Match(TokenType.CloseBrace))
+            // Verifica si el siguiente token es una cadena (nombre simple) o un objeto
+            if (Match(TokenType.Name))
             {
-                switch (_lexerStream.CurrentToken.Type)
+                string effectName = ParseProperty(TokenType.Name);
+
+                // Consume el posible cierre de llave si el efecto es un nombre simple
+                if (Match(TokenType.CloseBrace))
                 {
-                    case TokenType.Name:
-                        effectName = ParseProperty(TokenType.Name);
-                        break;
-                    case TokenType.Amount:
-                        string amountValue = ParseProperty(TokenType.Amount);
-                        if (int.TryParse(amountValue, out int parsedAmount))
-                        {
-                            amount = parsedAmount;
-                        }
-                        else
-                        {
-                            ThrowSyntaxError($"Expected 'Number' for property 'Amount', but found '{amountValue}'");
-                        }
-                        break;
-                    case TokenType.Params:
-                        parameters = ParseParameters();
-                        break;
-                    case TokenType.Selector:
-                        Selector selector = ParseSelector();
-                        action = (targets, context) =>
-                        {
-                            // Aquí puedes usar el selector para definir la lógica de la acción
-                            Debug.Log($"Executing action with selector: {selector.source}");
-                        };
-                        break;
-                    case TokenType.PostAction:
-                        postAction = ParsePostAction();
-                        // Aquí puedes incorporar postAction a tu lógica si es necesario
-                        break;
-                    default:
-                        ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Effect within a card");
-                        break;
+                    Consume(TokenType.CloseBrace);
+                    return new Effect(effectName, new List<Parameter>(), null); // action es null porque no hay selector ni postAction
+                }
+                else
+                {
+                    ThrowSyntaxError("Expected '}' after simple effect name.");
+                }
+            }
+            else if (Match(TokenType.OpenBrace))
+            {
+                // Si no es un nombre simple, asumimos que es un objeto con propiedades
+                Consume(TokenType.OpenBrace);
+
+                string effectName = null;
+                int? amount = null;
+                List<Parameter> parameters = new List<Parameter>();
+                Action<List<Card>, Context> action = null;
+                PostAction postAction = null;
+
+                while (!Match(TokenType.CloseBrace))
+                {
+                    switch (_lexerStream.CurrentToken.Type)
+                    {
+                        case TokenType.Name:
+                            effectName = ParseProperty(TokenType.Name);
+                            break;
+                        case TokenType.Amount:
+                            string amountValue = ParseProperty(TokenType.Amount);
+                            if (int.TryParse(amountValue, out int parsedAmount))
+                            {
+                                amount = parsedAmount;
+                            }
+                            else
+                            {
+                                ThrowSyntaxError($"Expected 'Number' for property 'Amount', but found '{amountValue}'");
+                            }
+                            break;
+                        // case TokenType.Params:
+                        //     parameters = ParseParameters();
+                        //     break;
+                        case TokenType.Selector:
+                            Selector selector = ParseSelector();
+                            action = (targets, context) =>
+                            {
+                                Debug.Log($"Executing action with selector: {selector.source}");
+                            };
+                            break;
+                        case TokenType.PostAction:
+                            postAction = ParsePostAction();
+                            // Aquí puedes incorporar postAction a tu lógica si es necesario
+                            break;
+                        default:
+                            ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Effect within a card");
+                            break;
+                    }
+
+                    _lexerStream.Advance();
                 }
 
-                _lexerStream.Advance();
+                Consume(TokenType.CloseBrace);
+
+                // Crear el objeto Effect usando los datos parseados
+                return new Effect(effectName, parameters, action); // action es de tipo Action<List<Card>, Context>
+            }
+            else
+            {
+                ThrowSyntaxError("Expected 'Name' or '{' for Effect.");
             }
 
-            Consume(TokenType.CloseBrace);
-
-            // Crear el objeto Effect usando los datos parseados
-            return new Effect(effectName, parameters, action); // action es de tipo Action<List<Card>, Context>
+            // Asegura que el método siempre retorne un valor
+            return null; // Puedes reemplazar esto con un valor predeterminado si es necesario
         }
 
 

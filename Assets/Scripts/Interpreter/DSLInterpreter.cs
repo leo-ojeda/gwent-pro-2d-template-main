@@ -51,6 +51,6 @@ public class DSLInterpreter : MonoBehaviour
     private void DisplayError(string message, Color color)
     {
         outputText.color = color;
-        outputText.text = $"{message}\nInput: {inputField.text}";
+        outputText.text = message; // Solo mostrar el mensaje de error
     }
 }

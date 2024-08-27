@@ -79,6 +79,7 @@ namespace DSL.Lexer
         Return,
         Owner,
         PostAction,
+        Unit,
 
         // Contexto del juego
         TriggerPlayer,

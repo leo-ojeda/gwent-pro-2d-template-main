@@ -57,6 +57,7 @@ namespace DSL.Lexer
               {"true", TokenType.True},
               {"postaction", TokenType.PostAction},
               {"owner", TokenType.Owner},
+              {"unit", TokenType.Unit},
               {"selector", TokenType.Selector},
         };
 
@@ -160,18 +161,28 @@ namespace DSL.Lexer
                     AdvanceChar();
                     break;
                 case '=':
-                    if (LookAhead() == '=')
+
+                    if (LookAhead() == '>')
                     {
-                        CurrentToken = new Token(TokenType.Equals, "==", CurrentPos);
+                        CurrentToken = new Token(TokenType.Arrow, "=>", CurrentPos);
                         AdvanceChar();
                         AdvanceChar();
                     }
+
+                    else if (LookAhead() == '=')
+                    {
+                        CurrentToken = new Token(TokenType.EqualsEquals, "==", CurrentPos);
+                        AdvanceChar();
+                        AdvanceChar();
+                    }
+
                     else
                     {
                         CurrentToken = new Token(TokenType.Equals, "=", CurrentPos);
                         AdvanceChar();
                     }
                     break;
+
                 case '<':
                     if (LookAhead() == '=')
                     {
