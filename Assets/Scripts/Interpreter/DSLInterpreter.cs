@@ -3,8 +3,10 @@ using UnityEngine.UI;
 using DSL.Lexer;
 using DSL.Parser;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using System.Text.RegularExpressions;
+using System.Text;
 
 public class DSLInterpreter : MonoBehaviour
 {
@@ -18,22 +20,40 @@ public class DSLInterpreter : MonoBehaviour
         // Preprocesar la entrada para eliminar espacios y saltos de línea innecesarios
         userInput = PreprocessInput(userInput);
 
-        try
-        {
-            LexerStream lexerStream = new LexerStream(userInput);
-            Parser parser = new Parser(lexerStream);
-            var cardNode = parser.ParseCard();
+        LexerStream lexerStream = new LexerStream(userInput);
+        Parser parser = new Parser(lexerStream);
 
-            DisplaySuccess(cardNode);
-        }
-        catch (LexerError lexEx)
+        List<Card> validCards = new List<Card>();
+        List<string> errorMessages = new List<string>();
+
+        while (!parser.IsEndOfInput())
         {
-            DisplayError($"Lexer Error: {lexEx.Message}\nPosition: {lexEx.Position}", Color.red);
+            try
+            {
+                // Intentar parsear una carta
+                var cardNode = parser.ParseCard();
+                validCards.Add(cardNode);
+            }
+            catch (LexerError lexEx)
+            {
+                // Capturar el error del lexer y añadirlo a la lista de mensajes de error
+                errorMessages.Add($"Lexer Error: {lexEx.Message}\nPosition: {lexEx.Position}");
+                
+                // Saltar el resto del input hasta la próxima carta o final del input
+                parser.SkipToNextCard();
+            }
+            catch (Exception ex)
+            {
+                // Capturar errores generales y añadirlos a la lista de mensajes de error
+                errorMessages.Add($"Error parsing input: {ex.Message}");
+                
+                // Saltar el resto del input hasta la próxima carta o final del input
+                parser.SkipToNextCard();
+            }
         }
-        catch (Exception ex)
-        {
-            DisplayError($"Error parsing input: {ex.Message}", Color.red);
-        }
+
+        // Mostrar cartas válidas y errores, si los hay
+        DisplayResults(validCards, errorMessages);
     }
 
     private static string PreprocessInput(string input)
@@ -42,15 +62,43 @@ public class DSLInterpreter : MonoBehaviour
         return Regex.Replace(input, @"[ \t]+", " ").Trim();
     }
 
-    private void DisplaySuccess(object result)
+    private void DisplayResults(List<Card> validCards, List<string> errorMessages)
     {
-        outputText.color = Color.green;
-        outputText.text = $"Card parsed successfully: {result}";
-    }
+        StringBuilder resultBuilder = new StringBuilder();
 
-    private void DisplayError(string message, Color color)
-    {
-        outputText.color = color;
-        outputText.text = message; // Solo mostrar el mensaje de error
+        // Mostrar cartas válidas
+        if (validCards.Count > 0)
+        {
+            resultBuilder.AppendLine("Cards parsed successfully:");
+            foreach (var cardNode in validCards)
+            {
+                resultBuilder.AppendLine(cardNode.Name); // Asumiendo que Card tiene un método ToString
+            }
+        }
+        else
+        {
+            resultBuilder.AppendLine("No valid cards found.");
+        }
+
+        // Mostrar errores
+        if (errorMessages.Count > 0)
+        {
+            resultBuilder.AppendLine("\nErrors found:");
+            foreach (var error in errorMessages)
+            {
+                resultBuilder.AppendLine(error);
+            }
+
+            // Mostrar errores en color rojo
+            outputText.color = Color.red;
+        }
+        else
+        {
+            // Si no hay errores, mostrar en color verde
+            outputText.color = Color.green;
+        }
+
+        // Mostrar el resultado en la interfaz de usuario
+        outputText.text = resultBuilder.ToString();
     }
 }
