@@ -24,36 +24,42 @@ public class DSLInterpreter : MonoBehaviour
         Parser parser = new Parser(lexerStream);
 
         List<Card> validCards = new List<Card>();
+        List<Effect> validEffects = new List<Effect>();
         List<string> errorMessages = new List<string>();
 
         while (!parser.IsEndOfInput())
         {
             try
             {
-                // Intentar parsear una carta
-                var cardNode = parser.ParseCard();
-                validCards.Add(cardNode);
+                if (parser.Match(TokenType.Card))
+                {
+                    var cardNode = parser.ParseCard();
+                    validCards.Add(cardNode);
+                }
+                else if (parser.Match(TokenType.Effect))
+                {
+                    var effects = parser.ParseEffects();  // Esto ahora captura cualquier excepción de efecto
+                    validEffects.AddRange(effects);
+                }
+                else
+                {
+                    throw new Exception($"Unexpected token '{lexerStream.CurrentToken.Value}'");
+                }
             }
             catch (LexerError lexEx)
             {
-                // Capturar el error del lexer y añadirlo a la lista de mensajes de error
                 errorMessages.Add($"Lexer Error: {lexEx.Message}\nPosition: {lexEx.Position}");
-                
-                // Saltar el resto del input hasta la próxima carta o final del input
-                parser.SkipToNextCard();
+                parser.SkipToNextStatement();
             }
             catch (Exception ex)
             {
-                // Capturar errores generales y añadirlos a la lista de mensajes de error
                 errorMessages.Add($"Error parsing input: {ex.Message}");
-                
-                // Saltar el resto del input hasta la próxima carta o final del input
-                parser.SkipToNextCard();
+                parser.SkipToNextStatement();
             }
         }
 
-        // Mostrar cartas válidas y errores, si los hay
-        DisplayResults(validCards, errorMessages);
+        // Mostrar resultados
+        DisplayResults(validCards, validEffects, errorMessages);
     }
 
     private static string PreprocessInput(string input)
@@ -62,7 +68,7 @@ public class DSLInterpreter : MonoBehaviour
         return Regex.Replace(input, @"[ \t]+", " ").Trim();
     }
 
-    private void DisplayResults(List<Card> validCards, List<string> errorMessages)
+    private void DisplayResults(List<Card> validCards, List<Effect> validEffects, List<string> errorMessages)
     {
         StringBuilder resultBuilder = new StringBuilder();
 
@@ -72,12 +78,26 @@ public class DSLInterpreter : MonoBehaviour
             resultBuilder.AppendLine("Cards parsed successfully:");
             foreach (var cardNode in validCards)
             {
-                resultBuilder.AppendLine(cardNode.Name); // Asumiendo que Card tiene un método ToString
+                resultBuilder.AppendLine($"Name: {cardNode.Name}"); // Asegúrate de que Card tenga una propiedad Name
             }
         }
         else
         {
             resultBuilder.AppendLine("No valid cards found.");
+        }
+
+        // Mostrar efectos válidos
+        if (validEffects.Count > 0)
+        {
+            resultBuilder.AppendLine("\nEffects parsed successfully:");
+            foreach (var effectNode in validEffects)
+            {
+                resultBuilder.AppendLine($"Name: {effectNode.name}"); // Asegúrate de que Effect tenga una propiedad Name
+            }
+        }
+        else
+        {
+            resultBuilder.AppendLine("No valid effects found.");
         }
 
         // Mostrar errores

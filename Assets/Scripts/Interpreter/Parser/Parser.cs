@@ -28,36 +28,28 @@ namespace DSL.Parser
                 }
                 catch (LexerError)
                 {
-                    SkipToNextCard();
+                    SkipToNextStatement();
                 }
                 catch (Exception)
                 {
-                    SkipToNextCard();
+                    SkipToNextStatement();
                 }
             }
             return cards;
-        }
-        private void Synchronize()
-        {
-            // Saltar tokens hasta encontrar el inicio de la próxima carta o el final del archivo.
-            while (_lexerStream.CurrentToken.Type != TokenType.Card &&
-                   _lexerStream.CurrentToken.Type != TokenType.EOF)
-            {
-                _lexerStream.Advance();
-            }
         }
         public bool IsEndOfInput()
         {
             return _lexerStream.CurrentToken.Type == TokenType.EOF;
         }
 
-        public void SkipToNextCard()
+        public void SkipToNextStatement()
         {
-            while (!IsEndOfInput() && _lexerStream.CurrentToken.Type != TokenType.Card)
+            while (!IsEndOfInput() && _lexerStream.CurrentToken.Type != TokenType.Card && _lexerStream.CurrentToken.Type != TokenType.Effect)
             {
                 _lexerStream.NextToken();
             }
         }
+
 
         public Card ParseCard()
         {
@@ -195,12 +187,6 @@ namespace DSL.Parser
                 {
                     break; // Termina el bucle si se encuentra CloseBracket
                 }
-
-                // Verificamos si hay una coma para continuar
-                if (Match(TokenType.Comma))
-                {
-                    Consume(TokenType.Comma);
-                }
             }
 
             // Consume el corchete de cierre
@@ -245,22 +231,59 @@ namespace DSL.Parser
                         break;
                 }
 
-                _lexerStream.Advance(); // Avanza al siguiente token después de procesar uno.
+                //_lexerStream.Advance(); // Avanza al siguiente token después de procesar uno.
+                if (Match(TokenType.Comma))
+                {
+                    Consume(TokenType.Comma);
+                }
             }
+            if (Match(TokenType.CloseBrace))
+            {
+                Consume(TokenType.CloseBrace);
+                if (Match(TokenType.Comma))
+                {
+                    Consume(TokenType.Comma);
+                }
 
-            Consume(TokenType.CloseBrace); // Espera el final del bloque de activación
+            }
 
             // Retorna el objeto EffectActivation con los valores finales
             return new EffectActivation(effect, selector, postAction);
         }
 
 
+        public List<Effect> ParseEffects()
+        {
+            List<Effect> effects = new List<Effect>();
 
+            Consume(TokenType.Effect);
+            Consume(TokenType.OpenBrace);
 
+            while (!Match(TokenType.CloseBrace))
+            {
+                try
+                {
+                    if (Match(TokenType.Effect))
+                    {
+                        var effect = ParseEffect();
+                        effects.Add(effect);
+                    }
+                    else
+                    {
+                        ThrowSyntaxError("Expected 'Effect' keyword", TokenType.Effect);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Captura cualquier excepción en el parsing de efectos
+                    ThrowSyntaxError($"Error parsing effect: {ex.Message}");
+                }
+            }
 
-
-
-        private Effect ParseEffect()
+            Consume(TokenType.CloseBrace);
+            return effects;
+        }
+        public Effect ParseEffect()
         {
             Consume(TokenType.Effect);
             Consume(TokenType.OpenBrace);
@@ -289,8 +312,17 @@ namespace DSL.Parser
             }
 
             Consume(TokenType.CloseBrace);
+
+            if (effectName == null)
+            {
+                ThrowSyntaxError("Effect name is required", TokenType.Name);
+            }
+
             return new Effect(effectName, parameters, action);
         }
+
+
+
 
         private List<Parameter> ParseParameters()
         {
@@ -406,6 +438,7 @@ namespace DSL.Parser
                     case TokenType.Single:
                         if (hasSingle) ThrowSyntaxError("Duplicate 'Single' property in Selector");
                         string singleValue = ParseProperty(TokenType.Single);
+
                         if (bool.TryParse(singleValue, out bool parsedSingle))
                         {
                             single = parsedSingle;
@@ -437,8 +470,11 @@ namespace DSL.Parser
                     Consume(TokenType.Comma);
                 }
             }
+            if (Match(TokenType.CloseBrace))
+            {
+                Consume(TokenType.CloseBrace);
+            }
 
-            Consume(TokenType.CloseBrace);
 
             return new Selector(source, single, predicate);
         }
@@ -454,6 +490,8 @@ namespace DSL.Parser
 
             string type = null;
             Selector selector = null;
+            // por arreglar
+            int? amount = null;
 
             bool hasType = false;
             bool hasSelector = false;
@@ -466,6 +504,17 @@ namespace DSL.Parser
                         if (hasType) ThrowSyntaxError("Duplicate 'Type' property in PostAction");
                         type = ParseProperty(TokenType.Type);
                         hasType = true;
+                        break;
+                    case TokenType.Amount:
+                        string amountValue = ParseProperty(TokenType.Amount);
+                        if (int.TryParse(amountValue, out int parsedAmount))
+                        {
+                            amount = parsedAmount;
+                        }
+                        else
+                        {
+                            ThrowSyntaxError($"Expected 'Number' for property 'Amount', but found '{amountValue}'");
+                        }
                         break;
                     case TokenType.Selector:
                         if (hasSelector) ThrowSyntaxError("Duplicate 'Selector' property in PostAction");
@@ -488,8 +537,15 @@ namespace DSL.Parser
                     Consume(TokenType.Comma);
                 }
             }
+            if (Match(TokenType.CloseBrace))
+            {
+                Consume(TokenType.CloseBrace);
 
-            Consume(TokenType.CloseBrace);
+                if (Match(TokenType.Comma))
+                {
+                    Consume(TokenType.Comma);
+                }
+            }
 
             return new PostAction(type, selector);
         }
@@ -524,7 +580,7 @@ namespace DSL.Parser
                     // Maneja identificadores específicos y operadores
                     if (token.Type == TokenType.Unit || token.Type == TokenType.Identifier ||
                         token.Type == TokenType.String || token.Type == TokenType.Number ||
-                        token.Type == TokenType.Faction || token.Type == TokenType.Power) // <-- Aseguramos que Faction es válido
+                        token.Type == TokenType.Faction || token.Type == TokenType.Power || token.Type == TokenType.False || token.Type == TokenType.True) // <-- Aseguramos que Faction es válido
                     {
                         predicate.Append(token.Value);
                     }
@@ -582,7 +638,7 @@ namespace DSL.Parser
             return token;
         }
 
-        private bool Match(TokenType type)
+        public bool Match(TokenType type)
         {
             return LookAhead().Type == type;
         }
@@ -602,13 +658,9 @@ namespace DSL.Parser
             Debug.Log($"Consumed Token: {token}");
         }
 
-        private void ThrowSyntaxError(string message, TokenType expected = TokenType.None)
+        private void ThrowSyntaxError(string message, TokenType expectedType = TokenType.None)
         {
-            var token = LookAhead();
-            string errorMessage = expected == TokenType.None
-                ? $"Syntax Error: {message} at position {token.Pos} (found '{token.Value}')"
-                : $"Syntax Error: {message} at position {token.Pos} (found '{token.Value}', expected '{expected}')";
-
+            string errorMessage = $"Syntax Error: {message}. Found '{_lexerStream.CurrentToken.Value}' at position {_lexerStream.CurrentToken.Pos}.";
             Debug.LogError(errorMessage);
             throw new LexerError(errorMessage);
         }
@@ -665,67 +717,74 @@ namespace DSL.Parser
         {
             Consume(TokenType.Effect);
             Consume(TokenType.Colon);
-            Consume(TokenType.OpenBrace);
-
-            string effectName = null;
-            int? amount = null;
-            List<Parameter> parameters = new List<Parameter>();
-            Action<List<Card>, Context> action = null;
-            PostAction postAction = null;
-
-            while (!Match(TokenType.CloseBrace))
+            if (Match(TokenType.OpenBrace))
             {
-                switch (_lexerStream.CurrentToken.Type)
+
+                Consume(TokenType.OpenBrace);
+
+                string effectName = null;
+                int? amount = null;
+                List<Parameter> parameters = new List<Parameter>();
+                Action<List<Card>, Context> action = null;
+
+                while (!Match(TokenType.CloseBrace))
                 {
-                    case TokenType.Name:
-                        effectName = ParseProperty(TokenType.Name);
-                        break;
-                    case TokenType.Amount:
-                        string amountValue = ParseProperty(TokenType.Amount);
-                        if (int.TryParse(amountValue, out int parsedAmount))
-                        {
-                            amount = parsedAmount;
-                        }
-                        else
-                        {
-                            ThrowSyntaxError($"Expected 'Number' for property 'Amount', but found '{amountValue}'");
-                        }
-                        break;
-                    // case TokenType.Params:
-                    //     parameters = ParseParameters();
-                    //     break;
-                    case TokenType.Selector:
-                        Selector selector = ParseSelector();
-                        action = (targets, context) =>
-                        {
-                            Debug.Log($"Executing action with selector: {selector.source}");
-                        };
-                        break;
-                    case TokenType.PostAction:
-                        postAction = ParsePostAction();
-                        // Aquí puedes incorporar postAction a tu lógica si es necesario
-                        break;
-                    default:
-                        ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Effect within a card");
-                        break;
+                    switch (_lexerStream.CurrentToken.Type)
+                    {
+                        case TokenType.Name:
+                            effectName = ParseProperty(TokenType.Name);
+                            Consume(TokenType.Comma);
+                            break;
+                        case TokenType.String:
+                            Token valueToken = ConsumeAny(TokenType.String);
+                            effectName = valueToken.Value;
+                            Consume(TokenType.Comma);
+                            break;
+                        case TokenType.Amount:
+                            string amountValue = ParseProperty(TokenType.Amount);
+                            Consume(TokenType.Comma);
+                            if (int.TryParse(amountValue, out int parsedAmount))
+                            {
+                                amount = parsedAmount;
+                            }
+                            else
+                            {
+                                ThrowSyntaxError($"Expected 'Number' for property 'Amount', but found '{amountValue}'");
+                            }
+                            break;
+                        default:
+                            ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Effect within a card");
+                            break;
+                    }
+
+                    // _lexerStream.Advance();
+                }
+                if (Match(TokenType.CloseBrace))
+                {
+                    Consume(TokenType.CloseBrace);
                 }
 
-                _lexerStream.Advance();
+                // Crear el objeto Effect usando los datos parseados
+                return new Effect(effectName, parameters, action); // action es de tipo Action<List<Card>, Context>
+            }
+            else
+            {
+                return ParseSimpleEffect();
             }
 
-            Consume(TokenType.CloseBrace);
-
-            // Crear el objeto Effect usando los datos parseados
-            return new Effect(effectName, parameters, action); // action es de tipo Action<List<Card>, Context>
         }
         private Effect ParseSimpleEffect()
         {
-            Consume(TokenType.OpenBrace); // Consume la llave de apertura
+
+            if (Match(TokenType.OpenBrace))
+            {
+                Consume(TokenType.OpenBrace); // Consume la llave de apertura
+            }
 
             if (Match(TokenType.Effect))
             {
                 string effectName = ParseProperty(TokenType.Effect);
-
+                Consume(TokenType.Comma);
                 // Consume el posible cierre de llave si el efecto es un nombre simple
                 if (Match(TokenType.CloseBrace))
                 {
@@ -736,9 +795,46 @@ namespace DSL.Parser
                     ThrowSyntaxError("Expected '}' after simple effect name.");
                 }
             }
-            else
+            else if (Match(TokenType.String))
             {
-                ThrowSyntaxError("Expected 'Effect' after '{'.");
+                Token valueToken = ConsumeAny(TokenType.String);
+                string effectName = "";
+                if (valueToken.Type == TokenType.String)
+                {
+                    effectName = valueToken.Value;
+                    if (Match(TokenType.Comma))
+                    {
+                        Consume(TokenType.Comma);
+                    }
+                    if (!Match(TokenType.Amount))
+                    {
+                        return new Effect(effectName, new List<Parameter>(), null);
+                    }
+                    else if (Match(TokenType.Amount))
+                    {
+
+                        int? amount = null;
+                        List<Parameter> parameters = new List<Parameter>();
+                        Action<List<Card>, Context> action = null;
+                        string amountValue = ParseProperty(TokenType.Amount);
+                        Consume(TokenType.Comma);
+                        if (int.TryParse(amountValue, out int parsedAmount))
+                        {
+                            amount = parsedAmount;
+                        }
+                        else
+                        {
+                            ThrowSyntaxError($"Expected 'Number' for property 'Amount', but found '{amountValue}'");
+                        }
+                        return new Effect(effectName, parameters, action);
+
+                    }
+                }
+                else
+                {
+                    ThrowSyntaxError($"Expected 'Value' for property '{TokenType.String}', but found '{valueToken.Type}'");
+                    return null; // Este retorno nunca se alcanzará, es solo para evitar errores de compilación
+                }
             }
 
             return null; // Retorno por defecto si hay un error

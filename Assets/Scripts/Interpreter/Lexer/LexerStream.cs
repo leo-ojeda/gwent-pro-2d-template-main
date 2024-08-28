@@ -51,7 +51,7 @@ namespace DSL.Lexer
         public void Advance(int steps = 1)
         {
             _position = Math.Clamp(_position + steps, 0, _tokens.Count - 1);
-            Debug.Log($"Advanced to position {_position}, Current Token: {CurrentToken}");
+            Debug.Log($"Avanza a la posicion {_position}, token de la posicion actual: {CurrentToken}");
         }
     }
 }

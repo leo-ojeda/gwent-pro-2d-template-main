@@ -123,6 +123,10 @@ namespace DSL.Lexer
                     CurrentToken = new Token(TokenType.Colon, ":", CurrentPos);
                     AdvanceChar();
                     break;
+                case ';':
+                    CurrentToken = new Token(TokenType.Colon, ";", CurrentPos);
+                    AdvanceChar();
+                    break;
                 case ',':
                     CurrentToken = new Token(TokenType.Comma, ",", CurrentPos);
                     AdvanceChar();
