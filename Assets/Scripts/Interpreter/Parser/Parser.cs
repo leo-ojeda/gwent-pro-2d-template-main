@@ -408,7 +408,7 @@ namespace DSL.Parser
             Consume(TokenType.OpenBrace); // "{"
 
             List<Action<List<Card>, Context>> actions = new List<Action<List<Card>, Context>>();
-            Dictionary<string, int> localVariables = new Dictionary<string, int>();
+            Dictionary<string, object> localVariables = new Dictionary<string, object>();
 
             while (!Match(TokenType.CloseBrace))
             {
@@ -452,7 +452,7 @@ namespace DSL.Parser
                             {
                                 Consume(TokenType.Increment); // "++"
                                 Consume(TokenType.SemiColon); // ";"
-                                loopActions.Add((targetCard, ctx) => localVariables[variable]++);
+                                                              // loopActions.Add((targetCard, ctx) => localVariables[variable]++);
                             }
                         }
                         else if (Match(TokenType.While))
@@ -485,8 +485,7 @@ namespace DSL.Parser
                                 }
                             }
 
-                            // Agrega la acción del bucle al conjunto de acciones
-                            actions.Add((targets, context) =>
+                            actions.Add((targets, ctx) =>
                             {
                                 foreach (var target in targets)
                                 {
@@ -500,14 +499,12 @@ namespace DSL.Parser
                                         // Ejecuta las acciones dentro del bucle 'while'
                                         foreach (var action in whileActions)
                                         {
-                                            action(target, context);
+                                            action(target, ctx);
                                         }
                                     }
                                 }
                             });
                         }
-
-
                         else if (Match(TokenType.Identifier))
                         {
                             // Handle general assignments like 'owner = target.Owner'
@@ -537,7 +534,7 @@ namespace DSL.Parser
                     }
 
                     Consume(TokenType.CloseBrace); // End of for loop
-                    if(Match(TokenType.SemiColon))
+                    if (Match(TokenType.SemiColon))
                     {
                         Consume(TokenType.SemiColon);
                     }
@@ -555,60 +552,205 @@ namespace DSL.Parser
                 }
                 else if (Match(TokenType.Identifier))
                 {
-                    var contextObject = Consume(TokenType.Identifier).Value; // e.g., "context"
-                    Consume(TokenType.Dot); // "."
-                    var method = Consume(TokenType.Identifier).Value; // e.g., "Deck.Pop"
+                    var contextObject = Consume(TokenType.Identifier).Value; // e.g., "context" o una variable local
 
-                    if (Match(TokenType.OpenParen))
+                    if (Match(TokenType.Dot))
                     {
-                        Consume(TokenType.OpenParen);
-                        Consume(TokenType.CloseParen);
-                        Consume(TokenType.SemiColon);
+                        Consume(TokenType.Dot); // "."
+                        var memberName = Consume(TokenType.Identifier).Value; // e.g., "Deck" o "Hand"
+
+                        if (Match(TokenType.OpenParen))
+                        {
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            if (Match(TokenType.Equals))
+                            {
+                                var resultVarName = contextObject; // El nombre de la variable a la que se asignará
+                                Consume(TokenType.Equals);
+
+                                var rightHandSideBuilder = new StringBuilder();
+                                rightHandSideBuilder.Append(contextObject);
+                                rightHandSideBuilder.Append('.');
+                                rightHandSideBuilder.Append(memberName);
+                                rightHandSideBuilder.Append('(');
+                                rightHandSideBuilder.Append(')');
+
+                                Consume(TokenType.SemiColon); // Final de la instrucción
+
+                                var rightHandSide = rightHandSideBuilder.ToString();
+
+                                actions.Add((cards, ctx) =>
+                                {
+                                    if (memberName == "Pop")
+                                    {
+                                        var card = ctx.Deck.Pop(); // Llama al método
+                                        localVariables[resultVarName] = card; // Asigna a la variable (ahora de tipo object)
+                                    }
+                                    else
+                                    {
+                                        ThrowSyntaxError($"Método desconocido '{memberName}' para la llamada de asignación.");
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                Consume(TokenType.SemiColon); // Final de la instrucción
+                                actions.Add((cards, ctx) =>
+                                {
+                                    if (memberName == "Shuffle")
+                                    {
+                                        ctx.Hand.Shuffle();
+                                    }
+                                    else
+                                    {
+                                        ThrowSyntaxError($"Método desconocido '{memberName}' para llamada sin asignación.");
+                                    }
+                                });
+                            }
+                        }
+                        else if (Match(TokenType.SemiColon))
+                        {
+                            var methodCalls = new List<Action<List<Card>, Context>>();
+
+                            do
+                            {
+                                var localContextObject = contextObject; // Guardar el objeto de contexto actual
+                                Consume(TokenType.Dot);
+                                var localMemberName = Consume(TokenType.Identifier).Value;
+
+                                if (Match(TokenType.OpenParen))
+                                {
+                                    Consume(TokenType.OpenParen);
+                                    Consume(TokenType.CloseParen);
+
+                                    methodCalls.Add((cardList, ctx) =>
+                                    {
+                                        if (localMemberName == "Add")
+                                        {
+                                            if (localVariables.ContainsKey(localContextObject))
+                                            {
+                                                var card = localVariables[localContextObject] as Card;
+                                                if (card != null)
+                                                {
+                                                    ctx.Hand.Add(card);
+                                                }
+                                                else
+                                                {
+                                                    ThrowSyntaxError($"Variable '{localContextObject}' no es del tipo correcto.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ThrowSyntaxError($"Variable '{localContextObject}' no encontrada.");
+                                            }
+                                        }
+                                        else if (localMemberName == "Shuffle")
+                                        {
+                                            ctx.Hand.Shuffle();
+                                        }
+                                        else
+                                        {
+                                            ThrowSyntaxError($"Método desconocido '{localMemberName}' para llamada en secuencia.");
+                                        }
+                                    });
+
+                                    if (Match(TokenType.Dot))
+                                    {
+                                        Consume(TokenType.Dot);
+                                    }
+                                }
+                            } while (Match(TokenType.Dot)); // Continuar mientras haya métodos encadenados
+
+                            Consume(TokenType.SemiColon); // Final de la instrucción
+
+                            actions.Add((cardList, ctx) =>
+                            {
+                                foreach (var methodCall in methodCalls)
+                                {
+                                    methodCall(cardList, ctx); // Pasar `cardList` en lugar de `cards`
+                                }
+                            });
+                        }
+                    }
+
+
+                    else if (Match(TokenType.Equals))
+                    {
+                        // Declaración de asignación, e.g., topCard = algúnValor;
+                        Consume(TokenType.Equals);
+
+                        // Crear un StringBuilder para construir el lado derecho de la asignación
+                        var rightHandSideBuilder = new StringBuilder();
+                        rightHandSideBuilder.Append(contextObject);
+                        while (!Match(TokenType.SemiColon))
+                        {
+                            if (Match(TokenType.Identifier))
+                            {
+                                rightHandSideBuilder.Append(Consume(TokenType.Identifier).Value);
+                            }
+                            else if (Match(TokenType.Dot))
+                            {
+                                rightHandSideBuilder.Append('.');
+                                Consume(TokenType.Dot);
+                            }
+                            else if (Match(TokenType.OpenParen))
+                            {
+                                rightHandSideBuilder.Append('(');
+                                Consume(TokenType.OpenParen);
+                                if (Match(TokenType.CloseParen))
+                                {
+                                    rightHandSideBuilder.Append(')');
+                                    Consume(TokenType.CloseParen);
+                                }
+                            }
+                            else if (Match(TokenType.CloseParen))
+                            {
+                                rightHandSideBuilder.Append(')');
+                                Consume(TokenType.CloseParen);
+                            }
+                            else
+                            {
+                                ThrowSyntaxError($"Token inesperado '{_lexerStream.CurrentToken.Value}' en el lado derecho de la asignación.");
+                            }
+                        }
+                        Consume(TokenType.SemiColon); // Final de la instrucción
+
+                        var rightHandSide = rightHandSideBuilder.ToString();
 
                         actions.Add((cards, ctx) =>
                         {
-                            if (method == "Pop")
+                            if (localVariables.ContainsKey(rightHandSide))
+                            {
+                                localVariables[contextObject] = localVariables[rightHandSide]; // Asignación de variable
+                            }
+                            else if (rightHandSide == $"{contextObject}.Deck.Pop()")
                             {
                                 var card = ctx.Deck.Pop();
-                                ctx.Hand.Add(card);
+                                localVariables[contextObject] = card; // Asignación de la carta
                             }
-                            else if (method == "Shuffle")
+                            else
                             {
-                                ctx.Hand.Shuffle();
+                                ThrowSyntaxError($"No se puede resolver '{rightHandSide}' para asignación.");
                             }
                         });
                     }
                 }
+
                 else
                 {
-                    ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Action block");
+                    ThrowSyntaxError($"Token inesperado '{_lexerStream.CurrentToken.Value}' en Action block");
                 }
             }
 
-            Consume(TokenType.CloseBrace);
-            if (Match(TokenType.Colon))
-            {
-                Consume(TokenType.Colon);
-            }
+            Consume(TokenType.CloseBrace); // Fin del bloque de acción
 
-            return (targets, context) =>
+            return (cards, ctx) =>
             {
                 foreach (var action in actions)
                 {
-                    action(targets, context);
+                    action(cards, ctx);
                 }
-            };
-        }
-
-
-        private ParamType ParseParamType(string type)
-        {
-            return type.ToLower() switch
-            {
-                "number" => ParamType.Number,
-                "string" => ParamType.String,
-                "bool" => ParamType.Bool,
-                _ => throw new LexerError($"Unrecognized parameter type: {type}")
             };
         }
 
