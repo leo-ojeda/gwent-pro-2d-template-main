@@ -16,7 +16,7 @@ namespace DSL.Lexer
         Colon,          // :
         Comma,          // ,
         Dot,            // .
-
+        SemiColon,
         // Operadores aritméticos
         Plus,           // +
         Minus,          // -

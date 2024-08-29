@@ -263,7 +263,7 @@ namespace DSL.Parser
             {
                 try
                 {
-                    if (Match(TokenType.Effect))
+                    if (Match(TokenType.Name))
                     {
                         var effect = ParseEffect();
                         effects.Add(effect);
@@ -285,8 +285,8 @@ namespace DSL.Parser
         }
         public Effect ParseEffect()
         {
-            Consume(TokenType.Effect);
-            Consume(TokenType.OpenBrace);
+            //Consume(TokenType.Effect);
+            //Consume(TokenType.OpenBrace);
 
             string effectName = null;
             List<Parameter> parameters = new List<Parameter>();
@@ -298,6 +298,7 @@ namespace DSL.Parser
                 {
                     case TokenType.Name:
                         effectName = ParseProperty(TokenType.Name);
+                        Consume(TokenType.Comma);
                         break;
                     case TokenType.Params:
                         parameters = ParseParameters();
@@ -311,7 +312,7 @@ namespace DSL.Parser
                 }
             }
 
-            Consume(TokenType.CloseBrace);
+            //Consume(TokenType.CloseBrace);
 
             if (effectName == null)
             {
@@ -328,32 +329,53 @@ namespace DSL.Parser
         {
             List<Parameter> parameters = new List<Parameter>();
 
-            Consume(TokenType.Params);
-            Consume(TokenType.Colon);
-            Consume(TokenType.OpenBrace);
+            Consume(TokenType.Params); // Consume "Params"
+            Consume(TokenType.Colon);  // Consume ":"
+            Consume(TokenType.OpenBrace); // Consume "{"
 
             while (!Match(TokenType.CloseBrace))
             {
 
-                Consume(TokenType.Colon);
-                string paramType = Consume(TokenType.Identifier).Value;
 
-                object paramValue = null;
-                if (Match(TokenType.Equals)) // Asume que usas '=' para asignar un valor
+                string paramName = Consume(TokenType.Amount).Value;
+                Consume(TokenType.Colon);
+
+                ParamType paramType;
+                if (Match(TokenType.Number))
                 {
-                    Consume(TokenType.Equals);
-                    paramValue = ParseParameterValue(ParseParamType(paramType)); // Nuevo método para obtener el valor basado en el tipo
+                    paramType = ParamType.Number;
+                    Consume(TokenType.Number);
+                }
+                else if (Match(TokenType.String))
+                {
+                    paramType = ParamType.String;
+                    Consume(TokenType.String);
+                }
+                else if (Match(TokenType.Bool))
+                {
+                    paramType = ParamType.Bool;
+                    Consume(TokenType.Bool);
+                }
+                else
+                {
+                    ThrowSyntaxError($"Tipo de parámetro inesperado después de '{paramName}'");
+                    return null; // Para evitar más errores en tiempo de compilación, aunque normalmente ThrowSyntaxError lanzará una excepción
                 }
 
-                parameters.Add(new Parameter(ParseParamType(paramType), paramValue));
+                // Crear el parámetro y añadirlo a la lista
+                parameters.Add(new Parameter(paramType));
 
+                // Si hay una coma, consumirla y continuar al siguiente parámetro
+            }
+            if (Match(TokenType.CloseBrace))
+            {
+                Consume(TokenType.CloseBrace); // Consume "}"
                 if (Match(TokenType.Comma))
                 {
                     Consume(TokenType.Comma);
                 }
             }
 
-            Consume(TokenType.CloseBrace);
             return parameters;
         }
 
@@ -362,7 +384,7 @@ namespace DSL.Parser
             switch (type)
             {
                 case ParamType.Number:
-                    return double.Parse(Consume(TokenType.Number).Value);
+                    return int.Parse(Consume(TokenType.Number).Value);
                 case ParamType.String:
                     return Consume(TokenType.String).Value;
                 case ParamType.Bool:
@@ -385,21 +407,199 @@ namespace DSL.Parser
             Consume(TokenType.Arrow); // "=>"
             Consume(TokenType.OpenBrace); // "{"
 
-            string actionBody = "";
+            List<Action<List<Card>, Context>> actions = new List<Action<List<Card>, Context>>();
+            Dictionary<string, int> localVariables = new Dictionary<string, int>();
+
             while (!Match(TokenType.CloseBrace))
             {
-                var token = _lexerStream.CurrentToken;
-                actionBody += token.Value + " ";
-                _lexerStream.Advance();
+                if (Match(TokenType.For))
+                {
+                    Consume(TokenType.For);
+                    var targetVar = Consume(TokenType.Identifier).Value; // e.g., "target"
+                    Consume(TokenType.In);
+                    var listName = Consume(TokenType.Identifier).Value; // e.g., "targets"
+                    Consume(TokenType.OpenBrace); // "{"
+
+                    List<Action<Card, Context>> loopActions = new List<Action<Card, Context>>();
+
+                    while (!Match(TokenType.CloseBrace))
+                    {
+                        if (Match(TokenType.Identifier))
+                        {
+                            var variable = Consume(TokenType.Identifier).Value; // e.g., "i" or "owner"
+                            if (Match(TokenType.Equals))
+                            {
+                                Consume(TokenType.Equals);
+                                var value = int.Parse(Consume(TokenType.Number).Value); // e.g., "0"
+                                Consume(TokenType.SemiColon); // ";"
+                                localVariables[variable] = value; // Store variable
+                            }
+                            else if (Match(TokenType.Dot))
+                            {
+                                Consume(TokenType.Dot); // "."
+                                var propertyOrMethod = Consume(TokenType.Identifier).Value; // e.g., "Power" or "Shuffle"
+
+                                if (Match(TokenType.Minus))
+                                {
+                                    Consume(TokenType.Minus); // "-"
+                                    Consume(TokenType.Equals); // "="
+                                    var value = int.Parse(Consume(TokenType.Number).Value); // e.g., "1"
+                                    Consume(TokenType.SemiColon); // ";"
+                                    loopActions.Add((targetCard, ctx) => targetCard.Power -= value);
+                                }
+                            }
+                            else if (Match(TokenType.Increment))
+                            {
+                                Consume(TokenType.Increment); // "++"
+                                Consume(TokenType.SemiColon); // ";"
+                                loopActions.Add((targetCard, ctx) => localVariables[variable]++);
+                            }
+                        }
+                        else if (Match(TokenType.While))
+                        {
+                            Consume(TokenType.While);
+                            Consume(TokenType.OpenParen); // "("
+                            var loopVar = Consume(TokenType.Identifier).Value; // e.g., "i"
+                            Consume(TokenType.Increment); // "++"
+                            Consume(TokenType.Less); // "<"
+                            var loopConditionValue = Consume(TokenType.Amount).Value; // e.g., "Amount"
+                            Consume(TokenType.CloseParen); // ")"
+
+                            List<Action<Card, Context>> whileActions = new List<Action<Card, Context>>();
+
+                            if (Match(TokenType.Identifier))
+                            {
+                                var target = Consume(TokenType.Identifier).Value; // e.g., "target"
+                                if (Match(TokenType.Dot))
+                                {
+                                    Consume(TokenType.Dot); // "."
+                                    var property = Consume(TokenType.Power).Value; // "Power"
+                                    if (Match(TokenType.Minus))
+                                    {
+                                        Consume(TokenType.Minus); // "-"
+                                        Consume(TokenType.Equals); // "="
+                                        var value = int.Parse(Consume(TokenType.Number).Value); // e.g., "1"
+                                        Consume(TokenType.SemiColon); // ";"
+                                        whileActions.Add((targetCard, ctx) => targetCard.Power -= value);
+                                    }
+                                }
+                            }
+
+                            // Agrega la acción del bucle al conjunto de acciones
+                            actions.Add((targets, context) =>
+                            {
+                                foreach (var target in targets)
+                                {
+                                    int currentValue = 0; // Inicializa la variable de control
+
+                                    // Usa el valor de 'loopConditionValue' directamente
+                                    while (currentValue < 1)
+                                    {
+                                        currentValue++; // Incrementa después de la comparación
+
+                                        // Ejecuta las acciones dentro del bucle 'while'
+                                        foreach (var action in whileActions)
+                                        {
+                                            action(target, context);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+
+                        else if (Match(TokenType.Identifier))
+                        {
+                            // Handle general assignments like 'owner = target.Owner'
+                            var variable = Consume(TokenType.Identifier).Value; // e.g., "owner"
+                            if (Match(TokenType.Equals))
+                            {
+                                Consume(TokenType.Equals); // "="
+                                var valueExpression = Consume(TokenType.Identifier).Value; // e.g., "target.Owner"
+                                Consume(TokenType.SemiColon); // ";"
+
+                                // Add the assignment action
+                                loopActions.Add((targetCard, ctx) =>
+                                {
+                                    // Example: ctx.GetValue(variable, valueExpression);
+                                    // Implement logic to handle assignment if necessary
+                                });
+                            }
+                            else
+                            {
+                                ThrowSyntaxError($"Unexpected token in for loop after '{variable}'");
+                            }
+                        }
+                        else
+                        {
+                            ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Action block");
+                        }
+                    }
+
+                    Consume(TokenType.CloseBrace); // End of for loop
+                    if(Match(TokenType.SemiColon))
+                    {
+                        Consume(TokenType.SemiColon);
+                    }
+
+                    actions.Add((cards, ctx) =>
+                    {
+                        foreach (var card in cards)
+                        {
+                            foreach (var loopAction in loopActions)
+                            {
+                                loopAction(card, ctx);
+                            }
+                        }
+                    });
+                }
+                else if (Match(TokenType.Identifier))
+                {
+                    var contextObject = Consume(TokenType.Identifier).Value; // e.g., "context"
+                    Consume(TokenType.Dot); // "."
+                    var method = Consume(TokenType.Identifier).Value; // e.g., "Deck.Pop"
+
+                    if (Match(TokenType.OpenParen))
+                    {
+                        Consume(TokenType.OpenParen);
+                        Consume(TokenType.CloseParen);
+                        Consume(TokenType.SemiColon);
+
+                        actions.Add((cards, ctx) =>
+                        {
+                            if (method == "Pop")
+                            {
+                                var card = ctx.Deck.Pop();
+                                ctx.Hand.Add(card);
+                            }
+                            else if (method == "Shuffle")
+                            {
+                                ctx.Hand.Shuffle();
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Action block");
+                }
             }
 
-            Consume(TokenType.CloseBrace); // "}"
+            Consume(TokenType.CloseBrace);
+            if (Match(TokenType.Colon))
+            {
+                Consume(TokenType.Colon);
+            }
 
             return (targets, context) =>
             {
-                Debug.Log($"Executing action: {actionBody}");
+                foreach (var action in actions)
+                {
+                    action(targets, context);
+                }
             };
         }
+
 
         private ParamType ParseParamType(string type)
         {

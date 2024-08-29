@@ -75,10 +75,10 @@ public class Parameter
     public ParamType type;
     public object value;
 
-    public Parameter( ParamType type, object value)
+    public Parameter(object value)
     {
        // this.paramName = paramName;
-        this.type = type;
+       
         this.value = value;
     }
 }

@@ -31,7 +31,7 @@ namespace DSL.Lexer
               {"source", TokenType.Source},
               {"single", TokenType.Single},
               {"predicate", TokenType.Predicate},
-              {"number", TokenType.NumberType},
+              {"number", TokenType.Number},
               {"for", TokenType.For},
               {"in", TokenType.In},
               {"while", TokenType.While},
@@ -124,7 +124,7 @@ namespace DSL.Lexer
                     AdvanceChar();
                     break;
                 case ';':
-                    CurrentToken = new Token(TokenType.Colon, ";", CurrentPos);
+                    CurrentToken = new Token(TokenType.SemiColon, ";", CurrentPos);
                     AdvanceChar();
                     break;
                 case ',':
