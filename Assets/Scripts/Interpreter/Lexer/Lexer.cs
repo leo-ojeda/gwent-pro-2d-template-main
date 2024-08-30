@@ -19,46 +19,48 @@ namespace DSL.Lexer
         {
               {"card", TokenType.Card},
               {"effect", TokenType.Effect},
-              {"type", TokenType.Type},
-              {"name", TokenType.Name},
-              {"faction", TokenType.Faction},
-              {"power", TokenType.Power},
-              {"range", TokenType.Range},
-              {"onactivation", TokenType.OnActivation},
-              {"params", TokenType.Params},
-              {"action", TokenType.Action},
-              {"amount", TokenType.Amount},
-              {"source", TokenType.Source},
-              {"single", TokenType.Single},
-              {"predicate", TokenType.Predicate},
-              {"number", TokenType.Number},
+              {"Type", TokenType.Type},
+              {"Name", TokenType.Name},
+              {"Faction", TokenType.Faction},
+              {"Power", TokenType.Power},
+              {"Range", TokenType.Range},
+              {"OnActivation", TokenType.OnActivation},
+              {"Params", TokenType.Params},
+              {"Action", TokenType.Action},
+              {"Amount", TokenType.Amount},
+              {"Source", TokenType.Source},
+              {"Single", TokenType.Single},
+              {"Predicate", TokenType.Predicate},
+              {"Number", TokenType.Number},
               {"for", TokenType.For},
               {"in", TokenType.In},
               {"while", TokenType.While},
+              {"Effect",TokenType.effect},
               {"return", TokenType.Return},
-             // {"triggerplayer", TokenType.TriggerPlayer},
-             // {"handoffplayer", TokenType.HandOfPlayer},
-             // {"fieldofplayer", TokenType.FieldOfPlayer},
-             // {"graveyardofplayer", TokenType.GraveyardOfPlayer},
-             // {"deckofplayer", TokenType.DeckOfPlayer},
-             // {"hand", TokenType.Hand},
-             // {"field", TokenType.Field},
-             // {"graveyard", TokenType.Graveyard},
-             // {"deck", TokenType.Deck},
-             // {"board", TokenType.Board},
-             // {"push", TokenType.Push},
-             // {"sendbottom", TokenType.SendBottom},
-             // {"pop", TokenType.Pop},
-             // {"remove", TokenType.Remove},
-             // {"shuffle", TokenType.Shuffle},
-             // {"find", TokenType.Find},
+              {"triggerplayer", TokenType.TriggerPlayer},
+              {"HandOfPlayer", TokenType.HandOfPlayer},
+              {"FieldOfPlayer", TokenType.FieldOfPlayer},
+              {"GraveyardOfPlayer", TokenType.GraveyardOfPlayer},
+              {"DeckOfPlayer", TokenType.DeckOfPlayer},
+              {"Hand", TokenType.Hand},
+              {"Field", TokenType.Field},
+              {"Graveyard", TokenType.Graveyard},
+              {"Deck", TokenType.Deck},
+              {"Board", TokenType.Board},
+              {"Push", TokenType.Push},
+              {"sendbottom", TokenType.SendBottom},
+              {"Pop", TokenType.Pop},
+              {"Remove", TokenType.Remove},
+              {"Shuffle", TokenType.Shuffle},
+              {"Find", TokenType.Find},
+              {"Add",TokenType.Add},
               {"bool", TokenType.Bool},
               {"false", TokenType.False},
               {"true", TokenType.True},
-              {"postaction", TokenType.PostAction},
-              {"owner", TokenType.Owner},
+              {"PostAction", TokenType.PostAction},
+              {"Owner", TokenType.Owner},
               {"unit", TokenType.Unit},
-              {"selector", TokenType.Selector},
+              {"Selector", TokenType.Selector},
         };
 
         // Carácter actual que se está procesando
@@ -272,7 +274,7 @@ namespace DSL.Lexer
                     }
                     else if (IsLetter(_currentChar))
                     {
-                        CurrentToken = IdentifierToken();
+                        CurrentToken = VariableOrIdentifierToken();
                     }
                     else
                     {
@@ -301,17 +303,46 @@ namespace DSL.Lexer
             }
 
             string tokenString = sb.ToString();
-            string normalizedTokenString = tokenString.ToLower(); // Convertir a minúsculas
 
-            if (_keyWordsTokens.ContainsKey(normalizedTokenString))
+
+            if (_keyWordsTokens.ContainsKey(tokenString))
             {
-                return new Token(_keyWordsTokens[normalizedTokenString], tokenString, CurrentPos);
+                return new Token(_keyWordsTokens[tokenString], tokenString, CurrentPos);
             }
             else
             {
                 return new Token(TokenType.Identifier, tokenString, CurrentPos);
             }
         }
+        private Token VariableOrIdentifierToken()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            while (IsAlphaNumeric(_currentChar))
+            {
+                sb.Append(_currentChar);
+                AdvanceChar();
+            }
+
+            string tokenString = sb.ToString();
+
+            // Si el siguiente carácter es '=' y el token actual no está vacío, es una variable
+            if (_currentChar == '=' && tokenString.Length > 0)
+            {
+                AdvanceChar(); // Consumir '='
+                return new Token(TokenType.Variable, tokenString, CurrentPos);
+            }
+
+            if (_keyWordsTokens.ContainsKey(tokenString))
+            {
+                return new Token(_keyWordsTokens[tokenString], tokenString, CurrentPos);
+            }
+            else
+            {
+                return new Token(TokenType.Identifier, tokenString, CurrentPos);
+            }
+        }
+
 
 
         // Procesa un token numérico

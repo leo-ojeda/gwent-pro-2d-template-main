@@ -55,10 +55,12 @@ namespace DSL.Lexer
         // Identificadores
         Identifier,
         EndOfInput,
+        Variable,
 
         // Palabras clave del DSL
         Card,
         Effect,
+        effect,
         Type,
         Name,
         Faction,
@@ -98,5 +100,7 @@ namespace DSL.Lexer
         Pop,
         Remove,
         Find,
+        Add,
+        
     }
 }
