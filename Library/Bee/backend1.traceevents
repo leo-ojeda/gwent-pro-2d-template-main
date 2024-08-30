@@ -1,232 +1,166 @@
 { "cat":"", "pid":12345, "tid":0, "ts":0, "ph":"M", "name":"process_name", "args": { "name":"bee_backend" } }
-,{ "pid":12345, "tid":0, "ts":1724993199531596, "dur":2170, "ph":"X", "name": "DriverInitData",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":0, "ts":1724993199533776, "dur":501, "ph":"X", "name": "RemoveStaleOutputs",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":0, "ts":1724993199534324, "dur":278, "ph":"X", "name": "BuildQueueInit",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":0, "ts":1724993199534623, "dur":3555, "ph":"X", "name": "EnqueueRequestedNodes",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":0, "ts":1724993199538180, "dur":193414, "ph":"X", "name": "WaitForBuildFinished", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":0, "ts":1724993199731596, "dur":149, "ph":"X", "name": "JoinBuildThread",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":0, "ts":1724993199731845, "dur":2370, "ph":"X", "name": "Tundra",  "args": { "detail":"Write AllBuiltNodes" }}
-,{ "pid":12345, "tid":1, "ts":1724993199534927, "dur":3259, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":1, "ts":1724993199538189, "dur":8675, "ph":"X", "name": "CheckDagSignatures",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":1, "ts":1724993199546922, "dur":152, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\PlayerDataCache\\Win64\\Data\\boot.config" }}
-,{ "pid":12345, "tid":1, "ts":1724993199547083, "dur":5178, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\PlayerDataCache\\Win64\\Data\\RuntimeInitializeOnLoads.json" }}
-,{ "pid":12345, "tid":1, "ts":1724993199546921, "dur":5557, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"AddBootConfigGUID Library/Bee/artifacts/WinPlayerBuildProgram/boot.config" }}
-,{ "pid":12345, "tid":1, "ts":1724993199685575, "dur":50, "ph":"X", "name": "EmitNodeFinish",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":1, "ts":1724993199553491, "dur":132157, "ph":"X", "name": "AddBootConfigGUID",  "args": { "detail":"Library/Bee/artifacts/WinPlayerBuildProgram/boot.config" }}
-,{ "pid":12345, "tid":1, "ts":1724993199688385, "dur":3549, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\Bee\\artifacts\\WinPlayerBuildProgram\\boot.config" }}
-,{ "pid":12345, "tid":1, "ts":1724993199688385, "dur":3550, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/boot.config" }}
-,{ "pid":12345, "tid":1, "ts":1724993199691974, "dur":902, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/boot.config" }}
-,{ "pid":12345, "tid":1, "ts":1724993199692879, "dur":38697, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199534965, "dur":3232, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199538199, "dur":566, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199538765, "dur":8141, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199546906, "dur":147, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/settings.map" }}
-,{ "pid":12345, "tid":2, "ts":1724993199547053, "dur":838, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199547946, "dur":382, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199548332, "dur":66, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx" }}
-,{ "pid":12345, "tid":2, "ts":1724993199548399, "dur":298, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199548716, "dur":713, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199549442, "dur":264, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199549716, "dur":190, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199549965, "dur":98, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.VisualScripting.State.dll" }}
-,{ "pid":12345, "tid":2, "ts":1724993199549964, "dur":100, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.VisualScripting.State.dll" }}
-,{ "pid":12345, "tid":2, "ts":1724993199550065, "dur":249, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199550324, "dur":349, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199550684, "dur":326, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199551023, "dur":206, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199551244, "dur":170, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199551425, "dur":204, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199551645, "dur":153, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199551811, "dur":376, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199552200, "dur":347, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199552574, "dur":236, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199552822, "dur":229, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199553067, "dur":50, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199553124, "dur":173, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199553405, "dur":231, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199553646, "dur":252, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199553960, "dur":145, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199554113, "dur":168, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199554287, "dur":621, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":2, "ts":1724993199554915, "dur":176674, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199534959, "dur":3233, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199538194, "dur":567, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199538761, "dur":8132, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199546899, "dur":104, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/browscap.ini" }}
-,{ "pid":12345, "tid":3, "ts":1724993199547004, "dur":500, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199547513, "dur":52, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/Browsers/Compat.browser" }}
-,{ "pid":12345, "tid":3, "ts":1724993199547566, "dur":711, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199548284, "dur":191, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/settings.map" }}
-,{ "pid":12345, "tid":3, "ts":1724993199548476, "dur":216, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199548698, "dur":64, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Resources/unity default resources" }}
-,{ "pid":12345, "tid":3, "ts":1724993199548823, "dur":605, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199549448, "dur":264, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199549721, "dur":211, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199549938, "dur":304, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.VisualScripting.Flow.dll" }}
-,{ "pid":12345, "tid":3, "ts":1724993199549937, "dur":306, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.VisualScripting.Flow.dll" }}
-,{ "pid":12345, "tid":3, "ts":1724993199550244, "dur":58, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":3, "ts":1724993199550307, "dur":105, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Assembly-CSharp.dll" }}
-,{ "pid":12345, "tid":3, "ts":1724993199550306, "dur":106, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Assembly-CSharp.dll" }}
-,{ "pid":12345, "tid":3, "ts":1724993199551617, "dur":3405, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Assembly-CSharp.dll" }}
-,{ "pid":12345, "tid":3, "ts":1724993199555051, "dur":176523, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199534972, "dur":3231, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199538206, "dur":540, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199538746, "dur":8122, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199546877, "dur":87, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199546972, "dur":321, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199547300, "dur":50, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/DefaultWsdlHelpGenerator.aspx" }}
-,{ "pid":12345, "tid":4, "ts":1724993199547351, "dur":732, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199548096, "dur":307, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\2.0\\web.config" }}
-,{ "pid":12345, "tid":4, "ts":1724993199548088, "dur":316, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/web.config" }}
-,{ "pid":12345, "tid":4, "ts":1724993199548405, "dur":312, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199548726, "dur":752, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199549491, "dur":203, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199549707, "dur":58, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199549775, "dur":210, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199549993, "dur":452, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.TextMeshPro.dll" }}
-,{ "pid":12345, "tid":4, "ts":1724993199549991, "dur":455, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.TextMeshPro.dll" }}
-,{ "pid":12345, "tid":4, "ts":1724993199550447, "dur":268, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199550733, "dur":414, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199551158, "dur":197, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199551369, "dur":66, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199551444, "dur":177, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199551634, "dur":122, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199551775, "dur":61, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199551845, "dur":164, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199552016, "dur":373, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199552403, "dur":177, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199552590, "dur":265, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199552861, "dur":206, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199553095, "dur":193, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199553297, "dur":65, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199553370, "dur":111, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199553491, "dur":182, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199553690, "dur":180, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199553923, "dur":186, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199554125, "dur":234, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199554369, "dur":133, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199554510, "dur":364, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":4, "ts":1724993199554882, "dur":176705, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199535002, "dur":3208, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199538213, "dur":592, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199538805, "dur":8079, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199546890, "dur":172, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/config" }}
-,{ "pid":12345, "tid":5, "ts":1724993199547063, "dur":575, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199547643, "dur":51, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/web.config" }}
-,{ "pid":12345, "tid":5, "ts":1724993199547694, "dur":642, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199548346, "dur":102, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\EmbedRuntime\\MonoPosixHelper.dll" }}
-,{ "pid":12345, "tid":5, "ts":1724993199548344, "dur":105, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/EmbedRuntime/MonoPosixHelper.dll" }}
-,{ "pid":12345, "tid":5, "ts":1724993199548449, "dur":259, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199548741, "dur":686, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199549452, "dur":265, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199549727, "dur":196, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199549933, "dur":316, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199550262, "dur":210, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\UnityEngine.UI.dll" }}
-,{ "pid":12345, "tid":5, "ts":1724993199550260, "dur":213, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/UnityEngine.UI.dll" }}
-,{ "pid":12345, "tid":5, "ts":1724993199550473, "dur":158, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199550644, "dur":338, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199550997, "dur":164, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199551172, "dur":55, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199551238, "dur":183, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199551433, "dur":189, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199551636, "dur":152, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199551796, "dur":207, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199552015, "dur":171, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199552195, "dur":347, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199552607, "dur":187, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199552804, "dur":246, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199553116, "dur":177, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199553303, "dur":52, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199553472, "dur":170, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199553648, "dur":236, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199553938, "dur":156, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199554101, "dur":116, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199554224, "dur":150, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199554381, "dur":264, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":5, "ts":1724993199554653, "dur":176928, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199535028, "dur":3188, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199538218, "dur":585, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199538803, "dur":8098, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199546915, "dur":162, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.5\\web.config" }}
-,{ "pid":12345, "tid":6, "ts":1724993199546904, "dur":174, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/web.config" }}
-,{ "pid":12345, "tid":6, "ts":1724993199547079, "dur":794, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199547880, "dur":52, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.0\\machine.config" }}
-,{ "pid":12345, "tid":6, "ts":1724993199547878, "dur":54, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/machine.config" }}
-,{ "pid":12345, "tid":6, "ts":1724993199547933, "dur":389, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199548329, "dur":72, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\2.0\\machine.config" }}
-,{ "pid":12345, "tid":6, "ts":1724993199548327, "dur":74, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/machine.config" }}
-,{ "pid":12345, "tid":6, "ts":1724993199548402, "dur":326, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199548745, "dur":682, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199549440, "dur":288, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199549738, "dur":152, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199549899, "dur":358, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199550266, "dur":199, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.Timeline.dll" }}
-,{ "pid":12345, "tid":6, "ts":1724993199550264, "dur":202, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.Timeline.dll" }}
-,{ "pid":12345, "tid":6, "ts":1724993199550466, "dur":248, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199550726, "dur":1071, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199551808, "dur":202, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199552027, "dur":361, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199552400, "dur":197, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199552605, "dur":194, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199552807, "dur":446, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199553324, "dur":136, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199553521, "dur":379, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199553914, "dur":167, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199554087, "dur":119, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199554212, "dur":151, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199554372, "dur":142, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":6, "ts":1724993199554518, "dur":177082, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199535060, "dur":3163, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199538237, "dur":519, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199538756, "dur":8123, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199546891, "dur":100, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\mconfig\\config.xml" }}
-,{ "pid":12345, "tid":7, "ts":1724993199546880, "dur":112, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/mconfig/config.xml" }}
-,{ "pid":12345, "tid":7, "ts":1724993199546993, "dur":791, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199547790, "dur":50, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/settings.map" }}
-,{ "pid":12345, "tid":7, "ts":1724993199547840, "dur":495, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199548340, "dur":115, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser" }}
-,{ "pid":12345, "tid":7, "ts":1724993199548455, "dur":264, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199548730, "dur":768, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199549504, "dur":146, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199549660, "dur":65, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199549734, "dur":227, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199549969, "dur":549, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.VisualScripting.Core.dll" }}
-,{ "pid":12345, "tid":7, "ts":1724993199549967, "dur":552, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.VisualScripting.Core.dll" }}
-,{ "pid":12345, "tid":7, "ts":1724993199550520, "dur":90, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199550621, "dur":386, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199551016, "dur":206, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199551234, "dur":51, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199551293, "dur":337, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199551645, "dur":365, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199552024, "dur":401, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199552432, "dur":136, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199552577, "dur":256, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199552842, "dur":222, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199553079, "dur":54, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199553141, "dur":359, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199553506, "dur":242, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\UnityPlayer.dll" }}
-,{ "pid":12345, "tid":7, "ts":1724993199553505, "dur":244, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/UnityPlayer.dll" }}
-,{ "pid":12345, "tid":7, "ts":1724993199553801, "dur":232, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199554041, "dur":182, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199554228, "dur":188, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199554422, "dur":252, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":7, "ts":1724993199554678, "dur":176899, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199535087, "dur":3157, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199538244, "dur":501, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199538746, "dur":291, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199539037, "dur":7840, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199546892, "dur":90, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\UnityCrashHandler64.exe" }}
-,{ "pid":12345, "tid":8, "ts":1724993199546879, "dur":104, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/UnityCrashHandler64.exe" }}
-,{ "pid":12345, "tid":8, "ts":1724993199546984, "dur":115, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199547107, "dur":55, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.5\\machine.config" }}
-,{ "pid":12345, "tid":8, "ts":1724993199547106, "dur":56, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/machine.config" }}
-,{ "pid":12345, "tid":8, "ts":1724993199547163, "dur":900, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548068, "dur":91, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/Browsers/Compat.browser" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548159, "dur":193, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548359, "dur":64, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\EmbedRuntime\\mono-2.0-bdwgc.dll" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548357, "dur":67, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548425, "dur":231, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548662, "dur":182805, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Temp\\StagingArea\\WindowsPlayer.exe" }}
-,{ "pid":12345, "tid":8, "ts":1724993199548661, "dur":182808, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent.exe" }}
-,{ "pid":12345, "tid":0, "ts":1724993199736792, "dur":3788, "ph":"X", "name": "ProfilerWriteOutput" }
+,{ "pid":12345, "tid":0, "ts":1725050298630639, "dur":3237, "ph":"X", "name": "DriverInitData",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050298633888, "dur":134, "ph":"X", "name": "RemoveStaleOutputs",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050298634067, "dur":227, "ph":"X", "name": "BuildQueueInit",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050298634499, "dur":63, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level4" }}
+,{ "pid":12345, "tid":0, "ts":1725050298634807, "dur":118, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets1.assets" }}
+,{ "pid":12345, "tid":0, "ts":1725050298635026, "dur":86, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets4.assets" }}
+,{ "pid":12345, "tid":0, "ts":1725050298635197, "dur":139, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/UnityEngine.AIModule.dll" }}
+,{ "pid":12345, "tid":0, "ts":1725050298635439, "dur":109, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/UnityEngine.AssetBundleModule.dll" }}
+,{ "pid":12345, "tid":0, "ts":1725050298636136, "dur":57, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/UnityEngine.PerformanceReportingModule.dll" }}
+,{ "pid":12345, "tid":0, "ts":1725050298636294, "dur":125, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/UnityEngine.PropertiesModule.dll" }}
+,{ "pid":12345, "tid":0, "ts":1725050298638014, "dur":50, "ph":"X", "name": "EmitFirstTimeEnqueue",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/System.Data.DataSetExtensions.dll" }}
+,{ "pid":12345, "tid":0, "ts":1725050298634317, "dur":4857, "ph":"X", "name": "EnqueueRequestedNodes",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050298639175, "dur":495196, "ph":"X", "name": "WaitForBuildFinished", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050299134372, "dur":239, "ph":"X", "name": "JoinBuildThread",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050299134726, "dur":1614, "ph":"X", "name": "Tundra",  "args": { "detail":"Write AllBuiltNodes" }}
+,{ "pid":12345, "tid":1, "ts":1725050298634773, "dur":4409, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":1, "ts":1725050298639185, "dur":6377, "ph":"X", "name": "CheckDagSignatures",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":1, "ts":1725050298645620, "dur":2857, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\PlayerDataCache\\Win64\\Data\\boot.config" }}
+,{ "pid":12345, "tid":1, "ts":1725050298648497, "dur":6152, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\PlayerDataCache\\Win64\\Data\\ScriptingAssemblies.json" }}
+,{ "pid":12345, "tid":1, "ts":1725050298645619, "dur":9321, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"AddBootConfigGUID Library/Bee/artifacts/WinPlayerBuildProgram/boot.config" }}
+,{ "pid":12345, "tid":1, "ts":1725050298655216, "dur":63, "ph":"X", "name": "StoreTimestampsOfNonGeneratedInputFiles",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":1, "ts":1725050298657823, "dur":469833, "ph":"X", "name": "AddBootConfigGUID",  "args": { "detail":"Library/Bee/artifacts/WinPlayerBuildProgram/boot.config" }}
+,{ "pid":12345, "tid":1, "ts":1725050299130266, "dur":3325, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\Bee\\artifacts\\WinPlayerBuildProgram\\boot.config" }}
+,{ "pid":12345, "tid":1, "ts":1725050299130265, "dur":3328, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/boot.config" }}
+,{ "pid":12345, "tid":1, "ts":1725050299133614, "dur":728, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/boot.config" }}
+,{ "pid":12345, "tid":2, "ts":1725050298635398, "dur":3831, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298639230, "dur":609, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298639840, "dur":5840, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298645683, "dur":134, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/settings.map" }}
+,{ "pid":12345, "tid":2, "ts":1725050298645861, "dur":74, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/Browsers/Compat.browser" }}
+,{ "pid":12345, "tid":2, "ts":1725050298645936, "dur":61, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646014, "dur":75, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\EmbedRuntime\\mono-2.0-bdwgc.dll" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646005, "dur":87, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646128, "dur":89, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646240, "dur":125, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646371, "dur":284, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\UnityEngine.UI.dll" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646369, "dur":287, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/UnityEngine.UI.dll" }}
+,{ "pid":12345, "tid":2, "ts":1725050298646710, "dur":86, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":2, "ts":1725050298647635, "dur":4983, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets3.assets" }}
+,{ "pid":12345, "tid":2, "ts":1725050298652650, "dur":7648, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Library\\PlayerDataCache\\Win64\\Data\\ScriptingAssemblies.json" }}
+,{ "pid":12345, "tid":2, "ts":1725050298652649, "dur":7652, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/ScriptingAssemblies.json" }}
+,{ "pid":12345, "tid":2, "ts":1725050298660334, "dur":124, "ph":"X", "name": "EmitNodeUpToDate",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/ScriptingAssemblies.json" }}
+,{ "pid":12345, "tid":2, "ts":1725050298660497, "dur":5559, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level3.resS" }}
+,{ "pid":12345, "tid":2, "ts":1725050298666083, "dur":468303, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298635367, "dur":3856, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298639225, "dur":490, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298639715, "dur":329, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298640044, "dur":5533, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298645596, "dur":81, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\UnityCrashHandler64.exe" }}
+,{ "pid":12345, "tid":3, "ts":1725050298645583, "dur":95, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/UnityCrashHandler64.exe" }}
+,{ "pid":12345, "tid":3, "ts":1725050298645708, "dur":79, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/DefaultWsdlHelpGenerator.aspx" }}
+,{ "pid":12345, "tid":3, "ts":1725050298645787, "dur":56, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298645848, "dur":64, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/DefaultWsdlHelpGenerator.aspx" }}
+,{ "pid":12345, "tid":3, "ts":1725050298645957, "dur":62, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser" }}
+,{ "pid":12345, "tid":3, "ts":1725050298646020, "dur":57, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298646332, "dur":92, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.VisualScripting.State.dll" }}
+,{ "pid":12345, "tid":3, "ts":1725050298646330, "dur":94, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.VisualScripting.State.dll" }}
+,{ "pid":12345, "tid":3, "ts":1725050298646470, "dur":156, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.Timeline.dll" }}
+,{ "pid":12345, "tid":3, "ts":1725050298646469, "dur":159, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.Timeline.dll" }}
+,{ "pid":12345, "tid":3, "ts":1725050298647893, "dur":4687, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets4.assets" }}
+,{ "pid":12345, "tid":3, "ts":1725050298652635, "dur":6658, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets0.assets.resS" }}
+,{ "pid":12345, "tid":3, "ts":1725050298660819, "dur":56, "ph":"X", "name": "EmitNodeFinish",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298659338, "dur":1636, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level4.resS" }}
+,{ "pid":12345, "tid":3, "ts":1725050298662642, "dur":81, "ph":"X", "name": "EmitNodeFinish",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298661047, "dur":1875, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level2.resS" }}
+,{ "pid":12345, "tid":3, "ts":1725050298662995, "dur":54, "ph":"X", "name": "EmitNodeStart",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":3, "ts":1725050298663058, "dur":2076, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level1" }}
+,{ "pid":12345, "tid":3, "ts":1725050298665201, "dur":2624, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/globalgamemanagers" }}
+,{ "pid":12345, "tid":3, "ts":1725050298667861, "dur":466507, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298635189, "dur":4018, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298639210, "dur":519, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298639729, "dur":5838, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298645580, "dur":85, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298645705, "dur":127, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.5\\machine.config" }}
+,{ "pid":12345, "tid":4, "ts":1725050298645700, "dur":133, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/machine.config" }}
+,{ "pid":12345, "tid":4, "ts":1725050298645834, "dur":87, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298645927, "dur":87, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/settings.map" }}
+,{ "pid":12345, "tid":4, "ts":1725050298646014, "dur":78, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298646102, "dur":102, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298646237, "dur":202, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298646487, "dur":142, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Assembly-CSharp.dll" }}
+,{ "pid":12345, "tid":4, "ts":1725050298646477, "dur":152, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Assembly-CSharp.dll" }}
+,{ "pid":12345, "tid":4, "ts":1725050298646755, "dur":63, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298647019, "dur":111, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298648713, "dur":3901, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets1.assets" }}
+,{ "pid":12345, "tid":4, "ts":1725050298652695, "dur":114, "ph":"X", "name": "EmitNodeUpToDate",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/RuntimeInitializeOnLoads.json" }}
+,{ "pid":12345, "tid":4, "ts":1725050298652874, "dur":6636, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Resources/unity_builtin_extra" }}
+,{ "pid":12345, "tid":4, "ts":1725050298660344, "dur":143, "ph":"X", "name": "EmitNodeFinish",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298659552, "dur":950, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level4" }}
+,{ "pid":12345, "tid":4, "ts":1725050298660549, "dur":942, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level3" }}
+,{ "pid":12345, "tid":4, "ts":1725050298661549, "dur":1380, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level2" }}
+,{ "pid":12345, "tid":4, "ts":1725050298663002, "dur":445, "ph":"X", "name": "EmitNodeStart",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":4, "ts":1725050298663454, "dur":1588, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level0.resS" }}
+,{ "pid":12345, "tid":4, "ts":1725050298665118, "dur":3879, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/globalgamemanagers.assets.resS" }}
+,{ "pid":12345, "tid":4, "ts":1725050298669034, "dur":465333, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":5, "ts":1725050298634843, "dur":4345, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":5, "ts":1725050298639191, "dur":687, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":5, "ts":1725050298639878, "dur":5709, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":5, "ts":1725050298645592, "dur":93, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/config" }}
+,{ "pid":12345, "tid":5, "ts":1725050298645721, "dur":116, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/Browsers/Compat.browser" }}
+,{ "pid":12345, "tid":5, "ts":1725050298645838, "dur":118, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":5, "ts":1725050298645988, "dur":97, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\EmbedRuntime\\MonoPosixHelper.dll" }}
+,{ "pid":12345, "tid":5, "ts":1725050298645980, "dur":105, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/EmbedRuntime/MonoPosixHelper.dll" }}
+,{ "pid":12345, "tid":5, "ts":1725050298646241, "dur":55, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":5, "ts":1725050298646329, "dur":265, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.VisualScripting.Flow.dll" }}
+,{ "pid":12345, "tid":5, "ts":1725050298646327, "dur":268, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.VisualScripting.Flow.dll" }}
+,{ "pid":12345, "tid":5, "ts":1725050298648493, "dur":4518, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets1.assets.resS" }}
+,{ "pid":12345, "tid":5, "ts":1725050298653063, "dur":11967, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/resources.resource" }}
+,{ "pid":12345, "tid":5, "ts":1725050298665444, "dur":2058, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/globalgamemanagers.assets" }}
+,{ "pid":12345, "tid":5, "ts":1725050298667555, "dur":466811, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298634984, "dur":4211, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298639197, "dur":687, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298639884, "dur":5743, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298645635, "dur":150, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.5\\web.config" }}
+,{ "pid":12345, "tid":6, "ts":1725050298645627, "dur":160, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.5/web.config" }}
+,{ "pid":12345, "tid":6, "ts":1725050298645787, "dur":52, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298645847, "dur":59, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.0\\machine.config" }}
+,{ "pid":12345, "tid":6, "ts":1725050298645845, "dur":61, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/machine.config" }}
+,{ "pid":12345, "tid":6, "ts":1725050298645949, "dur":66, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx" }}
+,{ "pid":12345, "tid":6, "ts":1725050298646016, "dur":62, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298646248, "dur":65, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298646350, "dur":452, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.VisualScripting.Core.dll" }}
+,{ "pid":12345, "tid":6, "ts":1725050298646348, "dur":455, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.VisualScripting.Core.dll" }}
+,{ "pid":12345, "tid":6, "ts":1725050298646804, "dur":212, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":6, "ts":1725050298647139, "dur":76, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\UnityPlayer.dll" }}
+,{ "pid":12345, "tid":6, "ts":1725050298647138, "dur":78, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/UnityPlayer.dll" }}
+,{ "pid":12345, "tid":6, "ts":1725050298648957, "dur":9781, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets0.resource" }}
+,{ "pid":12345, "tid":6, "ts":1725050298658802, "dur":5670, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/resources.assets" }}
+,{ "pid":12345, "tid":6, "ts":1725050298664526, "dur":1383, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/level0" }}
+,{ "pid":12345, "tid":6, "ts":1725050298665935, "dur":468450, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298635012, "dur":4189, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298639203, "dur":525, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298639729, "dur":5854, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645596, "dur":87, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\mconfig\\config.xml" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645583, "dur":101, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/mconfig/config.xml" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645684, "dur":88, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645776, "dur":65, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/settings.map" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645842, "dur":55, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645905, "dur":58, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\2.0\\web.config" }}
+,{ "pid":12345, "tid":7, "ts":1725050298645903, "dur":61, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/web.config" }}
+,{ "pid":12345, "tid":7, "ts":1725050298646014, "dur":37202, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"Temp\\StagingArea\\WindowsPlayer.exe" }}
+,{ "pid":12345, "tid":7, "ts":1725050298646013, "dur":37206, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent.exe" }}
+,{ "pid":12345, "tid":7, "ts":1725050298683220, "dur":65, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":7, "ts":1725050298683307, "dur":451057, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298635227, "dur":3988, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298639219, "dur":527, "ph":"X", "name": "EarlyStatNonGeneratedFile",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298639747, "dur":5847, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645597, "dur":87, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/browscap.ini" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645685, "dur":75, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645775, "dur":80, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\4.0\\web.config" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645767, "dur":88, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/4.0/web.config" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645856, "dur":70, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645933, "dur":66, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Program Files\\Unity 2022.3.15f1\\Editor\\Data\\PlaybackEngines\\WindowsStandaloneSupport\\Variations\\win64_player_nondevelopment_mono\\MonoBleedingEdge\\etc\\mono\\2.0\\machine.config" }}
+,{ "pid":12345, "tid":8, "ts":1725050298645931, "dur":68, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/MonoBleedingEdge/etc/mono/2.0/machine.config" }}
+,{ "pid":12345, "tid":8, "ts":1725050298646046, "dur":55, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Resources/unity default resources" }}
+,{ "pid":12345, "tid":8, "ts":1725050298646356, "dur":279, "ph":"X", "name": "ComputeFileSignatureSha1",  "args": { "detail":"C:\\Users\\Leonardo\\Desktop\\gwent-pro-2d-template-main\\gwent-pro-2d-template-main\\Library\\Bee\\PlayerScriptAssemblies\\Unity.TextMeshPro.dll" }}
+,{ "pid":12345, "tid":8, "ts":1725050298646355, "dur":281, "ph":"X", "name": "CheckInputSignature",  "args": { "detail":"CopyFiles C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/Managed/Unity.TextMeshPro.dll" }}
+,{ "pid":12345, "tid":8, "ts":1725050298648224, "dur":4363, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets2.assets" }}
+,{ "pid":12345, "tid":8, "ts":1725050298652628, "dur":85, "ph":"X", "name": "EmitNodeStart",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298657039, "dur":149, "ph":"X", "name": "EmitNodeFinish",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":8, "ts":1725050298652716, "dur":4513, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/sharedassets0.assets" }}
+,{ "pid":12345, "tid":8, "ts":1725050298657335, "dur":418036, "ph":"X", "name": "CopyFiles",  "args": { "detail":"C:/Users/Leonardo/Desktop/Minions 2/Gwent_Data/resources.assets.resS" }}
+,{ "pid":12345, "tid":8, "ts":1725050299075417, "dur":58967, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
+,{ "pid":12345, "tid":0, "ts":1725050299138622, "dur":717, "ph":"X", "name": "ProfilerWriteOutput" }
 ,

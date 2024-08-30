@@ -133,7 +133,7 @@ namespace DSL.Parser
             else
             {
                 ThrowSyntaxError($"Expected 'String', 'Identifier', or 'Number' for property '{propertyType}', but found '{valueToken.Type}'");
-                return null; // Este retorno nunca se alcanzará, es solo para evitar errores de compilación
+                return null; 
             }
         }
 
@@ -181,22 +181,15 @@ namespace DSL.Parser
                 {
                     ThrowSyntaxError($"Se esperaba '{{' pero se encontró '{_lexerStream.CurrentToken.Value}'");
                 }
-
-                // Si encontramos un CloseBracket aquí, terminamos el bucle
-                if (Match(TokenType.CloseBracket))
-                {
-                    break; // Termina el bucle si se encuentra CloseBracket
-                }
             }
 
-            // Consume el corchete de cierre
             Consume(TokenType.CloseBracket);
             return activations;
         }
 
         private EffectActivation ParseEffectActivation()
         {
-            // Consume el token de apertura del bloque de activación (si no se ha consumido en ParseCardEffect)
+            
             Consume(TokenType.OpenBrace);
 
             Effect effect = null;
@@ -206,11 +199,11 @@ namespace DSL.Parser
             while (!Match(TokenType.CloseBrace))
             {
                 // Verificar si se encuentra un CloseBracket prematuramente y terminar el bucle
-                if (Match(TokenType.CloseBracket))
-                {
-                    // Terminar el bucle y retornar el estado actual
-                    return new EffectActivation(effect, selector, postAction);
-                }
+              //  if (Match(TokenType.CloseBracket))
+              //  {
+              //      // Terminar el bucle y retornar el estado actual
+              //      return new EffectActivation(effect, selector, postAction);
+              //  }
 
                 switch (_lexerStream.CurrentToken.Type)
                 {
@@ -236,16 +229,12 @@ namespace DSL.Parser
                 {
                     Consume(TokenType.Comma);
                 }
-            }
-            if (Match(TokenType.CloseBrace))
-            {
+            }        
                 Consume(TokenType.CloseBrace);
                 if (Match(TokenType.Comma))
                 {
                     Consume(TokenType.Comma);
                 }
-
-            }
 
             // Retorna el objeto EffectActivation con los valores finales
             return new EffectActivation(effect, selector, postAction);
@@ -275,7 +264,7 @@ namespace DSL.Parser
                 }
                 catch (Exception ex)
                 {
-                    // Captura cualquier excepción en el parsing de efectos
+                    
                     ThrowSyntaxError($"Error parsing effect: {ex.Message}");
                 }
             }
@@ -284,9 +273,7 @@ namespace DSL.Parser
             return effects;
         }
         public Effect ParseEffect()
-        {
-            //Consume(TokenType.Effect);
-            //Consume(TokenType.OpenBrace);
+        {          
 
             string effectName = null;
             List<Parameter> parameters = new List<Parameter>();
@@ -312,8 +299,6 @@ namespace DSL.Parser
                 }
             }
 
-            //Consume(TokenType.CloseBrace);
-
             if (effectName == null)
             {
                 ThrowSyntaxError("Effect name is required", TokenType.Name);
@@ -323,15 +308,13 @@ namespace DSL.Parser
         }
 
 
-
-
         private List<Parameter> ParseParameters()
         {
             List<Parameter> parameters = new List<Parameter>();
 
-            Consume(TokenType.Params); // Consume "Params"
-            Consume(TokenType.Colon);  // Consume ":"
-            Consume(TokenType.OpenBrace); // Consume "{"
+            Consume(TokenType.Params);
+            Consume(TokenType.Colon);  
+            Consume(TokenType.OpenBrace); 
 
             while (!Match(TokenType.CloseBrace))
             {
@@ -365,56 +348,36 @@ namespace DSL.Parser
                 // Crear el parámetro y añadirlo a la lista
                 parameters.Add(new Parameter(paramType));
 
-                // Si hay una coma, consumirla y continuar al siguiente parámetro
-            }
-            if (Match(TokenType.CloseBrace))
-            {
-                Consume(TokenType.CloseBrace); // Consume "}"
+            
+            }          
+                Consume(TokenType.CloseBrace);
                 if (Match(TokenType.Comma))
                 {
                     Consume(TokenType.Comma);
                 }
-            }
-
+            
             return parameters;
         }
 
-        private object ParseParameterValue(ParamType type)
-        {
-            switch (type)
-            {
-                case ParamType.Number:
-                    return int.Parse(Consume(TokenType.Number).Value);
-                case ParamType.String:
-                    return Consume(TokenType.String).Value;
-                case ParamType.Bool:
-                    return bool.Parse(Consume(TokenType.Bool).Value);
-                default:
-                    throw new Exception("Tipo de parámetro desconocido.");
-            }
-        }
-
-
+       
         private Action<List<Card>, Context> ParseAction()
         {
-            // Consumir el token 'Action' que inicia la definición de la acción
             Consume(TokenType.Action);
-            Consume(TokenType.Colon); // Consumir el token ':'
-            Consume(TokenType.OpenParen); // Consumir el token '('
+            Consume(TokenType.Colon); 
+            Consume(TokenType.OpenParen); 
 
             // Leer y verificar los parámetros 'targets' y 'context'
-            var targetsParam = Consume(TokenType.Identifier).Value; // Debe ser "targets"
-            Consume(TokenType.Comma); // Consumir la coma que separa los parámetros
-            var contextParam = Consume(TokenType.Identifier).Value; // Debe ser "context"
-            Consume(TokenType.CloseParen); // Consumir el token ')'
-            Consume(TokenType.Arrow); // Consumir el token '=>'
-            Consume(TokenType.OpenBrace); // Consumir el token '{' que inicia el bloque de acciones
+            var targetsParam = Consume(TokenType.Identifier).Value; 
+            Consume(TokenType.Comma);
+            var contextParam = Consume(TokenType.Identifier).Value; 
+            Consume(TokenType.CloseParen); 
+            Consume(TokenType.Arrow); 
+            Consume(TokenType.OpenBrace);
 
             // Inicializar listas y diccionarios para almacenar acciones y variables locales
             List<Action<List<Card>, Context>> actions = new List<Action<List<Card>, Context>>();
             Dictionary<string, object> localVariables = new Dictionary<string, object>();
 
-            // Procesar el contenido del bloque de acciones
             while (!Match(TokenType.CloseBrace))
             {
                 if (Match(TokenType.For))
@@ -429,12 +392,11 @@ namespace DSL.Parser
                 }
                 else
                 {
-                    // Manejar cualquier token inesperado
                     ThrowSyntaxError($"Token inesperado '{_lexerStream.CurrentToken.Value}' en el bloque de acción.");
                 }
             }
 
-            Consume(TokenType.CloseBrace); // Consumir el token '}' que finaliza el bloque de acciones
+            Consume(TokenType.CloseBrace);
 
             // Retornar la acción final que ejecutará todas las acciones parseadas
             return (cards, ctx) =>
@@ -451,7 +413,7 @@ namespace DSL.Parser
             Consume(TokenType.For);
 
             var targetVarToken = Consume(TokenType.Identifier);
-            var targetVar = targetVarToken.Value; // Variable de iteración, ej., "target"
+            var targetVar = targetVarToken.Value; 
 
             if (!Match(TokenType.In))
             {
@@ -477,21 +439,16 @@ namespace DSL.Parser
                 {
                     ParseForLoopIdentifier(loopActions, localVariables, actions);
                 }
-                else if (Match(TokenType.While))
-                {
-                    ParseWhileLoop(actions);
-                }
                 else
                 {
                     ThrowSyntaxError("Unexpected token in for-loop body");
                 }
             }
-
-            Consume(TokenType.CloseBrace); // Consumir el token '}' que finaliza el cuerpo del bucle
+            Consume(TokenType.CloseBrace); 
 
             if (Match(TokenType.SemiColon))
             {
-                Consume(TokenType.SemiColon); // Consumir el token ';'
+                Consume(TokenType.SemiColon); 
             }
             else
             {
@@ -513,81 +470,23 @@ namespace DSL.Parser
 
         private void ParseForLoopIdentifier(List<Action<Card, Context>> loopActions, Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
         {
-            var variableToken = Consume(TokenType.Identifier);
-            var variable = variableToken.Value; // ej., "owner" o "i"
+            var variableToken = LookAhead(); 
+            var variable = variableToken.Value;
 
-            if (Match(TokenType.Equals) && variable == "i")
+            if (Match(TokenType.Identifier))
             {
-                Consume(TokenType.Equals);
-                var valueToken = Consume(TokenType.Number);
-                int value;
 
-                if (!int.TryParse(valueToken.Value, out value))
-                {
-                    ThrowSyntaxError("Invalid number format for assignment", TokenType.Number);
-                }
-                Consume(TokenType.SemiColon); // Consumir el token ';'
-                localVariables[variable] = value; // Almacenar la variable localmente
-            }
-            else if (Match(TokenType.Equals))
-            {
-                Consume(TokenType.Equals);
-                ParseAssignment(variable, localVariables);
-            }
-            else if (Match(TokenType.Dot))
-            {
-                ParsePropertyOrMethod(loopActions);
-            }
-            else if (Match(TokenType.Increment))
-            {
-                Consume(TokenType.Increment); // Consumir el token '++'
-                Consume(TokenType.SemiColon); // Consumir el token ';'
+                ParseAssignment(variable, localVariables,actions);
             }
             else
             {
                 ThrowSyntaxError($"Unexpected token in for-loop identifier handling: '{variableToken.Value}'");
             }
         }
-
-        private void ParsePropertyOrMethod(List<Action<Card, Context>> loopActions)
-        {
-            if (!Match(TokenType.Dot))
-            {
-                ThrowSyntaxError("Expected '.' before property or method access", TokenType.Dot);
-            }
-            Consume(TokenType.Dot);
-
-            var propertyOrMethodToken = Consume(TokenType.Identifier);
-            var propertyOrMethod = propertyOrMethodToken.Value; // ej., "Power" o "Shuffle"
-
-            if (Match(TokenType.Minus))
-            {
-                Consume(TokenType.Minus); // Consumir el token '-'
-                Consume(TokenType.Equals); // Consumir el token '='
-                var valueToken = Consume(TokenType.Number);
-                int value;
-
-                if (!int.TryParse(valueToken.Value, out value))
-                {
-                    ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
-                }
-                Consume(TokenType.SemiColon); // Consumir el token ';'
-                loopActions.Add((targetCard, ctx) => targetCard.Power -= value);
-            }
-            else
-            {
-                ThrowSyntaxError($"Unexpected token or operation after property or method '{propertyOrMethodToken.Value}'");
-            }
-        }
-
+   
         private void ParseWhileLoop(List<Action<List<Card>, Context>> actions)
         {
             Consume(TokenType.While);
-
-            if (!Match(TokenType.OpenParen))
-            {
-                ThrowSyntaxError("Expected '(' after 'while'", TokenType.OpenParen);
-            }
             Consume(TokenType.OpenParen);
 
             var loopVarToken = Consume(TokenType.Identifier);
@@ -608,7 +507,7 @@ namespace DSL.Parser
             var loopConditionToken = Consume(TokenType.Amount);
             var loopConditionValue = loopConditionToken.Value; // Valor de condición del bucle, ej., "Amount"
 
-            Consume(TokenType.CloseParen); // Consumir el token ')'
+            Consume(TokenType.CloseParen); 
 
             List<Action<Card, Context>> whileActions = new List<Action<Card, Context>>();
 
@@ -635,7 +534,7 @@ namespace DSL.Parser
                         {
                             ThrowSyntaxError("Invalid number format for decrement operation in while-loop", TokenType.Number);
                         }
-                        Consume(TokenType.SemiColon);
+                        
                         whileActions.Add((targetCard, ctx) => targetCard.Power -= value);
                     }
                     else
@@ -669,18 +568,13 @@ namespace DSL.Parser
 
         private void ParseIdentifier(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
         {
-            var contextObjectToken = Consume(TokenType.Identifier);
-            var contextObject = contextObjectToken.Value;
+            var contextObjectToken = LookAhead();
+            string contextObject = contextObjectToken.Value;
 
-            if (Match(TokenType.Dot))
+           
+            if (Match(TokenType.Identifier))
             {
-                Consume(TokenType.Dot);
-                ParseMemberAccess(contextObject, actions, localVariables);
-            }
-            else if (Match(TokenType.Equals))
-            {
-                Consume(TokenType.Equals);
-                ParseAssignment(contextObject, localVariables);
+                ParseAssignment(contextObject, localVariables,actions);
             }
             else
             {
@@ -688,111 +582,16 @@ namespace DSL.Parser
             }
         }
 
-
-        private void ParseMemberAccess(string contextObject, List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
+        private void ParseAssignment(string variableName, Dictionary<string, object> localVariables,List<Action<List<Card>, Context>> actions)
         {
-            // Consumir propiedades y métodos específicos del contexto
-            var propertyOrMethod = ConsumePropertyOrMethod();
-            var A = LookAhead();
-            if (IsMethodToken(A.Type))
-            {
-                switch (A.Type)
-                {
-                    case TokenType.Pop:
-                    case TokenType.Shuffle:
-                        Consume(TokenType.OpenParen);
-                        Consume(TokenType.CloseParen);
-                        break;
 
-                    case TokenType.Push:
-                    case TokenType.SendBottom:
-                    case TokenType.Remove:
-                    case TokenType.Find:
-                    case TokenType.Add:
-                        Consume(TokenType.OpenParen);
-                        Consume(TokenType.Identifier); // Leer el parámetro
-                        Consume(TokenType.CloseParen);
-                        break;
-
-                    default:
-                        ThrowSyntaxError($"Unexpected context method '{A.Value}'");
-                        break;
-                }
-            }
-
-            switch (propertyOrMethod.Type)
-            {
-
-                // Propiedades de context que requieren un parámetro
-                case TokenType.DeckOfPlayer:
-                case TokenType.HandOfPlayer:
-                case TokenType.FieldOfPlayer:
-                case TokenType.GraveyardOfPlayer:
-                    Consume(TokenType.OpenParen);
-                    var parameter = Consume(TokenType.Identifier); // Leer el parámetro
-                    Consume(TokenType.CloseParen);
-                    Consume(TokenType.SemiColon);
-                    break;
-
-                // Propiedades de context que pueden ser seguidas por un método
-                case TokenType.Deck:
-                case TokenType.Hand:
-                case TokenType.Field:
-                case TokenType.Graveyard:
-                case TokenType.Board:
-                    if (Match(TokenType.Dot))
-                    {
-                        Consume(TokenType.Dot);
-                        var method = ConsumeMethod();
-
-                        switch (method.Type)
-                        {
-                            case TokenType.Pop:
-                            case TokenType.Shuffle:
-                                Consume(TokenType.OpenParen);
-                                Consume(TokenType.CloseParen);
-                                break;
-
-                            case TokenType.Push:
-                            case TokenType.SendBottom:
-                            case TokenType.Remove:
-                            case TokenType.Find:
-                            case TokenType.Add:
-                                Consume(TokenType.OpenParen);
-                                Consume(TokenType.Identifier); // Leer el parámetro
-                                Consume(TokenType.CloseParen);
-                                break;
-
-                            default:
-                                ThrowSyntaxError($"Unexpected context method '{method.Value}'");
-                                break;
-                        }
-                        Consume(TokenType.SemiColon);
-                    }
-                    else
-                    {
-                        ThrowSyntaxError($"Expected method after context property '{propertyOrMethod.Value}'");
-                    }
-                    break;
-
-                default:
-                    ThrowSyntaxError($"Unexpected context property '{propertyOrMethod.Value}'");
-                    break;
-            }
-            Consume(TokenType.SemiColon);
-
-        }
-
-
-        private void ParseAssignment(string variableName, Dictionary<string, object> localVariables)
-        {
-            // Comenzar un bucle que continuará hasta encontrar un 'CloseBrace'
             while (LookAhead().Type != TokenType.CloseBrace)
             {
                 while (!Match(TokenType.SemiColon))
                 {
 
                     var identifier = LookAhead();
+                    variableName = identifier.Value;
 
                     if (identifier.Value == "context" || identifier.Value == "target")
                     {
@@ -815,7 +614,7 @@ namespace DSL.Parser
                                 case TokenType.FieldOfPlayer:
                                 case TokenType.GraveyardOfPlayer:
                                     Consume(TokenType.OpenParen);
-                                    Consume(TokenType.Identifier); // Leer el parámetro
+                                    Consume(TokenType.Identifier);
                                     Consume(TokenType.CloseParen);
                                     break;
 
@@ -844,7 +643,7 @@ namespace DSL.Parser
                                             case TokenType.Find:
                                             case TokenType.Add:
                                                 Consume(TokenType.OpenParen);
-                                                Consume(TokenType.Identifier); // Leer el parámetro
+                                                Consume(TokenType.Identifier); 
                                                 Consume(TokenType.CloseParen);
                                                 break;
 
@@ -872,10 +671,10 @@ namespace DSL.Parser
                             {
                                 case TokenType.Name:
                                 case TokenType.Power:
-                                case TokenType.Type:
-                                case TokenType.Range:
+                                //case TokenType.Type:
+                                //case TokenType.Range:
                                 case TokenType.Faction:
-                                case TokenType.OnActivation:
+                               // case TokenType.OnActivation:
                                 case TokenType.Owner:
                                     // Propiedad de target
                                     break;
@@ -896,6 +695,22 @@ namespace DSL.Parser
                         if (Match(TokenType.Equals))
                         {
                             Consume(TokenType.Equals);
+
+
+                            if (Match(TokenType.Number))
+                            {
+                                var valueToken = Consume(TokenType.Number);
+                                int value;
+
+                                if (!int.TryParse(valueToken.Value, out value))
+                                {
+                                    ThrowSyntaxError("Invalid number format for assignment", TokenType.Number);
+                                }
+                                Consume(TokenType.SemiColon);
+                                localVariables[variable] = value; // Almacenar la variable localmente
+
+                            }
+
                         }
                         if (Match(TokenType.Dot))
                         {
@@ -918,7 +733,7 @@ namespace DSL.Parser
                                     case TokenType.Find:
                                     case TokenType.Add:
                                         Consume(TokenType.OpenParen);
-                                        Consume(TokenType.Identifier); // Leer el parámetro
+                                        Consume(TokenType.Identifier);
                                         Consume(TokenType.CloseParen);
                                         break;
 
@@ -930,6 +745,12 @@ namespace DSL.Parser
                         }
 
                     }
+                    else if (identifier.Type == TokenType.While)
+                    {                       
+                        {
+                            ParseWhileLoop(actions);
+                        }
+                    }
 
 
                     else
@@ -938,7 +759,7 @@ namespace DSL.Parser
                     }
 
                 }
-                // Consumir el token de final de expresión
+              
                 Consume(TokenType.SemiColon);
             }
         }
@@ -965,7 +786,7 @@ namespace DSL.Parser
 
         private Token ConsumeMethod()
         {
-            // Consumo un token que es un método específico del context después de una propiedad
+            
             var nextToken = LookAhead();
             if (IsMethodToken(nextToken.Type))
             {
@@ -980,7 +801,7 @@ namespace DSL.Parser
 
         private Token ConsumeTargetProperty()
         {
-            // Consumo un token que es una propiedad específica de target
+            
             var nextToken = LookAhead();
             if (IsTargetPropertyToken(nextToken.Type))
             {
@@ -989,7 +810,7 @@ namespace DSL.Parser
             else
             {
                 ThrowSyntaxError($"Unexpected token '{nextToken.Value}'. Expected a target property.");
-                return null; // Nunca se alcanza, solo para cumplir con el flujo de control
+                return null; 
             }
         }
 
@@ -1081,8 +902,7 @@ namespace DSL.Parser
                         ThrowSyntaxError($"Unexpected token '{_lexerStream.CurrentToken.Value}' in Selector");
                         break;
                 }
-
-                // Verifica si hay más propiedades y si se debe consumir una coma
+               
                 if (!Match(TokenType.CloseBrace) && !Match(TokenType.Comma))
                 {
                     ThrowSyntaxError($"Expected a comma or closing brace in Selector, but found '{_lexerStream.CurrentToken.Value}'");
@@ -1149,7 +969,7 @@ namespace DSL.Parser
                         break;
                 }
 
-                // Verifica si hay más propiedades y si se debe consumir una coma
+                
                 if (!Match(TokenType.CloseBrace) && !Match(TokenType.Comma))
                 {
                     ThrowSyntaxError($"Expected a comma or closing brace in PostAction, but found '{_lexerStream.CurrentToken.Value}'");
@@ -1159,27 +979,24 @@ namespace DSL.Parser
                 {
                     Consume(TokenType.Comma);
                 }
-            }
-            if (Match(TokenType.CloseBrace))
-            {
+            }          
                 Consume(TokenType.CloseBrace);
 
                 if (Match(TokenType.Comma))
                 {
                     Consume(TokenType.Comma);
-                }
-            }
+                }           
 
             return new PostAction(type, selector);
         }
 
 
-        private string ParsePredicate()
+        private string ParsePredicate() //Debe mejorarse
         {
-            // Confirmamos que hemos encontrado el token 'Predicate'
+            
             Consume(TokenType.Predicate);
             Consume(TokenType.Colon);
-            Consume(TokenType.OpenParen); // Consume '('
+            Consume(TokenType.OpenParen); 
 
             var predicate = new StringBuilder();
 
@@ -1187,10 +1004,9 @@ namespace DSL.Parser
             var paramToken = Consume(TokenType.Unit); // Esto debería ser 'unit' o cualquier otro parámetro específico
             predicate.Append(paramToken.Value);
 
-            Consume(TokenType.CloseParen); // Consume ')'
-
-            // Verificamos si sigue una expresión lambda
-            if (Match(TokenType.Arrow)) // TokenType.Arrow es '=>'
+            Consume(TokenType.CloseParen); 
+          
+            if (Match(TokenType.Arrow)) 
             {
                 Consume(TokenType.Arrow);
                 predicate.Append(" => ");
@@ -1257,7 +1073,7 @@ namespace DSL.Parser
             }
             Token token = _lexerStream.CurrentToken;
             _lexerStream.Advance();
-            LogTokenConsumed(token);
+            //LogTokenConsumed(token);
             return token;
         }
 
@@ -1276,10 +1092,10 @@ namespace DSL.Parser
             Debug.Log($"Current Token in {context}: {_lexerStream.CurrentToken}");
         }
 
-        private void LogTokenConsumed(Token token)
-        {
-            Debug.Log($"Consumed Token: {token}");
-        }
+      //  private void LogTokenConsumed(Token token)
+      //  {
+      //      Debug.Log($"Consumed Token: {token}");
+      //  }
 
         private void ThrowSyntaxError(string message, TokenType expectedType = TokenType.None)
         {
@@ -1318,13 +1134,13 @@ namespace DSL.Parser
                 {
                     Token token = _lexerStream.CurrentToken;
                     _lexerStream.Advance();
-                    LogTokenConsumed(token);
+                   // LogTokenConsumed(token);
                     return token;
                 }
             }
 
             ThrowSyntaxError($"Expected one of the following types: {string.Join(", ", types)} but found '{LookAhead().Type}'");
-            return null; // Este retorno nunca se alcanzará, es solo para evitar errores de compilación
+            return null; 
         }
         private Effect ParseCardEffect()
         {
@@ -1370,15 +1186,15 @@ namespace DSL.Parser
                             break;
                     }
 
-                    // _lexerStream.Advance();
+                   
                 }
                 if (Match(TokenType.CloseBrace))
                 {
                     Consume(TokenType.CloseBrace);
                 }
 
-                // Crear el objeto Effect usando los datos parseados
-                return new Effect(effectName, parameters, action); // action es de tipo Action<List<Card>, Context>
+                
+                return new Effect(effectName, parameters, action); 
             }
             else
             {
@@ -1391,14 +1207,14 @@ namespace DSL.Parser
 
             if (Match(TokenType.OpenBrace))
             {
-                Consume(TokenType.OpenBrace); // Consume la llave de apertura
+                Consume(TokenType.OpenBrace); 
             }
 
             if (Match(TokenType.Effect))
             {
                 string effectName = ParseProperty(TokenType.Effect);
                 Consume(TokenType.Comma);
-                // Consume el posible cierre de llave si el efecto es un nombre simple
+                
                 if (Match(TokenType.CloseBrace))
                 {
                     return new Effect(effectName, new List<Parameter>(), null); // action es null porque no hay selector ni postAction
@@ -1446,7 +1262,7 @@ namespace DSL.Parser
                 else
                 {
                     ThrowSyntaxError($"Expected 'Value' for property '{TokenType.String}', but found '{valueToken.Type}'");
-                    return null; // Este retorno nunca se alcanzará, es solo para evitar errores de compilación
+                    return null; 
                 }
             }
 

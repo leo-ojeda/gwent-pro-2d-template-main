@@ -109,14 +109,14 @@ public class DSLInterpreter : MonoBehaviour
                 resultBuilder.AppendLine(error);
             }
 
-            // Mostrar errores en color rojo
-            outputText.color = Color.red;
+            
+            //outputText.color = Color.red;
         }
-        else
-        {
-            // Si no hay errores, mostrar en color verde
-            outputText.color = Color.green;
-        }
+       // else
+       // {
+       //     // Si no hay errores, mostrar en color verde
+       //     outputText.color = Color.green;
+       // }
 
         // Mostrar el resultado en la interfaz de usuario
         outputText.text = resultBuilder.ToString();
