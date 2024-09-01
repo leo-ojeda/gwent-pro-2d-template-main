@@ -33,7 +33,7 @@ public class EffectActivation
     public Selector selector;
     public PostAction postAction;
 
-    public EffectActivation() { }
+    //public EffectActivation() { }
 
     public EffectActivation(Effect effect, Selector selector, PostAction postAction)
     {

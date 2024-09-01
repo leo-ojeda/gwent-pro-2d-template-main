@@ -38,7 +38,7 @@ public class DSLInterpreter : MonoBehaviour
                 }
                 else if (parser.Match(TokenType.Effect))
                 {
-                    var effects = parser.ParseEffects();  // Esto ahora captura cualquier excepción de efecto
+                    var effects = parser.ParseEffects();
                     validEffects.AddRange(effects);
                 }
                 else
@@ -76,9 +76,53 @@ public class DSLInterpreter : MonoBehaviour
         if (validCards.Count > 0)
         {
             resultBuilder.AppendLine("Cards parsed successfully:");
-            foreach (var cardNode in validCards)
+            foreach (var card in validCards)
             {
-                resultBuilder.AppendLine($"Name: {cardNode.Name}"); // Asegúrate de que Card tenga una propiedad Name
+                resultBuilder.AppendLine($"Name: {card.Name}");
+               // resultBuilder.AppendLine($"Type: {card.Type}");
+               // resultBuilder.AppendLine($"Faction: {card.Faction}");
+               // resultBuilder.AppendLine($"Power: {card.Power}");
+               // resultBuilder.AppendLine($"Range: {string.Join(", ", card.Range)}");
+               // resultBuilder.AppendLine($"Owner: {card.Owner}");
+
+                // Mostrar detalles de OnActivation
+               // resultBuilder.AppendLine("On Activation:");
+               // if (card.OnActivation.Count > 0)
+               // {
+               //     foreach (var activation in card.OnActivation)
+               //     {
+               //         // Mostrar detalles del efecto
+               //         resultBuilder.AppendLine($"  Effect: {activation.effect.name}");
+//
+               //         // Mostrar detalles del selector
+               //         if (activation.selector != null)
+               //         {
+               //             resultBuilder.AppendLine($"  Selector Source: {activation.selector.source}");
+               //             resultBuilder.AppendLine($"  Selector Single: {activation.selector.single}");
+               //             resultBuilder.AppendLine($"  Selector Predicate: {activation.selector.predicate}");
+               //         }
+//
+               //         // Mostrar detalles de la acción posterior (PostAction)
+               //         if (activation.postAction != null)
+               //         {
+               //             resultBuilder.AppendLine($"  Post Action Type: {activation.postAction.Type}");
+               //             if (activation.postAction.Selector != null)
+               //             {
+               //                 resultBuilder.AppendLine($"  Post Action Selector Source: {activation.postAction.Selector.source}");
+               //                 resultBuilder.AppendLine($"  Post Action Selector Single: {activation.postAction.Selector.single}");
+               //                 resultBuilder.AppendLine($"  Post Action Selector Predicate: {activation.postAction.Selector.predicate}");
+               //             }
+               //         }
+//
+               //         resultBuilder.AppendLine(); // Línea en blanco para separar cada EffectActivation
+               //     }
+               // }
+               // else
+               // {
+               //     resultBuilder.AppendLine("  No effects defined.");
+               // }
+
+               // resultBuilder.AppendLine(); // Línea en blanco para separar cada carta
             }
         }
         else
@@ -90,9 +134,34 @@ public class DSLInterpreter : MonoBehaviour
         if (validEffects.Count > 0)
         {
             resultBuilder.AppendLine("\nEffects parsed successfully:");
-            foreach (var effectNode in validEffects)
+            foreach (var effect in validEffects)
             {
-                resultBuilder.AppendLine($"Name: {effectNode.name}"); // Asegúrate de que Effect tenga una propiedad Name
+                resultBuilder.AppendLine($"Name: {effect.name}");
+
+                // Mostrar parámetros del efecto
+               // if (effect.parameters != null && effect.parameters.Count > 0)
+               // {
+               //     resultBuilder.AppendLine("  Parameters:");
+               //     foreach (var parameter in effect.parameters)
+               //     {
+               //         resultBuilder.AppendLine($"    Param Name: {parameter.paramName}, Type: {parameter.type}, Value: {parameter.value}");
+               //     }
+               // }
+               // else
+               // {
+               //     resultBuilder.AppendLine("  No parameters defined.");
+               // }
+               //
+               // if (effect.action != null)
+               // {
+               //     resultBuilder.AppendLine("  Action: Defined"); 
+               // }
+               // else
+               // {
+               //     resultBuilder.AppendLine("  Action: Not defined");
+               // }
+
+                //resultBuilder.AppendLine(); // Línea en blanco para separar cada efecto
             }
         }
         else
@@ -108,17 +177,9 @@ public class DSLInterpreter : MonoBehaviour
             {
                 resultBuilder.AppendLine(error);
             }
-
-            
-            //outputText.color = Color.red;
         }
-       // else
-       // {
-       //     // Si no hay errores, mostrar en color verde
-       //     outputText.color = Color.green;
-       // }
 
-        // Mostrar el resultado en la interfaz de usuario
         outputText.text = resultBuilder.ToString();
     }
+
 }
