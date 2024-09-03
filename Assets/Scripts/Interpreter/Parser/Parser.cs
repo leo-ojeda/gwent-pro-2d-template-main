@@ -350,16 +350,19 @@ namespace DSL.Parser
                 {
                     paramType = ParamType.Number;
                     Consume(TokenType.Number);
+                    
                 }
                 else if (Match(TokenType.String))
                 {
                     paramType = ParamType.String;
                     Consume(TokenType.String);
+                    
                 }
                 else if (Match(TokenType.Bool))
                 {
                     paramType = ParamType.Bool;
                     Consume(TokenType.Bool);
+                    
                 }
                 else
                 {
@@ -373,10 +376,10 @@ namespace DSL.Parser
 
             }
             Consume(TokenType.CloseBrace);
-            if (Match(TokenType.Comma))
-            {
+            //if (Match(TokenType.Comma))
+           // {
                 Consume(TokenType.Comma);
-            }
+            //}
 
             return parameters;
         }
@@ -400,17 +403,20 @@ namespace DSL.Parser
             List<Action<List<Card>, Context>> actions = new List<Action<List<Card>, Context>>();
             Dictionary<string, object> localVariables = new Dictionary<string, object>();
 
+            var A = LookAhead();
+            var B = A.Value;
+
             while (!Match(TokenType.CloseBrace))
             {
-                if (Match(TokenType.For))
-                {
-                    // Manejar el bucle 'for'
-                    ParseForLoop(actions, localVariables);
-                }
-                else if (Match(TokenType.Identifier))
+               // if (Match(TokenType.For))
+               // {
+               //     // Manejar el bucle 'for'
+               //     ParseForLoop(actions, localVariables);
+               // }
+                if (A.Type == TokenType.Identifier || A.Type == TokenType.For)
                 {
                     // Procesar identificadores fuera de bucles
-                    ParseIdentifier(actions, localVariables);
+                    ParseAssignment(B, localVariables, actions);
                 }
                 else
                 {
@@ -468,14 +474,14 @@ namespace DSL.Parser
             }
             Consume(TokenType.CloseBrace);
 
-           // if (Match(TokenType.SemiColon))
-           // {
-           //     Consume(TokenType.SemiColon);
-           // }
-           // else
-           // {
-           //     ThrowSyntaxError("Expected eeeeeeeeee ';' after for-loop body", TokenType.SemiColon);
-           // }
+            // if (Match(TokenType.SemiColon))
+            // {
+            //     Consume(TokenType.SemiColon);
+            // }
+            // else
+            // {
+            //     ThrowSyntaxError("Expected eeeeeeeeee ';' after for-loop body", TokenType.SemiColon);
+            // }
 
             // Agregar las acciones del bucle 'for' a la lista principal de acciones
             actions.Add((cards, ctx) =>
@@ -588,21 +594,21 @@ namespace DSL.Parser
             });
         }
 
-        private void ParseIdentifier(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
-        {
-            var contextObjectToken = LookAhead();
-            string contextObject = contextObjectToken.Value;
-
-
-            if (Match(TokenType.Identifier))
-            {
-                ParseAssignment(contextObject, localVariables, actions);
-            }
-            else
-            {
-                ThrowSyntaxError($"Unexpected token el after identifier '{contextObject}'");
-            }
-        }
+       // private void ParseIdentifier(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
+       // {
+       //     var contextObjectToken = LookAhead();
+       //     string contextObject = contextObjectToken.Value;
+//
+//
+       //     if (Match(TokenType.Identifier))
+       //     {
+       //         ParseAssignment(contextObject, localVariables, actions);
+       //     }
+       //     else
+       //     {
+       //         ThrowSyntaxError($"Unexpected token el after identifier '{contextObject}'");
+       //     }
+       // }
 
         private void ParseAssignment(string variableName, Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
         {
@@ -722,9 +728,9 @@ namespace DSL.Parser
                                     ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
                                 }
 
-                               // Actions.Add((targetCard, ctx) => targetCard.Power -= value);
+                                // Actions.Add((targetCard, ctx) => targetCard.Power -= value);
                             }
-                             if (Match(TokenType.Plus))
+                            if (Match(TokenType.Plus))
                             {
                                 Consume(TokenType.Plus);
                                 Consume(TokenType.Equals);
@@ -736,7 +742,7 @@ namespace DSL.Parser
                                     ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
                                 }
 
-                               // Actions.Add((targetCard, ctx) => targetCard.Power += value);
+                                // Actions.Add((targetCard, ctx) => targetCard.Power += value);
                             }
                         }
                         else
@@ -825,6 +831,10 @@ namespace DSL.Parser
                 }
 
                 Consume(TokenType.SemiColon);
+                if(Match(TokenType.CloseBrace))
+                {
+                    break;
+                }
             }
         }
 

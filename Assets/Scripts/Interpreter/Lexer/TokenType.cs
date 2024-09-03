@@ -74,7 +74,7 @@ namespace DSL.Lexer
         Source,
         Single,
         Predicate,
-        NumberType,
+       
         For,
         In,
         While,
