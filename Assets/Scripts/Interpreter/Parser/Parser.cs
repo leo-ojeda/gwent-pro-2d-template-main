@@ -327,6 +327,7 @@ namespace DSL.Parser
             }
 
             return new Effect(effectName, parameters, action);
+
         }
 
 
@@ -342,7 +343,7 @@ namespace DSL.Parser
             {
 
 
-                string paramName = Consume(TokenType.Amount).Value;
+                string paramName = Consume(TokenType.Identifier).Value;
                 Consume(TokenType.Colon);
 
                 ParamType paramType;
@@ -350,19 +351,19 @@ namespace DSL.Parser
                 {
                     paramType = ParamType.Number;
                     Consume(TokenType.Number);
-                    
+
                 }
                 else if (Match(TokenType.String))
                 {
                     paramType = ParamType.String;
                     Consume(TokenType.String);
-                    
+
                 }
                 else if (Match(TokenType.Bool))
                 {
                     paramType = ParamType.Bool;
                     Consume(TokenType.Bool);
-                    
+
                 }
                 else
                 {
@@ -372,13 +373,17 @@ namespace DSL.Parser
 
                 // Crear el parámetro y añadirlo a la lista
                 parameters.Add(new Parameter(paramType));
+                if(Match(TokenType.Comma))
+                {
+                    Consume(TokenType.Comma);
+                }
 
 
             }
             Consume(TokenType.CloseBrace);
             //if (Match(TokenType.Comma))
-           // {
-                Consume(TokenType.Comma);
+            // {
+            Consume(TokenType.Comma);
             //}
 
             return parameters;
@@ -408,11 +413,11 @@ namespace DSL.Parser
 
             while (!Match(TokenType.CloseBrace))
             {
-               // if (Match(TokenType.For))
-               // {
-               //     // Manejar el bucle 'for'
-               //     ParseForLoop(actions, localVariables);
-               // }
+                // if (Match(TokenType.For))
+                // {
+                //     // Manejar el bucle 'for'
+                //     ParseForLoop(actions, localVariables);
+                // }
                 if (A.Type == TokenType.Identifier || A.Type == TokenType.For)
                 {
                     // Procesar identificadores fuera de bucles
@@ -532,7 +537,7 @@ namespace DSL.Parser
             }
             Consume(TokenType.Less);
 
-            var loopConditionToken = Consume(TokenType.Amount);
+            var loopConditionToken = Consume(TokenType.Identifier);//.Amount);
             var loopConditionValue = loopConditionToken.Value; // Valor de condición del bucle, ej., "Amount"
 
             Consume(TokenType.CloseParen);
@@ -594,21 +599,21 @@ namespace DSL.Parser
             });
         }
 
-       // private void ParseIdentifier(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
-       // {
-       //     var contextObjectToken = LookAhead();
-       //     string contextObject = contextObjectToken.Value;
-//
-//
-       //     if (Match(TokenType.Identifier))
-       //     {
-       //         ParseAssignment(contextObject, localVariables, actions);
-       //     }
-       //     else
-       //     {
-       //         ThrowSyntaxError($"Unexpected token el after identifier '{contextObject}'");
-       //     }
-       // }
+        // private void ParseIdentifier(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
+        // {
+        //     var contextObjectToken = LookAhead();
+        //     string contextObject = contextObjectToken.Value;
+        //
+        //
+        //     if (Match(TokenType.Identifier))
+        //     {
+        //         ParseAssignment(contextObject, localVariables, actions);
+        //     }
+        //     else
+        //     {
+        //         ThrowSyntaxError($"Unexpected token el after identifier '{contextObject}'");
+        //     }
+        // }
 
         private void ParseAssignment(string variableName, Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
         {
@@ -619,17 +624,18 @@ namespace DSL.Parser
                 {
 
                     var identifier = LookAhead();
-                    variableName = identifier.Value;
+                    //variableName = identifier.Value;
 
-                    if (identifier.Value == "context" || identifier.Value == "target")
+                    if (Match(TokenType.Identifier))//.Value == "context" || identifier.Value == "target")
                     {
-                        ConsumePropertyOrMethod();
+                        //ConsumePropertyOrMethod();
 
-                        Consume(TokenType.Dot);
-
+                        //Consume(TokenType.Dot);
 
                         if (identifier.Value == "context")
                         {
+                            ConsumePropertyOrMethod();
+                            Consume(TokenType.Dot);
                             // Consumir propiedades y métodos específicos del contexto
 
                             var propertyOrMethod = ConsumePropertyOrMethod();
@@ -697,6 +703,8 @@ namespace DSL.Parser
                         }
                         else if (identifier.Value == "target")
                         {
+                            ConsumePropertyOrMethod();
+                            Consume(TokenType.Dot);
                             var targetProperty = ConsumeTargetProperty();
 
                             switch (targetProperty.Type)
@@ -720,94 +728,206 @@ namespace DSL.Parser
                             {
                                 Consume(TokenType.Minus);
                                 Consume(TokenType.Equals);
-                                var valueToken = Consume(TokenType.Number);
                                 int value;
-
-                                if (!int.TryParse(valueToken.Value, out value))
+                                if (Match(TokenType.Number))
                                 {
-                                    ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
+
+                                    var valueToken = Consume(TokenType.Number);
+
+                                    if (!int.TryParse(valueToken.Value, out value))
+                                    {
+                                        ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
+                                    }
+                                }
+                                else
+                                {
+                                    //Terminar codigo
+                                    Consume(TokenType.Identifier);
                                 }
 
                                 // Actions.Add((targetCard, ctx) => targetCard.Power -= value);
+
                             }
                             if (Match(TokenType.Plus))
                             {
                                 Consume(TokenType.Plus);
                                 Consume(TokenType.Equals);
-                                var valueToken = Consume(TokenType.Number);
+                                //var valueToken = Consume(TokenType.Number);
                                 int value;
 
-                                if (!int.TryParse(valueToken.Value, out value))
+                               if (Match(TokenType.Number))
                                 {
-                                    ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
+
+                                    var valueToken = Consume(TokenType.Number);
+
+                                    if (!int.TryParse(valueToken.Value, out value))
+                                    {
+                                        ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
+                                    }
+                                }
+                                else
+                                {
+                                    //terminar codigo
+                                    Consume(TokenType.Identifier);
                                 }
 
                                 // Actions.Add((targetCard, ctx) => targetCard.Power += value);
                             }
                         }
+
+                        else if (identifier.Type == TokenType.Identifier)
+                        {
+                            string variable = Consume(TokenType.Identifier).Value;
+                            if (Match(TokenType.Equals))
+                            {
+                                Consume(TokenType.Equals);
+                                var property = LookAhead();
+
+                                if (Match(TokenType.Number))
+                                {
+                                    var valueToken = Consume(TokenType.Number);
+                                    int value;
+
+                                    if (!int.TryParse(valueToken.Value, out value))
+                                    {
+                                        ThrowSyntaxError("Invalid number format for assignment", TokenType.Number);
+                                    }
+                                    Consume(TokenType.SemiColon);
+                                    localVariables[variable] = value; // Almacenar la variable localmente
+
+                                }
+                                else if (identifier.Value == "target")
+                                {
+                                    ConsumePropertyOrMethod();
+                                    Consume(TokenType.Dot);
+                                    var targetProperty = ConsumeTargetProperty();
+
+                                    switch (targetProperty.Type)
+                                    {
+                                        case TokenType.Name:
+                                        case TokenType.Power:
+                                        case TokenType.Faction:
+                                        case TokenType.Owner:
+                                            // Propiedad de target
+                                            break;
+
+                                        default:
+                                            ThrowSyntaxError($"Unexpected target property '{targetProperty.Value}'");
+                                            break;
+                                    }
+                                }
+                                else if (identifier.Value == "context")
+                                {
+                                    ConsumePropertyOrMethod();
+                                    Consume(TokenType.Dot);
+                                    // Consumir propiedades y métodos específicos del contexto
+
+                                    var propertyOrMethod = ConsumePropertyOrMethod();
+
+                                    switch (propertyOrMethod.Type)
+                                    {
+                                        // Propiedades de context que requieren un parámetro
+                                        case TokenType.DeckOfPlayer:
+                                        case TokenType.HandOfPlayer:
+                                        case TokenType.FieldOfPlayer:
+                                        case TokenType.GraveyardOfPlayer:
+                                            Consume(TokenType.OpenParen);
+                                            Consume(TokenType.Identifier);
+                                            Consume(TokenType.CloseParen);
+                                            break;
+                                        //context.propertyOrMethod(owner)
+
+                                        // Propiedades de context que pueden ser seguidas por un método
+                                        case TokenType.Deck:
+                                        case TokenType.Hand:
+                                        case TokenType.Field:
+                                        case TokenType.Graveyard:
+                                        case TokenType.Board:
+                                            if (Match(TokenType.Dot))
+                                            {
+                                                Consume(TokenType.Dot);
+                                                var method = ConsumeMethod();
+
+                                                switch (method.Type)
+                                                {
+                                                    case TokenType.Pop:
+                                                    case TokenType.Shuffle:
+                                                        Consume(TokenType.OpenParen);
+                                                        Consume(TokenType.CloseParen);
+                                                        break;
+                                                    //context.propertyOrMethod.Method()
+
+                                                    case TokenType.Push:
+                                                    case TokenType.SendBottom:
+                                                    case TokenType.Remove:
+                                                    case TokenType.Find:
+                                                    case TokenType.Add:
+                                                        Consume(TokenType.OpenParen);
+                                                        Consume(TokenType.Identifier);
+                                                        Consume(TokenType.CloseParen);
+                                                        break;
+                                                    //context.propertyOrMethod.Method(identificador)
+
+
+                                                    default:
+                                                        ThrowSyntaxError($"Unexpected context method '{method.Value}'");
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ThrowSyntaxError($"Expected method after context property '{propertyOrMethod.Value}'");
+                                            }
+                                            break;
+
+                                        default:
+                                            ThrowSyntaxError($"Unexpected context property '{propertyOrMethod.Value}'");
+                                            break;
+                                    }
+                                }
+
+                            }
+                            if (Match(TokenType.Dot))
+                            {
+                                Consume(TokenType.Dot);
+                                var A = LookAhead();
+                                ConsumePropertyOrMethod();
+                                if (MethodContext(A.Type))
+                                {
+                                    switch (A.Type)
+                                    {
+                                        case TokenType.Pop:
+                                        case TokenType.Shuffle:
+                                            Consume(TokenType.OpenParen);
+                                            Consume(TokenType.CloseParen);
+                                            break;
+                                        //A.Pop o A.Shuffle
+
+                                        case TokenType.Push:
+                                        case TokenType.SendBottom:
+                                        case TokenType.Remove:
+                                        case TokenType.Find:
+                                        case TokenType.Add:
+                                            Consume(TokenType.OpenParen);
+                                            Consume(TokenType.Identifier);
+                                            Consume(TokenType.CloseParen);
+                                            break;
+
+                                        default:
+                                            ThrowSyntaxError($"Unexpected context method '{A.Value}'");
+                                            break;
+                                    }
+                                }
+
+                            }
+
+
+
+                        }
                         else
                         {
                             ThrowSyntaxError($"Expected '.' after identifier '{identifier.Value}'");
                         }
-                    }
-                    else if (identifier.Type == TokenType.Identifier)
-                    {
-                        string variable = Consume(TokenType.Identifier).Value;
-                        if (Match(TokenType.Equals))
-                        {
-                            Consume(TokenType.Equals);
-
-
-                            if (Match(TokenType.Number))
-                            {
-                                var valueToken = Consume(TokenType.Number);
-                                int value;
-
-                                if (!int.TryParse(valueToken.Value, out value))
-                                {
-                                    ThrowSyntaxError("Invalid number format for assignment", TokenType.Number);
-                                }
-                                Consume(TokenType.SemiColon);
-                                localVariables[variable] = value; // Almacenar la variable localmente
-
-                            }
-
-                        }
-                        if (Match(TokenType.Dot))
-                        {
-                            Consume(TokenType.Dot);
-                            var A = LookAhead();
-                            ConsumePropertyOrMethod();
-                            if (MethodContext(A.Type))
-                            {
-                                switch (A.Type)
-                                {
-                                    case TokenType.Pop:
-                                    case TokenType.Shuffle:
-                                        Consume(TokenType.OpenParen);
-                                        Consume(TokenType.CloseParen);
-                                        break;
-
-                                    case TokenType.Push:
-                                    case TokenType.SendBottom:
-                                    case TokenType.Remove:
-                                    case TokenType.Find:
-                                    case TokenType.Add:
-                                        Consume(TokenType.OpenParen);
-                                        Consume(TokenType.Identifier);
-                                        Consume(TokenType.CloseParen);
-                                        break;
-
-                                    default:
-                                        ThrowSyntaxError($"Unexpected context method '{A.Value}'");
-                                        break;
-                                }
-                            }
-
-                        }
-
-
-
                     }
                     else if (identifier.Type == TokenType.While)
                     {
@@ -831,10 +951,10 @@ namespace DSL.Parser
                 }
 
                 Consume(TokenType.SemiColon);
-                if(Match(TokenType.CloseBrace))
-                {
-                    break;
-                }
+               // if (Match(TokenType.CloseBrace))
+               // {
+               //     break;
+               // }
             }
         }
 
@@ -1039,8 +1159,8 @@ namespace DSL.Parser
                         type = ParseProperty(TokenType.Type);
                         hasType = true;
                         break;
-                    case TokenType.Amount:
-                        string amountValue = ParseProperty(TokenType.Amount);
+                    case TokenType.Identifier://.Amount:
+                        string amountValue = ParseProperty(TokenType.Identifier);//Amount
                         if (int.TryParse(amountValue, out int parsedAmount))
                         {
                             amount = parsedAmount;
@@ -1260,8 +1380,8 @@ namespace DSL.Parser
                             effectName = valueToken.Value;
                             Consume(TokenType.Comma);
                             break;
-                        case TokenType.Amount:
-                            string amountValue = ParseProperty(TokenType.Amount);
+                        case TokenType.Identifier://.Amount:
+                            string amountValue = ParseProperty(TokenType.Identifier);//Amount
                             Consume(TokenType.Comma);
                             if (int.TryParse(amountValue, out int parsedAmount))
                             {
@@ -1326,17 +1446,17 @@ namespace DSL.Parser
                     {
                         Consume(TokenType.Comma);
                     }
-                    if (!Match(TokenType.Amount))
+                    if (!Match(TokenType.Identifier))//.Amount))
                     {
                         return new Effect(effectName, new List<Parameter>(), null);
                     }
-                    else if (Match(TokenType.Amount))
+                    else if (Match(TokenType.Identifier))//.Amount))
                     {
 
                         int? amount = null;
                         List<Parameter> parameters = new List<Parameter>();
                         Action<List<Card>, Context> action = null;
-                        string amountValue = ParseProperty(TokenType.Amount);
+                        string amountValue = ParseProperty(TokenType.Identifier);//.Amount))
                         Consume(TokenType.Comma);
                         if (int.TryParse(amountValue, out int parsedAmount))
                         {

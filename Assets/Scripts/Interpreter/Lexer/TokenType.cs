@@ -70,7 +70,7 @@ namespace DSL.Lexer
         Selector,
         Params,
         Action,
-        Amount,
+      //  Amount,
         Source,
         Single,
         Predicate,

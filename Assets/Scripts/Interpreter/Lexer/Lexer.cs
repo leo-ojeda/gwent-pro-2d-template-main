@@ -27,7 +27,7 @@ namespace DSL.Lexer
               {"OnActivation", TokenType.OnActivation},
               {"Params", TokenType.Params},
               {"Action", TokenType.Action},
-              {"Amount", TokenType.Amount},
+            //  {"Amount", TokenType.Amount},
               {"Source", TokenType.Source},
               {"Single", TokenType.Single},
               {"Predicate", TokenType.Predicate},

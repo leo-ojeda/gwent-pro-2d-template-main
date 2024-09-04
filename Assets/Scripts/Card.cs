@@ -54,6 +54,7 @@ public class Effect
     public string name;
     public List<Parameter> parameters;
     public Action<List<Card>, Context> action;
+   
 
     public Effect()
     {
@@ -77,8 +78,8 @@ public class Parameter
 
     public Parameter(object value)
     {
-       // this.paramName = paramName;
-       
+        //this.paramName = paramName;
+
         this.value = value;
     }
 }

@@ -139,14 +139,14 @@ public class DSLInterpreter : MonoBehaviour
                 resultBuilder.AppendLine($"Name: {effect.name}");
 
                 // Mostrar parámetros del efecto
-               // if (effect.parameters != null && effect.parameters.Count > 0)
-               // {
-               //     resultBuilder.AppendLine("  Parameters:");
-               //     foreach (var parameter in effect.parameters)
-               //     {
-               //         resultBuilder.AppendLine($"    Param Name: {parameter.paramName}, Type: {parameter.type}, Value: {parameter.value}");
-               //     }
-               // }
+              //  if (effect.parameters != null && effect.parameters.Count > 0)
+              //  {
+              //      resultBuilder.AppendLine("  Parameters:");
+              //      foreach (var parameter in effect.parameters)
+              //      {
+              //          resultBuilder.AppendLine($"    Param Name: {parameter.paramName}, Type: {parameter.type}, Value: {parameter.value}");
+              //      }
+              //  }
                // else
                // {
                //     resultBuilder.AppendLine("  No parameters defined.");
