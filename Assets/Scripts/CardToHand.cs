@@ -3,10 +3,12 @@ using UnityEngine;
 public class CardToHand : MonoBehaviour
 {
     public GameObject Hand;
+    public GameObject Graveyard;
     public GameObject It;
     public static GameObject ItName;
 
     public static Card card;
+    private Context context;
 
 
     public static void InstantiateCard(GameObject cardPrefab, GameObject hand, Card cards)
@@ -30,11 +32,11 @@ public class CardToHand : MonoBehaviour
             cardToHand.It = cardObject;
 
         }
-        if(cards.Owner == "Jugador 2")
+        if (cards.Owner == "Jugador 2")
         {
-             cardToHand.tag = "AIClone";
-             card = cards;
-             Debug.Log(card.Name);
+            cardToHand.tag = "AIClone";
+            card = cards;
+            Debug.Log(card.Name);
         }
 
 
@@ -42,6 +44,7 @@ public class CardToHand : MonoBehaviour
     void Awake()
     {
         ItName = It;
+        context = FindObjectOfType<Context>();
 
     }
 
@@ -51,15 +54,33 @@ public class CardToHand : MonoBehaviour
         {
             Hand = GameObject.Find("Hand");
         }
+        if (Graveyard == null)
+        {
+            Graveyard = GameObject.Find("Cementery");
+
+        }
 
         if (It.tag == "first" || It.tag == "Three")
         {
-
-            It.transform.SetParent(Hand.transform);
-            It.transform.localScale = Vector3.one;
-            It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
-            It.transform.eulerAngles = new Vector3(25, 0, 0);
-            It.tag = "Hand";
+            if (context.HandOfPlayer("Jugador 1").Count < 11)
+            {
+                It.transform.SetParent(Hand.transform);
+                It.transform.localScale = Vector3.one;
+                It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
+                It.transform.eulerAngles = new Vector3(25, 0, 0);
+                It.tag = "Hand";
+            }
+            else
+            {
+                
+                context.HandOfPlayer("Jugador 1").RemoveAt(context.HandOfPlayer("Jugador 1").Count - 1);
+                //context.GraveyardOfPlayer("Jugador 1").Add();
+                It.transform.SetParent(Graveyard.transform);
+                It.transform.localScale = Vector3.one;
+                It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
+                It.transform.eulerAngles = new Vector3(25, 0, 0);
+                It.tag = "cementery";
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ namespace DSL.Parser
 
     public class Parser
     {
+        private Context Context;
         private readonly LexerStream _lexerStream;
 
         public Parser(LexerStream lexerStream)
@@ -373,7 +374,7 @@ namespace DSL.Parser
 
                 // Crear el parámetro y añadirlo a la lista
                 parameters.Add(new Parameter(paramType));
-                if(Match(TokenType.Comma))
+                if (Match(TokenType.Comma))
                 {
                     Consume(TokenType.Comma);
                 }
@@ -448,19 +449,13 @@ namespace DSL.Parser
             var targetVarToken = Consume(TokenType.Identifier);
             var targetVar = targetVarToken.Value;
 
-            //if (!Match(TokenType.In))
-            //{
-            //    ThrowSyntaxError("Expected 'in' after for-loop variable", TokenType.In);
-            //}
+           
             Consume(TokenType.In);
 
             var listNameToken = Consume(TokenType.Identifier);
             var listName = listNameToken.Value; // Nombre de la lista, ej., "targets"
 
-            //if (!Match(TokenType.OpenBrace))
-            //{
-            //    ThrowSyntaxError("Expected '{' to open for-loop body", TokenType.OpenBrace);
-            //}
+            
             Consume(TokenType.OpenBrace); // Consumir el token '{' que inicia el cuerpo del bucle
 
             List<Action<Card, Context>> loopActions = new List<Action<Card, Context>>();
@@ -618,6 +613,7 @@ namespace DSL.Parser
         private void ParseAssignment(string variableName, Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
         {
 
+
             while (LookAhead().Type != TokenType.CloseBrace)
             {
                 while (!Match(TokenType.SemiColon))
@@ -636,8 +632,6 @@ namespace DSL.Parser
                         {
                             ConsumePropertyOrMethod();
                             Consume(TokenType.Dot);
-                            // Consumir propiedades y métodos específicos del contexto
-
                             var propertyOrMethod = ConsumePropertyOrMethod();
 
                             switch (propertyOrMethod.Type)
@@ -648,10 +642,15 @@ namespace DSL.Parser
                                 case TokenType.FieldOfPlayer:
                                 case TokenType.GraveyardOfPlayer:
                                     Consume(TokenType.OpenParen);
-                                    Consume(TokenType.Identifier);
+                                    var owner = Consume(TokenType.Identifier).Value;  // Identificador dentro de los paréntesis
                                     Consume(TokenType.CloseParen);
+
+                                    actions.Add((cards, ctx) =>
+                                    {
+                                        // Agregar la acción según la propiedad
+                                        // Ejemplo: context.DeckOfPlayer(owner)
+                                    });
                                     break;
-                                //context.propertyOrMethod(owner)
 
                                 // Propiedades de context que pueden ser seguidas por un método
                                 case TokenType.Deck:
@@ -670,8 +669,12 @@ namespace DSL.Parser
                                             case TokenType.Shuffle:
                                                 Consume(TokenType.OpenParen);
                                                 Consume(TokenType.CloseParen);
+
+                                                actions.Add((cards, ctx) =>
+                                                {
+                                                    // Ejemplo: context.Deck.Shuffle()
+                                                });
                                                 break;
-                                            //context.propertyOrMethod.Method()
 
                                             case TokenType.Push:
                                             case TokenType.SendBottom:
@@ -679,11 +682,14 @@ namespace DSL.Parser
                                             case TokenType.Find:
                                             case TokenType.Add:
                                                 Consume(TokenType.OpenParen);
-                                                Consume(TokenType.Identifier);
+                                                var param = Consume(TokenType.Identifier).Value;  // Identificador dentro de los paréntesis
                                                 Consume(TokenType.CloseParen);
-                                                break;
-                                            //context.propertyOrMethod.Method(identificador)
 
+                                                actions.Add((cards, ctx) =>
+                                                {
+                                                    // Ejemplo: context.Deck.Add(param)
+                                                });
+                                                break;
 
                                             default:
                                                 ThrowSyntaxError($"Unexpected context method '{method.Value}'");
@@ -745,7 +751,7 @@ namespace DSL.Parser
                                     Consume(TokenType.Identifier);
                                 }
 
-                                // Actions.Add((targetCard, ctx) => targetCard.Power -= value);
+                                //actions.Add((targetCard, ctx) => targetCard.Power -= value);
 
                             }
                             if (Match(TokenType.Plus))
@@ -755,7 +761,7 @@ namespace DSL.Parser
                                 //var valueToken = Consume(TokenType.Number);
                                 int value;
 
-                               if (Match(TokenType.Number))
+                                if (Match(TokenType.Number))
                                 {
 
                                     var valueToken = Consume(TokenType.Number);
@@ -951,10 +957,10 @@ namespace DSL.Parser
                 }
 
                 Consume(TokenType.SemiColon);
-               // if (Match(TokenType.CloseBrace))
-               // {
-               //     break;
-               // }
+                // if (Match(TokenType.CloseBrace))
+                // {
+                //     break;
+                // }
             }
         }
 

@@ -87,6 +87,7 @@ public static class CardListExtensions
         var card = cards[0];
        // Debug.Log(card.Name);
         cards.RemoveAt(0);
+        
         return card;
     }
 
