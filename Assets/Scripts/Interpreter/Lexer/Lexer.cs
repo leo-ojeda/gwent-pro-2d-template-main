@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
+using System;
+using DSL.Parser;
+using UnityEngine;
 
 namespace DSL.Lexer
 {
@@ -79,210 +82,225 @@ namespace DSL.Lexer
         // Avanza al siguiente token en el texto de entrada
         public void NextToken()
         {
-            SkipWhiteSpaces(); // Omitir cualquier carácter de espacio en blanco
-
-            switch (_currentChar)
+            try
             {
-                case '\0':
+                SkipWhiteSpaces(); // Omitir cualquier carácter de espacio en blanco
+                if (_currentChar == '\0')
+                {
                     CurrentToken = new Token(TokenType.EOF, "", CurrentPos);
                     if (groupTokens.Count != 0)
                     {
-                        throw new LexerError($"Caracter sin emparejar {groupTokens.Peek().Value} en {groupTokens.Peek().Pos}", CurrentPos);
+                        ThrowLexerError($"Caracter sin emparejar {groupTokens.Peek().Value} en {groupTokens.Peek().Pos}");
                     }
-                    AdvanceChar();
-                    break;
-                case '{':
-                    CurrentToken = new Token(TokenType.OpenBrace, "{", CurrentPos);
-                    CheckBalance(CurrentToken);
-                    AdvanceChar();
-                    break;
-                case '}':
-                    CurrentToken = new Token(TokenType.CloseBrace, "}", CurrentPos);
-                    CheckBalance(CurrentToken);
-                    AdvanceChar();
-                    break;
-                case '[':
-                    CurrentToken = new Token(TokenType.OpenBracket, "[", CurrentPos);
-                    CheckBalance(CurrentToken);
-                    AdvanceChar();
-                    break;
-                case ']':
-                    CurrentToken = new Token(TokenType.CloseBracket, "]", CurrentPos);
-                    CheckBalance(CurrentToken);
-                    AdvanceChar();
-                    break;
-                case '(':
-                    CurrentToken = new Token(TokenType.OpenParen, "(", CurrentPos);
-                    CheckBalance(CurrentToken);
-                    AdvanceChar();
-                    break;
-                case ')':
-                    CurrentToken = new Token(TokenType.CloseParen, ")", CurrentPos);
-                    CheckBalance(CurrentToken);
-                    AdvanceChar();
-                    break;
-                case ':':
-                    CurrentToken = new Token(TokenType.Colon, ":", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case ';':
-                    CurrentToken = new Token(TokenType.SemiColon, ";", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case ',':
-                    CurrentToken = new Token(TokenType.Comma, ",", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case '+':
-                    if (LookAhead() == '+')
-                    {
-                        CurrentToken = new Token(TokenType.Increment, "++", CurrentPos);
-                        AdvanceChar();
-                        AdvanceChar();
-                    }
-                    else
-                    {
-                        CurrentToken = new Token(TokenType.Plus, "+", CurrentPos);
-                        AdvanceChar();
-                    }
-                    break;
-                case '-':
-                    CurrentToken = new Token(TokenType.Minus, "-", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case '*':
-                    CurrentToken = new Token(TokenType.Multiply, "*", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case '/':
-                    CurrentToken = new Token(TokenType.Slash, "/", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case '%':
-                    CurrentToken = new Token(TokenType.Modulus, "%", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case '.':
-                    CurrentToken = new Token(TokenType.Dot, ".", CurrentPos);
-                    AdvanceChar();
-                    break;
-                case '=':
+                    return;
+                }
 
-                    if (LookAhead() == '>')
-                    {
-                        CurrentToken = new Token(TokenType.Arrow, "=>", CurrentPos);
-                        AdvanceChar();
-                        AdvanceChar();
-                    }
+                switch (_currentChar)
+                {
 
-                    else if (LookAhead() == '=')
-                    {
-                        CurrentToken = new Token(TokenType.EqualsEquals, "==", CurrentPos);
+                    case '{':
+                        CurrentToken = new Token(TokenType.OpenBrace, "{", CurrentPos);
+                        CheckBalance(CurrentToken);
                         AdvanceChar();
+                        break;
+                    case '}':
+                        CurrentToken = new Token(TokenType.CloseBrace, "}", CurrentPos);
+                        CheckBalance(CurrentToken);
                         AdvanceChar();
-                    }
-
-                    else
-                    {
-                        CurrentToken = new Token(TokenType.Equals, "=", CurrentPos);
+                        break;
+                    case '[':
+                        CurrentToken = new Token(TokenType.OpenBracket, "[", CurrentPos);
+                        CheckBalance(CurrentToken);
                         AdvanceChar();
-                    }
-                    break;
-
-                case '<':
-                    if (LookAhead() == '=')
-                    {
-                        CurrentToken = new Token(TokenType.LessOrEqual, "<=", CurrentPos);
+                        break;
+                    case ']':
+                        CurrentToken = new Token(TokenType.CloseBracket, "]", CurrentPos);
+                        CheckBalance(CurrentToken);
                         AdvanceChar();
+                        break;
+                    case '(':
+                        CurrentToken = new Token(TokenType.OpenParen, "(", CurrentPos);
+                        CheckBalance(CurrentToken);
                         AdvanceChar();
-                    }
-                    else
-                    {
-                        CurrentToken = new Token(TokenType.Less, "<", CurrentPos);
+                        break;
+                    case ')':
+                        CurrentToken = new Token(TokenType.CloseParen, ")", CurrentPos);
+                        CheckBalance(CurrentToken);
                         AdvanceChar();
-                    }
-                    break;
-                case '>':
-                    if (LookAhead() == '=')
-                    {
-                        CurrentToken = new Token(TokenType.GreaterOrEqual, ">=", CurrentPos);
+                        break;
+                    case ':':
+                        CurrentToken = new Token(TokenType.Colon, ":", CurrentPos);
                         AdvanceChar();
+                        break;
+                    case ';':
+                        CurrentToken = new Token(TokenType.SemiColon, ";", CurrentPos);
                         AdvanceChar();
-                    }
-                    else
-                    {
-                        CurrentToken = new Token(TokenType.Greater, ">", CurrentPos);
+                        break;
+                    case ',':
+                        CurrentToken = new Token(TokenType.Comma, ",", CurrentPos);
                         AdvanceChar();
-                    }
-                    break;
-                case '&':
-                    if (LookAhead() == '&')
-                    {
-                        CurrentToken = new Token(TokenType.And, "&&", CurrentPos);
+                        break;
+                    case '+':
+                        if (LookAhead() == '+')
+                        {
+                            CurrentToken = new Token(TokenType.Increment, "++", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            CurrentToken = new Token(TokenType.Plus, "+", CurrentPos);
+                            AdvanceChar();
+                        }
+                        break;
+                    case '-':
+                        CurrentToken = new Token(TokenType.Minus, "-", CurrentPos);
                         AdvanceChar();
+                        break;
+                    case '*':
+                        CurrentToken = new Token(TokenType.Multiply, "*", CurrentPos);
                         AdvanceChar();
-                    }
-                    else
-                    {
-                        throw new LexerError($"Caracter inesperado: {_currentChar} en {CurrentPos}", CurrentPos);
-                    }
-                    break;
-                case '|':
-                    if (LookAhead() == '|')
-                    {
-                        CurrentToken = new Token(TokenType.Or, "||", CurrentPos);
+                        break;
+                    case '/':
+                        CurrentToken = new Token(TokenType.Slash, "/", CurrentPos);
                         AdvanceChar();
+                        break;
+                    case '%':
+                        CurrentToken = new Token(TokenType.Modulus, "%", CurrentPos);
                         AdvanceChar();
-                    }
-                    else
-                    {
-                        throw new LexerError($"Caracter inesperado: {_currentChar} en {CurrentPos}", CurrentPos);
-                    }
-                    break;
-                case '@':
-                    if (LookAhead() == '@')
-                    {
-                        CurrentToken = new Token(TokenType.DoubleAt, "@@", CurrentPos);
+                        break;
+                    case '.':
+                        CurrentToken = new Token(TokenType.Dot, ".", CurrentPos);
                         AdvanceChar();
-                        AdvanceChar();
-                    }
-                    else
-                    {
-                        CurrentToken = new Token(TokenType.At, "@", CurrentPos);
-                        AdvanceChar();
-                    }
-                    break;
-                case '!':
-                    if (LookAhead() == '=')
-                    {
-                        CurrentToken = new Token(TokenType.NotEqual, "!=", CurrentPos);
-                        AdvanceChar();
-                        AdvanceChar();
-                    }
-                    else
-                    {
-                        throw new LexerError($"Caracter inesperado: {_currentChar} en {CurrentPos}", CurrentPos);
-                    }
-                    break;
-                case '"':
-                    CurrentToken = StringToken();
-                    break;
-                default:
-                    if (IsDigit(_currentChar))
-                    {
-                        CurrentToken = NumberToken();
-                    }
-                    else if (IsLetter(_currentChar))
-                    {
-                        CurrentToken = VariableOrIdentifierToken();
-                    }
-                    else
-                    {
-                        throw new LexerError($"Caracter desconocido: {_currentChar} en {CurrentPos}", CurrentPos);
-                    }
-                    break;
+                        break;
+                    case '=':
+                        if (LookAhead() == '>')
+                        {
+                            CurrentToken = new Token(TokenType.Arrow, "=>", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else if (LookAhead() == '=')
+                        {
+                            CurrentToken = new Token(TokenType.EqualsEquals, "==", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            CurrentToken = new Token(TokenType.Equals, "=", CurrentPos);
+                            AdvanceChar();
+                        }
+                        break;
+                    case '<':
+                        if (LookAhead() == '=')
+                        {
+                            CurrentToken = new Token(TokenType.LessOrEqual, "<=", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            CurrentToken = new Token(TokenType.Less, "<", CurrentPos);
+                            AdvanceChar();
+                        }
+                        break;
+                    case '>':
+                        if (LookAhead() == '=')
+                        {
+                            CurrentToken = new Token(TokenType.GreaterOrEqual, ">=", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            CurrentToken = new Token(TokenType.Greater, ">", CurrentPos);
+                            AdvanceChar();
+                        }
+                        break;
+                    case '&':
+                        if (LookAhead() == '&')
+                        {
+                            CurrentToken = new Token(TokenType.And, "&&", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            ThrowLexerError($"Caracter inesperado: {_currentChar}");
+                        }
+                        break;
+                    case '|':
+                        if (LookAhead() == '|')
+                        {
+                            CurrentToken = new Token(TokenType.Or, "||", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            ThrowLexerError($"Caracter inesperado: {_currentChar}");
+                        }
+                        break;
+                    case '@':
+                        if (LookAhead() == '@')
+                        {
+                            CurrentToken = new Token(TokenType.DoubleAt, "@@", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            CurrentToken = new Token(TokenType.At, "@", CurrentPos);
+                            AdvanceChar();
+                        }
+                        break;
+                    case '!':
+                        if (LookAhead() == '=')
+                        {
+                            CurrentToken = new Token(TokenType.NotEqual, "!=", CurrentPos);
+                            AdvanceChar();
+                            AdvanceChar();
+                        }
+                        else
+                        {
+                            ThrowLexerError($"Caracter inesperado: {_currentChar}");
+                        }
+                        break;
+                    case '"':
+                        CurrentToken = StringToken();
+                        break;
+                    default:
+                        if (IsDigit(_currentChar))
+                        {
+                            CurrentToken = NumberToken();
+                        }
+                        else if (IsLetter(_currentChar))
+                        {
+                            CurrentToken = VariableOrIdentifierToken();
+                        }
+                        else
+                        {
+                            ThrowLexerError($"Caracter desconocido: {_currentChar}");
+                        }
+                        break;
+                }
+            }
+            catch (Error ex)
+            {
+                Debug.LogError($"Lexer Error: {ex.Message}");
+                AdvanceChar();
             }
         }
+
+
+        private void ThrowLexerError(string message)
+        {
+            string errorMessage = $"Error léxico: {message}. Se encontró '{_currentChar}' en la posición {CurrentPos}.";
+            Debug.LogError(errorMessage);
+            throw new Error(errorMessage, CurrentPos);
+        }
+
 
         // Método para obtener el próximo carácter sin avanzar la posición actual.
         private char LookAhead()
@@ -376,7 +394,7 @@ namespace DSL.Lexer
             }
             else
             {
-                throw new LexerError("Cadena no terminada", CurrentPos);
+                throw new Error("Cadena no terminada", CurrentPos);
             }
         }
 
@@ -425,17 +443,18 @@ namespace DSL.Lexer
             {
                 if (groupTokens.Count == 0)
                 {
-                    throw new LexerError($"Caracter sin emparejar {token.Value} en {token.Pos}", token.Pos);
+                    ThrowLexerError($"Caracter sin emparejar {token.Value} en {token.Pos}");
                 }
 
                 Token lastOpen = groupTokens.Pop();
 
                 if (!MatchingPairs(lastOpen, token))
                 {
-                    throw new LexerError($"Caracter sin emparejar {token.Value} en {token.Pos}", token.Pos);
+                    ThrowLexerError($"Caracter sin emparejar {token.Value} en {token.Pos}");
                 }
             }
         }
+
 
         // Verifica si los delimitadores coinciden ({}, [], (), etc.)
         private bool MatchingPairs(Token open, Token close)
@@ -444,6 +463,8 @@ namespace DSL.Lexer
                 || (open.Type == TokenType.OpenBracket && close.Type == TokenType.CloseBracket)
                 || (open.Type == TokenType.OpenParen && close.Type == TokenType.CloseParen);
         }
+
+
 
 
     }

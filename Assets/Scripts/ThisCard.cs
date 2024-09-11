@@ -338,12 +338,6 @@ public class ThisCard : MonoBehaviour
     }
 
 
-    private IEnumerator DestroyWithDelay(GameObject obj)
-    {
-        yield return new WaitForSeconds(0.5f);
-        Destroy(obj);
-        Debug.Log($"{obj.name} destroyed with delay.");
-    }
     string PlayMusic(string x)
     {
         audioSource = GetComponent<AudioSource>();
@@ -363,11 +357,6 @@ public class ThisCard : MonoBehaviour
 
 
 }
-
-
-
-
-
 
 
 

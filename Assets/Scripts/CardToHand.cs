@@ -62,8 +62,11 @@ public class CardToHand : MonoBehaviour
 
         if (It.tag == "first" || It.tag == "Three")
         {
-            if (context.HandOfPlayer("Jugador 1").Count < 11)
+            var hand = context.HandOfPlayer("Jugador 1");
+
+            if (hand.Count < 11)
             {
+                // Añadir carta a la mano
                 It.transform.SetParent(Hand.transform);
                 It.transform.localScale = Vector3.one;
                 It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
@@ -73,8 +76,9 @@ public class CardToHand : MonoBehaviour
             else
             {
                 
-                context.HandOfPlayer("Jugador 1").RemoveAt(context.HandOfPlayer("Jugador 1").Count - 1);
-                //context.GraveyardOfPlayer("Jugador 1").Add();
+                context.GraveyardOfPlayer("Jugador 1").Add(hand[hand.Count - 1]); 
+                hand.RemoveAt(hand.Count - 1); 
+
                 It.transform.SetParent(Graveyard.transform);
                 It.transform.localScale = Vector3.one;
                 It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);
@@ -82,5 +86,6 @@ public class CardToHand : MonoBehaviour
                 It.tag = "cementery";
             }
         }
+
     }
 }

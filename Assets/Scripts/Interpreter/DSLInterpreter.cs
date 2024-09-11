@@ -17,11 +17,12 @@ public class DSLInterpreter : MonoBehaviour
     {
         string userInput = inputField.text;
 
-        // Preprocesar la entrada para eliminar espacios y saltos de línea innecesarios
+        // Preprocesar la entrada
         userInput = PreprocessInput(userInput);
 
         LexerStream lexerStream = new LexerStream(userInput);
         Parser parser = new Parser(lexerStream);
+        SemanticChecker semanticChecker = new SemanticChecker();
 
         List<Card> validCards = new List<Card>();
         List<Effect> validEffects = new List<Effect>();
@@ -33,34 +34,68 @@ public class DSLInterpreter : MonoBehaviour
             {
                 if (parser.Match(TokenType.Card))
                 {
-                    var cardNode = parser.ParseCard();
-                    validCards.Add(cardNode);
+                    // Parsear carta
+                    Card cardNode = parser.ParseCard();
+
+                    // Chequeo semántico de la carta
+                    List<string> semanticErrors = semanticChecker.ValidateCard(cardNode);
+                    if (semanticErrors.Count == 0)
+                    {
+                        validCards.Add(cardNode);
+                    }
+                    else
+                    {
+                        errorMessages.AddRange(semanticErrors);
+                    }
                 }
                 else if (parser.Match(TokenType.Effect))
                 {
+                    // Parsear efectos
                     var effects = parser.ParseEffects();
                     validEffects.AddRange(effects);
+
+                    // Registrar cada efecto en el singleton EffectRegistry
+                    foreach (var effect in effects)
+                    {
+                        try
+                        {
+                            EffectRegistry.Instance.RegisterEffect(effect);
+                        }
+                        catch (Exception ex)
+                        {
+                            errorMessages.Add($"Error registering effect '{effect.name}': {ex.Message}");
+                        }
+                    }
                 }
                 else
                 {
-                    throw new Exception($"Unexpected token '{lexerStream.CurrentToken.Value}'");
+                    throw new Exception($"Unexpected token '{lexerStream.CurrentToken.Value}' at position {lexerStream.CurrentToken.Pos}");
                 }
             }
-            catch (LexerError lexEx)
+            catch (Error lexEx)
             {
-                errorMessages.Add($"Lexer Error: {lexEx.Message}\nPosition: {lexEx.Position}");
+                errorMessages.Add($"Lexer error: {lexEx.Message}");
                 parser.SkipToNextStatement();
             }
             catch (Exception ex)
             {
-                errorMessages.Add($"Error parsing input: {ex.Message}");
+                errorMessages.Add($"Error: {ex.Message} at position {lexerStream.CurrentToken.Pos}");
                 parser.SkipToNextStatement();
             }
         }
 
-        // Mostrar resultados
+        // Validar efectos de cada carta después del parseo y registro
+        foreach (var card in validCards)
+        {
+            var cardErrors = semanticChecker.ValidateCard(card);
+            errorMessages.AddRange(cardErrors);
+        }
+
+        // Mostrar los resultados o errores en la UI
         DisplayResults(validCards, validEffects, errorMessages);
     }
+
+
 
     private static string PreprocessInput(string input)
     {
@@ -78,51 +113,7 @@ public class DSLInterpreter : MonoBehaviour
             resultBuilder.AppendLine("Cards parsed successfully:");
             foreach (var card in validCards)
             {
-                resultBuilder.AppendLine($"Name: {card.Name}");
-               // resultBuilder.AppendLine($"Type: {card.Type}");
-               // resultBuilder.AppendLine($"Faction: {card.Faction}");
-               // resultBuilder.AppendLine($"Power: {card.Power}");
-               // resultBuilder.AppendLine($"Range: {string.Join(", ", card.Range)}");
-               // resultBuilder.AppendLine($"Owner: {card.Owner}");
-
-                // Mostrar detalles de OnActivation
-               // resultBuilder.AppendLine("On Activation:");
-               // if (card.OnActivation.Count > 0)
-               // {
-               //     foreach (var activation in card.OnActivation)
-               //     {
-               //         // Mostrar detalles del efecto
-               //         resultBuilder.AppendLine($"  Effect: {activation.effect.name}");
-//
-               //         // Mostrar detalles del selector
-               //         if (activation.selector != null)
-               //         {
-               //             resultBuilder.AppendLine($"  Selector Source: {activation.selector.source}");
-               //             resultBuilder.AppendLine($"  Selector Single: {activation.selector.single}");
-               //             resultBuilder.AppendLine($"  Selector Predicate: {activation.selector.predicate}");
-               //         }
-//
-               //         // Mostrar detalles de la acción posterior (PostAction)
-               //         if (activation.postAction != null)
-               //         {
-               //             resultBuilder.AppendLine($"  Post Action Type: {activation.postAction.Type}");
-               //             if (activation.postAction.Selector != null)
-               //             {
-               //                 resultBuilder.AppendLine($"  Post Action Selector Source: {activation.postAction.Selector.source}");
-               //                 resultBuilder.AppendLine($"  Post Action Selector Single: {activation.postAction.Selector.single}");
-               //                 resultBuilder.AppendLine($"  Post Action Selector Predicate: {activation.postAction.Selector.predicate}");
-               //             }
-               //         }
-//
-               //         resultBuilder.AppendLine(); // Línea en blanco para separar cada EffectActivation
-               //     }
-               // }
-               // else
-               // {
-               //     resultBuilder.AppendLine("  No effects defined.");
-               // }
-
-               // resultBuilder.AppendLine(); // Línea en blanco para separar cada carta
+                resultBuilder.AppendLine($"- Name: {card.Name}");
             }
         }
         else
@@ -136,32 +127,7 @@ public class DSLInterpreter : MonoBehaviour
             resultBuilder.AppendLine("\nEffects parsed successfully:");
             foreach (var effect in validEffects)
             {
-                resultBuilder.AppendLine($"Name: {effect.name}");
-
-                // Mostrar parámetros del efecto
-              //  if (effect.parameters != null && effect.parameters.Count > 0)
-              //  {
-              //      resultBuilder.AppendLine("  Parameters:");
-              //      foreach (var parameter in effect.parameters)
-              //      {
-              //          resultBuilder.AppendLine($"    Param Name: {parameter.paramName}, Type: {parameter.type}, Value: {parameter.value}");
-              //      }
-              //  }
-               // else
-               // {
-               //     resultBuilder.AppendLine("  No parameters defined.");
-               // }
-               //
-               // if (effect.action != null)
-               // {
-               //     resultBuilder.AppendLine("  Action: Defined"); 
-               // }
-               // else
-               // {
-               //     resultBuilder.AppendLine("  Action: Not defined");
-               // }
-
-                //resultBuilder.AppendLine(); // Línea en blanco para separar cada efecto
+                resultBuilder.AppendLine($"- Name: {effect.name}");
             }
         }
         else
@@ -173,13 +139,17 @@ public class DSLInterpreter : MonoBehaviour
         if (errorMessages.Count > 0)
         {
             resultBuilder.AppendLine("\nErrors found:");
-            foreach (var error in errorMessages)
+            for (int i = 0; i < errorMessages.Count; i++)
             {
-                resultBuilder.AppendLine(error);
+                resultBuilder.AppendLine($"{i + 1}. {errorMessages[i]}");
             }
         }
+        else
+        {
+            resultBuilder.AppendLine("\nNo errors found.");
+        }
 
+        // Mostrar resultados en la UI
         outputText.text = resultBuilder.ToString();
     }
-
 }
