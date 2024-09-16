@@ -28,7 +28,7 @@ public class CardPreview : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             // Obtener la carta sobre la cual el mouse está encima
             GameObject hoveredCard = eventData.pointerEnter;
-            if (hoveredCard != null && hoveredCard.name != "State" && hoveredCard.name != "AIState")
+            if (hoveredCard != null )//&& hoveredCard.name != "State" && hoveredCard.name != "AIState")
             {
                 // Instanciar una copia de la carta en el panel de vista previa
                 instantiatedCard = Instantiate(hoveredCard, previewPanel.transform);

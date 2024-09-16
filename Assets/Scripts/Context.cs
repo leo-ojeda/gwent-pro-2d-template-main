@@ -6,8 +6,8 @@ using UnityEngine;
 public class Context : MonoBehaviour
 {
 
-    public GameObject CardPrefab; 
-    public GameObject Hands; 
+    public GameObject CardPrefab;
+    public GameObject Hands;
     public string TriggerPlayer { get; set; }
     public List<Card> board { get; set; }
     public Dictionary<string, List<Card>> playerHands { get; set; }
@@ -52,7 +52,26 @@ public class Context : MonoBehaviour
     public List<Card> Field => FieldOfPlayer(TriggerPlayer);
     public List<Card> Graveyard => GraveyardOfPlayer(TriggerPlayer);
     public List<Card> Deck => DeckOfPlayer(TriggerPlayer);
+
+
+
+
+    public object GetValue(string propertyName)
+    {
+        var property = this.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        if (property != null)
+        {
+            return property.GetValue(this);
+        }
+        throw new ArgumentException($"Property '{propertyName}' not found in Context.");
+    }
+    
+
 }
+
+
+
+
 
 public static class CardListExtensions
 {
@@ -83,11 +102,11 @@ public static class CardListExtensions
     public static Card Pop(this List<Card> cards)
     {
         if (cards.Count == 0) return null;
-     //  Debug.Log(cards.Count);
+        //  Debug.Log(cards.Count);
         var card = cards[0];
-       // Debug.Log(card.Name);
+        // Debug.Log(card.Name);
         cards.RemoveAt(0);
-        
+
         return card;
     }
 
@@ -100,6 +119,9 @@ public static class CardListExtensions
     {
         return cards.Where(predicate).ToList();
     }
+    
+
 
 }
+
 

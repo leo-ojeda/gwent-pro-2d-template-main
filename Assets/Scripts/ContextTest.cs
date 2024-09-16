@@ -31,6 +31,7 @@ public class ContextTest : MonoBehaviour
             Debug.LogError("Context no se ha inicializado.");
         }
         //context.TriggerPlayer = "Jugador 1";
+       
     }
     void Update()
     {

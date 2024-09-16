@@ -74,12 +74,12 @@ public class DSLInterpreter : MonoBehaviour
             }
             catch (Error lexEx)
             {
-                errorMessages.Add($"Lexer error: {lexEx.Message}");
+                errorMessages.Add($" {lexEx.Message}");
                 parser.SkipToNextStatement();
             }
             catch (Exception ex)
             {
-                errorMessages.Add($"Error: {ex.Message} at position {lexerStream.CurrentToken.Pos}");
+                errorMessages.Add($" {ex.Message} at position {lexerStream.CurrentToken.Pos}");
                 parser.SkipToNextStatement();
             }
         }

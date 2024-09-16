@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using DSL.Lexer;
+using System.Linq;
 
 namespace DSL.Parser
 {
@@ -409,7 +410,7 @@ namespace DSL.Parser
                         {
                             ThrowSyntaxError("The 'Action' has already been defined.");
                         }
-                        action = ParseAction();
+                        action = ParseAction(parameters);
                         definedProperties.Add(TokenType.Action);
                         break;
 
@@ -439,17 +440,16 @@ namespace DSL.Parser
 
             while (!Match(TokenType.CloseBrace))
             {
-
-
                 string paramName = Consume(TokenType.Identifier).Value;
                 Consume(TokenType.Colon);
 
                 ParamType paramType;
+                object paramValue = null;  // Dejar el valor nulo hasta que se asigne posteriormente
+
                 if (Match(TokenType.Number))
                 {
                     paramType = ParamType.Number;
                     Consume(TokenType.Number);
-
                 }
                 else if (Match(TokenType.String))
                 {
@@ -466,36 +466,32 @@ namespace DSL.Parser
                 else
                 {
                     ThrowSyntaxError($"Tipo de parámetro inesperado después de '{paramName}'");
-                    return null; // Para evitar más errores en tiempo de compilación, aunque normalmente ThrowSyntaxError lanzará una excepción
+                    return null;
                 }
 
-                // Crear el parámetro y añadirlo a la lista
-                parameters.Add(new Parameter(paramType));
+                // Crear el parámetro con el tipo definido, sin un valor inicial
+                parameters.Add(new Parameter(paramName, paramType, paramValue));
+
                 if (Match(TokenType.Comma))
                 {
                     Consume(TokenType.Comma);
                 }
-
-
             }
-            Consume(TokenType.CloseBrace);
-            //if (Match(TokenType.Comma))
-            // {
-            Consume(TokenType.Comma);
-            //}
 
+            Consume(TokenType.CloseBrace);
+            Consume(TokenType.Comma);
             return parameters;
         }
 
 
-        private Action<List<Card>, Context> ParseAction()
+        private Action<List<Card>, Context> ParseAction(List<Parameter> parameters)
         {
             Consume(TokenType.Action);
             Consume(TokenType.Colon);
             Consume(TokenType.OpenParen);
 
             // Leer y verificar los parámetros 'targets' y 'context'
-            var targetsParam = Consume(TokenType.Identifier).Value;
+            var targetsParam = Consume(TokenType.Identifier).Value;  // Parametro 'targets'
             Consume(TokenType.Comma);
             var contextParam = Consume(TokenType.Identifier).Value;
             Consume(TokenType.CloseParen);
@@ -506,15 +502,28 @@ namespace DSL.Parser
             List<Action<List<Card>, Context>> actions = new List<Action<List<Card>, Context>>();
             Dictionary<string, object> localVariables = new Dictionary<string, object>();
 
-            var A = LookAhead();
-            //var B = A.Value;
+            // Guardar los parámetros 'targets' y 'context' como variables locales
+            localVariables[targetsParam] = new List<Card>();  // Aseguramos que 'targets' sea una lista de cartas
+            localVariables[contextParam] = null;  // El valor de 'context' se llenará en la ejecución
 
             while (!Match(TokenType.CloseBrace))
             {
+                var A = LookAhead();
 
-                if (A.Type == TokenType.Identifier || A.Type == TokenType.For)
+                if (A.Type == TokenType.Identifier || A.Type == TokenType.For || A.Type == TokenType.While)
                 {
-                    ParseAssignment(localVariables, actions);
+                    if (A.Type == TokenType.For)
+                    {
+                        ParseForLoop(actions, localVariables, parameters);  // Pasar 'localVariables' al bucle for
+                    }
+                    else if (A.Type == TokenType.While)
+                    {
+                        ParseWhileLoop(actions, localVariables, parameters);
+                    }
+                    else
+                    {
+                        ParseAssignment(localVariables, actions, parameters);  // Procesar las asignaciones
+                    }
                 }
                 else
                 {
@@ -527,528 +536,464 @@ namespace DSL.Parser
             // Retornar la acción final que ejecutará todas las acciones parseadas
             return (cards, ctx) =>
             {
+                // Verificar que 'targets' es una lista de cartas
+                if (!(localVariables[targetsParam] is List<Card>))
+                {
+                    throw new ArgumentException($"El parámetro '{targetsParam}' debe ser una lista de cartas.");
+                }
+
                 foreach (var action in actions)
                 {
-                    action(cards, ctx); // Ejecutar cada acción con las cartas y el contexto proporcionados
+                    action(cards, ctx);  // Ejecutar cada acción con las cartas y el contexto proporcionados
                 }
             };
         }
 
-        private void ParseForLoop(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
+        private void ParseForLoop(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, List<Parameter> parameters)
         {
             Consume(TokenType.For);
-
-            var targetVarToken = Consume(TokenType.Identifier);
-            //var targetVar = targetVarToken.Value;
-
-
+            var targetVar = Consume(TokenType.Identifier).Value;  // Variable para cada carta
             Consume(TokenType.In);
+            var listName = Consume(TokenType.Identifier).Value;  // Nombre de la lista sobre la cual iterar
 
-            var listNameToken = Consume(TokenType.Identifier);
-            //var listName = listNameToken.Value; // Nombre de la lista, ej., "targets"
-
+            // Verificar que 'listName' sea una lista de cartas (que corresponde a 'targets')
+            if (!localVariables.ContainsKey(listName) || !(localVariables[listName] is List<Card>))
+            {
+                throw new ArgumentException($"La lista '{listName}' no está definida como una lista de cartas.");
+            }
 
             Consume(TokenType.OpenBrace);
 
-            // List<Action<Card, Context>> loopActions = new List<Action<Card, Context>>();
+            List<Action<List<Card>, Context>> loopActions = new List<Action<List<Card>, Context>>();
+             localVariables[targetVar] = null; 
 
-
-            // Procesar el cuerpo del bucle 'for'
+            // Parsear todas las acciones dentro del bloque 'for'
             while (!Match(TokenType.CloseBrace))
             {
-                if (Match(TokenType.Identifier))
-                {
-                    ParseAssignment(localVariables, actions);
-                    //ParseForLoopIdentifier(loopActions, localVariables, actions);
-                }
-                else
-                {
-                    ThrowSyntaxError("Unexpected token in for-loop body");
-                }
+                ParseAssignment(localVariables, loopActions, parameters);  // Parsear las asignaciones y agregar a 'loopActions'
             }
-            Consume(TokenType.CloseBrace);
 
-            // Agregar las acciones del bucle 'for' a la lista principal de acciones
+            Consume(TokenType.CloseBrace);
+            Consume(TokenType.SemiColon);
+
+            // Añadir las acciones para ser ejecutadas en el contexto del bucle 'for'
             actions.Add((cards, ctx) =>
             {
-                foreach (var card in cards)
+                var cardList = (List<Card>)localVariables[listName];  // Obtener la lista de cartas
+
+                foreach (var card in cardList)
                 {
-                    foreach (var action in actions)
+                    localVariables[targetVar] = card;  // Asignar cada carta a la variable local 'target'
+                    foreach (var action in loopActions)
                     {
-                        action(cards, ctx);
+                        action(cards, ctx);  // Ejecutar las acciones del bloque 'for'
                     }
                 }
             });
         }
 
-        // private void ParseForLoopIdentifier(List<Action<Card, Context>> loopActions, Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
-        // {
-        //     var variableToken = LookAhead();
-        //     //var variable = variableToken.Value;
-        //
-        //     if (Match(TokenType.Identifier))
-        //     {
-        //         ParseAssignment(localVariables, actions);
-        //     }
-        //     else
-        //     {
-        //         ThrowSyntaxError($"Unexpected token in for-loop identifier handling: '{variableToken.Value}'");
-        //     }
-        // }
-
-        private void ParseWhileLoop(List<Action<List<Card>, Context>> actions)
+        private void ParseWhileLoop(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, List<Parameter> parameters)
         {
             Consume(TokenType.While);
             Consume(TokenType.OpenParen);
 
-            var loopVarToken = Consume(TokenType.Identifier);
-            var loopVar = loopVarToken.Value; // Variable de control del bucle, ej., "i"
-
-            if (!Match(TokenType.Increment))
-            {
-                ThrowSyntaxError("Expected '++' for while-loop increment", TokenType.Increment);
-            }
+            var loopVar = Consume(TokenType.Identifier).Value;  // Variable de bucle (por ejemplo, 'i')
             Consume(TokenType.Increment);
-
-            if (!Match(TokenType.Less))
-            {
-                ThrowSyntaxError("Expected '<' after increment in while-loop condition", TokenType.Less);
-            }
             Consume(TokenType.Less);
 
-            var loopConditionToken = Consume(TokenType.Identifier);//.Amount);
-            var loopConditionValue = loopConditionToken.Value; // Valor de condición del bucle, ej., "Amount"
+            // Verificamos si 'conditionVar' es un número literal o una variable/parámetro
+            string conditionVar;
+            if (Match(TokenType.Number))
+            {
+                conditionVar = Consume(TokenType.Number).Value;  // Si es un número literal
+            }
+            else
+            {
+                conditionVar = Consume(TokenType.Identifier).Value;  // Si es un parámetro o variable
+            }
 
             Consume(TokenType.CloseParen);
 
-            List<Action<Card, Context>> whileActions = new List<Action<Card, Context>>();
+            List<Action<List<Card>, Context>> whileActions = new List<Action<List<Card>, Context>>();
 
-            // Procesar el cuerpo del bucle 'while'
-            if (Match(TokenType.Identifier))
+            // Parsear todas las acciones dentro del bloque 'while'
+            while (!Match(TokenType.CloseBrace))
             {
-                var targetToken = Consume(TokenType.Identifier);
-                var target = targetToken.Value; // Variable objetivo, ej., "target"
+                ParseAssignment(localVariables, whileActions, parameters);
+            }
 
-                if (Match(TokenType.Dot))
+            
+            //Consume(TokenType.CloseBrace);
+
+            // Añadir las acciones del bucle 'while'
+            actions.Add((cards, ctx) =>
+            {
+                int loopValue = (int)localVariables[loopVar];  // Inicializar valor de la variable del bucle
+                int conditionValue;
+
+                // Si 'conditionVar' es un número literal
+                if (int.TryParse(conditionVar, out conditionValue))
                 {
-                    Consume(TokenType.Dot);
-                    var propertyToken = Consume(TokenType.Power);
-                    var property = propertyToken.Value; // Propiedad, ej., "Power"
-
-                    if (Match(TokenType.Minus))
-                    {
-                        Consume(TokenType.Minus);
-                        Consume(TokenType.Equals);
-                        var valueToken = Consume(TokenType.Number);
-                        int value;
-
-                        if (!int.TryParse(valueToken.Value, out value))
-                        {
-                            ThrowSyntaxError("Invalid number format for decrement operation in while-loop", TokenType.Number);
-                        }
-
-                        whileActions.Add((targetCard, ctx) => targetCard.Power -= value);
-                    }
-                    else
-                    {
-                        ThrowSyntaxError($"Unexpected token after property '{propertyToken.Value}' in while-loop");
-                    }
+                    // 'conditionVar' es un número literal, ya lo tenemos
+                }
+                // Si 'conditionVar' es un parámetro, usamos su valor
+                else if (parameters.Any(p => p.paramName == conditionVar))
+                {
+                    var parameter = parameters.First(p => p.paramName == conditionVar);
+                    conditionValue = (int)parameter.value;
+                }
+                // Si 'conditionVar' es una variable local
+                else if (localVariables.ContainsKey(conditionVar))
+                {
+                    conditionValue = (int)localVariables[conditionVar];
                 }
                 else
                 {
-                    ThrowSyntaxError($"Expected '.' after identifier '{targetToken.Value}' in while-loop");
+                    throw new ArgumentException($"'{conditionVar}' no está definido como un número, variable local o parámetro.");
                 }
-            }
 
-            // Agregar las acciones del bucle 'while' a la lista principal
-            actions.Add((cards, ctx) =>
-            {
-                foreach (var target in cards)
+                // Ejecutar el bucle 'while'
+                while (loopValue < conditionValue)
                 {
-                    int currentValue = 0; // Inicializar la variable de control
-                    while (currentValue < 1) // Usar el valor de 'loopConditionValue' directamente
+                    foreach (var action in whileActions)
                     {
-                        currentValue++; // Incrementar después de la comparación
-                        foreach (var action in whileActions)
-                        {
-                            action(target, ctx);
-                        }
+                        action(cards, ctx);  // Ejecutar las acciones del bucle
                     }
+                    loopValue++;
+                    localVariables[loopVar] = loopValue;  // Actualizamos el valor en 'localVariables'
                 }
             });
         }
 
-        // private void ParseIdentifier(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables)
-        // {
-        //     var contextObjectToken = LookAhead();
-        //     string contextObject = contextObjectToken.Value;
-        //
-        //
-        //     if (Match(TokenType.Identifier))
-        //     {
-        //         ParseAssignment(contextObject, localVariables, actions);
-        //     }
-        //     else
-        //     {
-        //         ThrowSyntaxError($"Unexpected token el after identifier '{contextObject}'");
-        //     }
-        // }
-        // string variableName
-        private void ParseAssignment(Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
+        private void ParseAssignment(Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions, List<Parameter> parameters)
         {
-
-
-            while (LookAhead().Type != TokenType.CloseBrace)
+            if (Match(TokenType.Identifier))
             {
-                while (!Match(TokenType.SemiColon))
+                var identifier = Consume(TokenType.Identifier).Value;
+
+
+                // Manejo de 'context'
+                if (identifier == "context")
+                {
+                    identifier = ContextAssignment(actions, localVariables, identifier);  // Pasamos el 'identifier' a ContextAssignment
+                }
+                // Manejo de 'target'
+                else if (identifier == "target")
+                {
+                    identifier = TargetAssignment(actions, localVariables, identifier, parameters);  // Pasamos el 'identifier' a TargetAssignment
+                }
+
+                // Verificar si viene una asignación '='
+                if (Match(TokenType.Equals))
                 {
 
-                    var identifier = LookAhead();
-                    //variableName = identifier.Value;
-
-                    if (Match(TokenType.Identifier))//.Value == "context" || identifier.Value == "target")
+                    if (localVariables.ContainsKey(identifier))
                     {
-                        //ConsumePropertyOrMethod();
-
-                        //Consume(TokenType.Dot);
-
-                        if (identifier.Value == "context")
-                        {
-                            ConsumePropertyOrMethod();
-                            Consume(TokenType.Dot);
-                            var propertyOrMethod = ConsumePropertyOrMethod();
-
-                            switch (propertyOrMethod.Type)
-                            {
-                                // Propiedades de context que requieren un parámetro
-                                case TokenType.DeckOfPlayer:
-                                case TokenType.HandOfPlayer:
-                                case TokenType.FieldOfPlayer:
-                                case TokenType.GraveyardOfPlayer:
-                                    Consume(TokenType.OpenParen);
-                                    var owner = Consume(TokenType.Identifier).Value;  // Identificador dentro de los paréntesis
-                                    Consume(TokenType.CloseParen);
-
-                                    actions.Add((cards, ctx) =>
-                                    {
-                                        // Agregar la acción según la propiedad
-                                        // Ejemplo: context.DeckOfPlayer(owner)
-                                    });
-                                    break;
-
-                                // Propiedades de context seguidas por un método
-                                case TokenType.Deck:
-                                case TokenType.Hand:
-                                case TokenType.Field:
-                                case TokenType.Graveyard:
-                                case TokenType.Board:
-                                    if (Match(TokenType.Dot))
-                                    {
-                                        Consume(TokenType.Dot);
-                                        var method = ConsumeMethod();
-
-                                        switch (method.Type)
-                                        {
-                                            case TokenType.Pop:
-                                            case TokenType.Shuffle:
-                                                Consume(TokenType.OpenParen);
-                                                Consume(TokenType.CloseParen);
-
-                                                actions.Add((cards, ctx) =>
-                                                {
-                                                    // Ejemplo: context.Deck.Shuffle()
-                                                });
-                                                break;
-
-                                            case TokenType.Push:
-                                            case TokenType.SendBottom:
-                                            case TokenType.Remove:
-                                            case TokenType.Find:
-                                            case TokenType.Add:
-                                                Consume(TokenType.OpenParen);
-                                                var param = Consume(TokenType.Identifier).Value;  // Identificador dentro de los paréntesis
-                                                Consume(TokenType.CloseParen);
-
-                                                actions.Add((cards, ctx) =>
-                                                {
-                                                    // Ejemplo: context.Deck.Add(param)
-                                                });
-                                                break;
-
-                                            default:
-                                                ThrowSyntaxError($"Unexpected context method '{method.Value}'");
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        ThrowSyntaxError($"Expected method after context property '{propertyOrMethod.Value}'");
-                                    }
-                                    break;
-
-                                default:
-                                    ThrowSyntaxError($"Unexpected context property '{propertyOrMethod.Value}'");
-                                    break;
-                            }
-                        }
-                        else if (identifier.Value == "target")
-                        {
-                            ConsumePropertyOrMethod();
-                            Consume(TokenType.Dot);
-                            var targetProperty = ConsumeTargetProperty();
-
-                            switch (targetProperty.Type)
-                            {
-                                case TokenType.Name:
-                                case TokenType.Power:
-                                //case TokenType.Type:
-                                //case TokenType.Range:
-                                case TokenType.Faction:
-                                // case TokenType.OnActivation:
-                                case TokenType.Owner:
-                                    // Propiedad de target
-                                    break;
-
-                                default:
-                                    ThrowSyntaxError($"Unexpected target property '{targetProperty.Value}'");
-                                    break;
-                            }
-                            // agregar terminacion en -= numero y += numero
-                            if (Match(TokenType.Minus))
-                            {
-                                Consume(TokenType.Minus);
-                                Consume(TokenType.Equals);
-                                int value;
-                                if (Match(TokenType.Number))
-                                {
-
-                                    var valueToken = Consume(TokenType.Number);
-
-                                    if (!int.TryParse(valueToken.Value, out value))
-                                    {
-                                        ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
-                                    }
-                                }
-                                else
-                                {
-                                    //Terminar codigo
-                                    Consume(TokenType.Identifier);
-                                }
-
-                                //actions.Add((targetCard, ctx) => targetCard.Power -= value);
-
-                            }
-                            if (Match(TokenType.Plus))
-                            {
-                                Consume(TokenType.Plus);
-                                Consume(TokenType.Equals);
-                                //var valueToken = Consume(TokenType.Number);
-                                int value;
-
-                                if (Match(TokenType.Number))
-                                {
-
-                                    var valueToken = Consume(TokenType.Number);
-
-                                    if (!int.TryParse(valueToken.Value, out value))
-                                    {
-                                        ThrowSyntaxError("Invalid number format for decrement operation", TokenType.Number);
-                                    }
-                                }
-                                else
-                                {
-                                    //terminar codigo
-                                    Consume(TokenType.Identifier);
-                                }
-
-                                // Actions.Add((targetCard, ctx) => targetCard.Power += value);
-                            }
-                        }
-
-                        else if (identifier.Type == TokenType.Identifier)
-                        {
-                            string variable = Consume(TokenType.Identifier).Value;
-                            // Card TypeCard;
-                            if (Match(TokenType.Equals))
-                            {
-                                //localVariables[variable] = TypeCard;
-                                Consume(TokenType.Equals);
-                                var property = LookAhead();
-
-                                if (Match(TokenType.Number))
-                                {
-                                    var valueToken = Consume(TokenType.Number);
-                                    int value;
-
-                                    if (!int.TryParse(valueToken.Value, out value))
-                                    {
-                                        ThrowSyntaxError("Invalid number format for assignment", TokenType.Number);
-                                    }
-                                    Consume(TokenType.SemiColon);
-                                    localVariables[variable] = value; // Almacenar la variable localmente
-
-                                }
-                                else if (identifier.Value == "target")
-                                {
-                                    ConsumePropertyOrMethod();
-                                    Consume(TokenType.Dot);
-                                    var targetProperty = ConsumeTargetProperty();
-
-                                    switch (targetProperty.Type)
-                                    {
-                                        case TokenType.Name:
-                                        case TokenType.Power:
-                                        case TokenType.Faction:
-                                        case TokenType.Owner:
-                                            // Propiedad de target
-                                            break;
-
-                                        default:
-                                            ThrowSyntaxError($"Unexpected target property '{targetProperty.Value}'");
-                                            break;
-                                    }
-                                }
-                                else if (identifier.Value == "context")
-                                {
-                                    ConsumePropertyOrMethod();
-                                    Consume(TokenType.Dot);
-                                    // Consumir propiedades y métodos específicos del contexto
-
-                                    var propertyOrMethod = ConsumePropertyOrMethod();
-
-                                    switch (propertyOrMethod.Type)
-                                    {
-                                        // Propiedades de context que requieren un parámetro
-                                        case TokenType.DeckOfPlayer:
-                                        case TokenType.HandOfPlayer:
-                                        case TokenType.FieldOfPlayer:
-                                        case TokenType.GraveyardOfPlayer:
-                                            Consume(TokenType.OpenParen);
-                                            Consume(TokenType.Identifier);
-                                            Consume(TokenType.CloseParen);
-                                            break;
-                                        //context.propertyOrMethod(owner)
-
-                                        // Propiedades de context que pueden ser seguidas por un método
-                                        case TokenType.Deck:
-                                        case TokenType.Hand:
-                                        case TokenType.Field:
-                                        case TokenType.Graveyard:
-                                        case TokenType.Board:
-                                            if (Match(TokenType.Dot))
-                                            {
-                                                Consume(TokenType.Dot);
-                                                var method = ConsumeMethod();
-
-                                                switch (method.Type)
-                                                {
-                                                    case TokenType.Pop:
-                                                    case TokenType.Shuffle:
-                                                        Consume(TokenType.OpenParen);
-                                                        Consume(TokenType.CloseParen);
-                                                        break;
-                                                    //context.propertyOrMethod.Method()
-
-                                                    case TokenType.Push:
-                                                    case TokenType.SendBottom:
-                                                    case TokenType.Remove:
-                                                    case TokenType.Find:
-                                                    case TokenType.Add:
-                                                        Consume(TokenType.OpenParen);
-                                                        Consume(TokenType.Identifier);
-                                                        Consume(TokenType.CloseParen);
-                                                        break;
-                                                    //context.propertyOrMethod.Method(identificador)
-
-
-                                                    default:
-                                                        ThrowSyntaxError($"Unexpected context method '{method.Value}'");
-                                                        break;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                ThrowSyntaxError($"Expected method after context property '{propertyOrMethod.Value}'");
-                                            }
-                                            break;
-
-                                        default:
-                                            ThrowSyntaxError($"Unexpected context property '{propertyOrMethod.Value}'");
-                                            break;
-                                    }
-                                }
-
-                            }
-                            if (Match(TokenType.Dot))
-                            {
-                                Consume(TokenType.Dot);
-                                var A = LookAhead();
-                                ConsumePropertyOrMethod();
-                                if (MethodContext(A.Type))
-                                {
-                                    switch (A.Type)
-                                    {
-                                        case TokenType.Pop:
-                                        case TokenType.Shuffle:
-                                            Consume(TokenType.OpenParen);
-                                            Consume(TokenType.CloseParen);
-                                            break;
-                                        //A.Pop o A.Shuffle
-
-                                        case TokenType.Push:
-                                        case TokenType.SendBottom:
-                                        case TokenType.Remove:
-                                        case TokenType.Find:
-                                        case TokenType.Add:
-                                            Consume(TokenType.OpenParen);
-                                            Consume(TokenType.Identifier);
-                                            Consume(TokenType.CloseParen);
-                                            break;
-
-                                        default:
-                                            ThrowSyntaxError($"Unexpected context method '{A.Value}'");
-                                            break;
-                                    }
-                                }
-
-                            }
-
-
-
-                        }
-                        else
-                        {
-                            ThrowSyntaxError($"Expected '.' after identifier '{identifier.Value}'");
-                        }
+                        throw new ArgumentException($"La variable local '{identifier}' ya está definida.");
                     }
-                    else if (identifier.Type == TokenType.While)
+                    Consume(TokenType.Equals);
+                    var nextToken = LookAhead().Value;
+
+                    // Asignación de 'context' a una variable local
+                    if (nextToken == "context")
                     {
-                        {
-                            ParseWhileLoop(actions);
-                        }
+                        Consume(TokenType.Identifier);  // Consumimos 'context'
+                        var result = ContextAssignment(actions, localVariables, identifier);  // Asignamos el resultado de 'ContextAssignment'
+                        localVariables[identifier] = result;  // Guardar el resultado en las variables locales
                     }
-                    else if (identifier.Type == TokenType.For)
+                    // Asignación de 'target' a una variable local
+                    else if (nextToken == "target")
                     {
-                        ParseForLoop(actions, localVariables);
+                        Consume(TokenType.Identifier);  // Consumimos 'target'
+                        var result = TargetAssignment(actions, localVariables, identifier, parameters);  // Asignamos el resultado de 'TargetAssignment'
+                        localVariables[identifier] = result;  // Guardar el resultado en las variables locales
                     }
+                    // Asignación de un número a la variable local
+                    else if (Match(TokenType.Number))
+                    {
+                        var numberValue = Consume(TokenType.Number).Value;
+                        int parsedValue = int.Parse(numberValue);
 
-
-
+                        actions.Add((cards, ctx) =>
+                        {
+                            localVariables[identifier] = parsedValue;
+                        });
+                        Consume(TokenType.SemiColon);
+                    }
 
                     else
                     {
-                        ThrowSyntaxError($"Expected 'context' or 'target', but found '{identifier.Value}'");
+                        throw new ArgumentException($"'{nextToken}' no está definido como variable local.");
                     }
-
                 }
-
-                Consume(TokenType.SemiColon);
-                // if (Match(TokenType.CloseBrace))
-                // {
-                //     break;
-                // }
+                else if (Match(TokenType.Dot)) // Métodos encadenados como 'Pop', 'Push'
+                {
+                    MethodChain(identifier, localVariables, actions);  // Manejar métodos encadenados
+                }
+            }
+            else if (Match(TokenType.While))
+            {
+                ParseWhileLoop(actions, localVariables, parameters);  // Manejo del bucle 'while'
+            }
+            else if (Match(TokenType.For))
+            {
+                ParseForLoop(actions, localVariables, parameters);  // Manejo del bucle 'for'
+            }
+            else
+            {
+                throw new ArgumentException("Error en la asignación");
             }
         }
+
+        private string ContextAssignment(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, string identifier)
+        {
+            Consume(TokenType.Dot);
+            var propertyOrMethod = ConsumePropertyOrMethod();
+
+            switch (propertyOrMethod.Type)
+            {
+                case TokenType.DeckOfPlayer:
+                case TokenType.HandOfPlayer:
+                case TokenType.FieldOfPlayer:
+                case TokenType.GraveyardOfPlayer:
+                    Consume(TokenType.OpenParen);
+                    var owner = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+
+                    // Verificar si el 'owner' ha sido previamente asignado desde 'target.Owner'
+                    if (!localVariables.ContainsKey(owner))
+                    {
+                        throw new ArgumentException($"El identificador '{owner}' debe haber sido asignado desde 'target.Owner'.");
+                    }
+
+                    actions.Add((cards, ctx) =>
+                    {
+                        // Asignar el resultado del método 'DeckOfPlayer', 'HandOfPlayer', etc., a la variable local 'identifier'
+                        var result = ctx.GetType().GetMethod(propertyOrMethod.Value)?.Invoke(ctx, new object[] { localVariables[owner] });
+                        localVariables[identifier] = result;  // Asignar el resultado a la variable local identificada (e.g., deck)
+                    });
+
+                    Consume(TokenType.SemiColon);  // Consumir el ';' al final de la asignación
+                    return identifier;
+
+                // Manejo de otros métodos y propiedades como Deck, Hand, Field, etc.
+                case TokenType.Deck:
+                case TokenType.Hand:
+                case TokenType.Field:
+                case TokenType.Graveyard:
+                case TokenType.Board:
+                    if (Match(TokenType.Dot))
+                    {
+                        Consume(TokenType.Dot);
+                        var method = ConsumeMethod();
+
+                        switch (method.Type)
+                        {
+                            case TokenType.Pop:
+                            case TokenType.Shuffle:
+                                Consume(TokenType.OpenParen);
+                                Consume(TokenType.CloseParen);
+
+                                actions.Add((cards, ctx) =>
+                                {
+                                    ctx.GetType().GetMethod(method.Value)?.Invoke(ctx, null);
+                                });
+                                break;
+
+                            case TokenType.Push:
+                            case TokenType.Add:
+                            case TokenType.Remove:
+                            case TokenType.SemiColon:
+                                Consume(TokenType.OpenParen);
+                                var param = Consume(TokenType.Identifier).Value;
+                                if (!localVariables.ContainsKey(param))
+                                    throw new ArgumentException($"'{param}' no está definido.");
+                                Consume(TokenType.CloseParen);
+
+                                actions.Add((cards, ctx) =>
+                                {
+                                    ctx.GetType().GetMethod(method.Value)?.Invoke(ctx, new object[] { localVariables[param] });
+                                });
+                                break;
+                        }
+                    }
+                    Consume(TokenType.SemiColon);  // Consumir el ';' al final de la asignación
+                    break;
+
+                default:
+                    ThrowSyntaxError($"Propiedad inesperada '{propertyOrMethod.Value}' en context.");
+                    break;
+            }
+
+            return propertyOrMethod.Value;
+        }
+
+        private string TargetAssignment(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, string identifier, List<Parameter> parameters)
+        {
+            Consume(TokenType.Dot);
+            var targetProperty = ConsumeTargetProperty();
+
+            switch (targetProperty.Type)
+            {
+                case TokenType.Name:
+                case TokenType.Faction:
+                case TokenType.Owner:
+                    // Asignación directa de una propiedad de 'target' a una variable local
+                    actions.Add((cards, ctx) =>
+                    {
+                        foreach (var card in cards)
+                        {
+                            localVariables[identifier] = targetProperty.Type switch
+                            {
+                                TokenType.Name => card.Name,
+                                TokenType.Faction => card.Faction,
+                                TokenType.Owner => card.Owner,
+                                _ => throw new ArgumentException($"Propiedad inesperada '{targetProperty.Value}' en target.")
+                            };
+                        }
+                    });
+                    Consume(TokenType.SemiColon);  // Consumir el ';' al final de la asignación
+                    return targetProperty.Value;
+
+                case TokenType.Power:
+                    // Manejo de incremento o decremento (+=, -=) en target.Power
+                    if (Match(TokenType.Plus) || Match(TokenType.Minus))
+                    {
+                        var operation = LookAhead().Type == TokenType.Plus ? 1 : -1;
+                        Consume(LookAhead().Type); // Consume '+' o '-'
+                        Consume(TokenType.Equals);
+
+                        // Verificar si es un número o un parámetro/variable
+                        int value = 0;
+
+                        // Si es un número directamente
+                        if (Match(TokenType.Number))
+                        {
+                            value = int.Parse(Consume(TokenType.Number).Value);
+                        }
+                        else
+                        {
+                            var paramOrVariable = Consume(TokenType.Identifier).Value;
+
+                            // Verificar si está en localVariables o en los parámetros
+                            if (localVariables.ContainsKey(paramOrVariable))
+                            {
+                                value = Convert.ToInt32(localVariables[paramOrVariable]);  // Convertir el valor a entero
+                            }
+                            else
+                            {
+                                // Buscar en los parámetros
+                                var parameter = parameters.FirstOrDefault(p => p.paramName == paramOrVariable);
+                                if (parameter != null)
+                                {
+                                    // Convertir el valor del parámetro dependiendo de su tipo
+                                    if (parameter.type == ParamType.Number)
+                                    {
+                                        value = (int)(parameter.value ?? 0); // Tomar el valor del parámetro si está definido
+                                    }
+                                    else
+                                    {
+                                        throw new ArgumentException($"El parámetro '{paramOrVariable}' no es del tipo esperado 'Number'.");
+                                    }
+                                }
+                                else
+                                {
+                                    throw new ArgumentException($"'{paramOrVariable}' no está definido como una variable o parámetro.");
+                                }
+                            }
+                        }
+
+                        // Agregar la acción que incrementa o decrementa el poder
+                        actions.Add((cards, ctx) =>
+                        {
+                            foreach (var card in cards)
+                            {
+                                card.Power += operation * value;
+                            }
+                        });
+
+                        Consume(TokenType.SemiColon);  // Consumir el ';' al final de la asignación
+                        return "Power";
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"Operación inesperada para target.Power.");
+                    }
+
+                default:
+                    ThrowSyntaxError($"Propiedad inesperada '{targetProperty.Value}' en target.");
+                    return null;
+            }
+        }
+        private void MethodChain(string identifier, Dictionary<string, object> localVariables, List<Action<List<Card>, Context>> actions)
+        {
+            // Si el identificador no está en localVariables, lanzar un error
+            if (identifier == null || !localVariables.ContainsKey(identifier))
+            {
+                throw new ArgumentException($"La variable '{identifier}' no está definida.");
+            }
+
+            // Consumir el punto y el método siguiente
+            Consume(TokenType.Dot);
+            var method = ConsumeMethod();
+
+            // Verificar si el método es de un objeto que no requiere parámetros, como 'Pop' o 'Shuffle'
+            switch (method.Type)
+            {
+                case TokenType.Pop:
+                case TokenType.Shuffle:
+                    Consume(TokenType.OpenParen);
+                    Consume(TokenType.CloseParen);
+
+                    // Añadir la acción para métodos sin parámetros
+                    actions.Add((cards, ctx) =>
+                    {
+                        var target = localVariables[identifier];
+                        // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                        target.GetType().GetMethod(method.Value)?.Invoke(target, null);
+                    });
+                    break;
+
+                // Métodos que requieren un parámetro como 'Push', 'Add', 'SendBottom', 'Remove', etc.
+                case TokenType.Push:
+                case TokenType.Add:
+                case TokenType.SendBottom:
+                case TokenType.Remove:
+                case TokenType.Find:
+                    Consume(TokenType.OpenParen);
+                    var param = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+
+                    // Validamos que el parámetro esté definido previamente en las variables locales
+                    if (!localVariables.ContainsKey(param))
+                    {
+                        throw new ArgumentException($"El parámetro '{param}' no está definido.");
+                    }
+
+                    // Validar que el parámetro sea del tipo esperado (por ejemplo, tipo 'Card')
+                   // if (!(localVariables[param] is Card))
+                   // {
+                   //     throw new ArgumentException($"El parámetro '{param}' debe ser de tipo 'Card'.");
+                   // }
+
+                    // Añadir la acción para métodos con parámetros
+                    actions.Add((cards, ctx) =>
+                    {
+                        var target = localVariables[identifier];
+                        var card = (Card)localVariables[param];
+
+                        // Invocar el método, como 'deck.Push(target)'
+                        target.GetType().GetMethod(method.Value)?.Invoke(target, new object[] { card });
+                    });
+                    break;
+
+                default:
+                    ThrowSyntaxError($"Método inesperado '{method.Value}' encontrado.");
+                    break;
+            }
+            Consume(TokenType.SemiColon);
+        }
+
 
 
         private Token ConsumePropertyOrMethod()
@@ -1402,7 +1347,7 @@ namespace DSL.Parser
 
         private void ThrowSyntaxError(string message, TokenType expectedType = TokenType.None)
         {
-            string errorMessage = $"Error de sintaxis: {message}. Se encontró '{_lexerStream.CurrentToken.Value}' en la posición {_lexerStream.CurrentToken.Pos}.";
+            string errorMessage = $" {message}. Se encontró '{_lexerStream.CurrentToken.Value}' en la posición {_lexerStream.CurrentToken.Pos}.";
             Debug.LogError(errorMessage);
             throw new Error(errorMessage);
         }

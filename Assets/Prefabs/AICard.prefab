@@ -354,6 +354,7 @@ GameObject:
   - component: {fileID: 1302154462316365238}
   - component: {fileID: 2611256296933939162}
   - component: {fileID: 6870870490208280870}
+  - component: {fileID: 1813501537321765345}
   m_Layer: 5
   m_Name: AICard
   m_TagString: Untagged
@@ -425,6 +426,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1813501537321765345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4147977711860542123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f755b8c99eeeb724c95e090557bdbe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  previewPanel: {fileID: 0}
+  cardPrefab: {fileID: 6249498607933185291}
 --- !u!1 &5651685015659053166
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,7 +718,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6249498607933185291}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f755b8c99eeeb724c95e090557bdbe58, type: 3}
   m_Name: 
