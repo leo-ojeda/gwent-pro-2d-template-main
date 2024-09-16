@@ -441,27 +441,36 @@ namespace DSL.Parser
             while (!Match(TokenType.CloseBrace))
             {
                 string paramName = Consume(TokenType.Identifier).Value;
+
+                // Verificar si ya existe un parámetro con el mismo nombre
+                if (parameters.Any(p => p.paramName == paramName))
+                {
+                    ThrowSyntaxError($"El parámetro '{paramName}' ya está definido.");
+                    return null; // Para evitar que continúe si hay un parámetro duplicado
+                }
+
                 Consume(TokenType.Colon);
 
                 ParamType paramType;
-                object paramValue = null;  // Dejar el valor nulo hasta que se asigne posteriormente
+                object paramValue = null;  // El valor es nulo al principio, pero su tipo debe mantenerse
 
                 if (Match(TokenType.Number))
                 {
                     paramType = ParamType.Number;
+                    paramValue = default(int); // Asignar el tipo 'int' por defecto, pero sin valor concreto
                     Consume(TokenType.Number);
                 }
                 else if (Match(TokenType.String))
                 {
                     paramType = ParamType.String;
+                    paramValue = default(string); // Asignar el tipo 'string' por defecto
                     Consume(TokenType.String);
-
                 }
                 else if (Match(TokenType.Bool))
                 {
                     paramType = ParamType.Bool;
+                    paramValue = default(bool); // Asignar el tipo 'bool' por defecto
                     Consume(TokenType.Bool);
-
                 }
                 else
                 {
@@ -469,7 +478,7 @@ namespace DSL.Parser
                     return null;
                 }
 
-                // Crear el parámetro con el tipo definido, sin un valor inicial
+                // Crear el parámetro con el tipo definido, aunque el valor aún sea nulo
                 parameters.Add(new Parameter(paramName, paramType, paramValue));
 
                 if (Match(TokenType.Comma))
@@ -533,15 +542,14 @@ namespace DSL.Parser
 
             Consume(TokenType.CloseBrace);
 
+            // Verificar que 'targets' es una lista de cartas
+            if (!(localVariables[targetsParam] is List<Card>))
+            {
+                throw new ArgumentException($"El parámetro '{targetsParam}' debe ser una lista de cartas.");
+            }
             // Retornar la acción final que ejecutará todas las acciones parseadas
             return (cards, ctx) =>
             {
-                // Verificar que 'targets' es una lista de cartas
-                if (!(localVariables[targetsParam] is List<Card>))
-                {
-                    throw new ArgumentException($"El parámetro '{targetsParam}' debe ser una lista de cartas.");
-                }
-
                 foreach (var action in actions)
                 {
                     action(cards, ctx);  // Ejecutar cada acción con las cartas y el contexto proporcionados
@@ -565,7 +573,7 @@ namespace DSL.Parser
             Consume(TokenType.OpenBrace);
 
             List<Action<List<Card>, Context>> loopActions = new List<Action<List<Card>, Context>>();
-             localVariables[targetVar] = null; 
+            localVariables[targetVar] = null;
 
             // Parsear todas las acciones dentro del bloque 'for'
             while (!Match(TokenType.CloseBrace))
@@ -591,25 +599,27 @@ namespace DSL.Parser
                 }
             });
         }
-
         private void ParseWhileLoop(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, List<Parameter> parameters)
         {
+            //While no debe estar duplicado
             Consume(TokenType.While);
             Consume(TokenType.OpenParen);
 
-            var loopVar = Consume(TokenType.Identifier).Value;  // Variable de bucle (por ejemplo, 'i')
+            // Variable de bucle (por ejemplo, 'i')
+            var loopVar = Consume(TokenType.Identifier).Value;
+
             Consume(TokenType.Increment);
             Consume(TokenType.Less);
 
-            // Verificamos si 'conditionVar' es un número literal o una variable/parámetro
+            // Verificamos si 'conditionVar' es un número literal o un parámetro/variable
             string conditionVar;
             if (Match(TokenType.Number))
             {
-                conditionVar = Consume(TokenType.Number).Value;  // Si es un número literal
+                conditionVar = Consume(TokenType.Number).Value;  // Es un número literal
             }
             else
             {
-                conditionVar = Consume(TokenType.Identifier).Value;  // Si es un parámetro o variable
+                conditionVar = Consume(TokenType.Identifier).Value;  // Es un parámetro o variable
             }
 
             Consume(TokenType.CloseParen);
@@ -622,35 +632,51 @@ namespace DSL.Parser
                 ParseAssignment(localVariables, whileActions, parameters);
             }
 
-            
-            //Consume(TokenType.CloseBrace);
-
-            // Añadir las acciones del bucle 'while'
-            actions.Add((cards, ctx) =>
+            // **Validaciones fuera del bloque 'actions.Add'**:
+            if (!localVariables.ContainsKey(loopVar))
             {
-                int loopValue = (int)localVariables[loopVar];  // Inicializar valor de la variable del bucle
-                int conditionValue;
+                throw new ArgumentException($"La variable de bucle '{loopVar}' no está definida como variable local.");
+            }
 
-                // Si 'conditionVar' es un número literal
-                if (int.TryParse(conditionVar, out conditionValue))
+
+            int loopValue = (int)localVariables[loopVar];  // Inicializar valor de la variable del bucle
+            int conditionValue;
+
+            // Si 'conditionVar' es un número literal
+            if (int.TryParse(conditionVar, out conditionValue))
+            {
+                // Ya tenemos el valor de la condición como número literal
+            }
+            // Si 'conditionVar' es un parámetro, intentamos obtener su valor
+            else
+            {
+                // Buscar el parámetro en la lista de parámetros
+                var parameter = parameters.FirstOrDefault(p => p.paramName == conditionVar && p.type == ParamType.Number);
+
+                if (parameter != null)
                 {
-                    // 'conditionVar' es un número literal, ya lo tenemos
-                }
-                // Si 'conditionVar' es un parámetro, usamos su valor
-                else if (parameters.Any(p => p.paramName == conditionVar))
-                {
-                    var parameter = parameters.First(p => p.paramName == conditionVar);
+                    // Si el valor aún es null, lanzamos una excepción para indicar que el valor aún no está definido
+                    if (parameter.value == null)
+                    {
+                        throw new ArgumentException($"El parámetro '{conditionVar}' no tiene un valor definido.");
+                    }
+
+                    // Usar el valor del parámetro si está definido
                     conditionValue = (int)parameter.value;
                 }
                 // Si 'conditionVar' es una variable local
                 else if (localVariables.ContainsKey(conditionVar))
                 {
-                    conditionValue = (int)localVariables[conditionVar];
+                    conditionValue = (int)localVariables[conditionVar];  // Usar el valor de la variable local
                 }
                 else
                 {
+                    // Lanzar excepción si 'conditionVar' no es un número, parámetro ni variable local
                     throw new ArgumentException($"'{conditionVar}' no está definido como un número, variable local o parámetro.");
                 }
+            }
+            actions.Add((cards, ctx) =>
+            {
 
                 // Ejecutar el bucle 'while'
                 while (loopValue < conditionValue)
@@ -713,6 +739,8 @@ namespace DSL.Parser
                     {
                         var numberValue = Consume(TokenType.Number).Value;
                         int parsedValue = int.Parse(numberValue);
+                        Debug.Log(identifier);
+                        localVariables[identifier] = parsedValue;
 
                         actions.Add((cards, ctx) =>
                         {
@@ -971,10 +999,10 @@ namespace DSL.Parser
                     }
 
                     // Validar que el parámetro sea del tipo esperado (por ejemplo, tipo 'Card')
-                   // if (!(localVariables[param] is Card))
-                   // {
-                   //     throw new ArgumentException($"El parámetro '{param}' debe ser de tipo 'Card'.");
-                   // }
+                    // if (!(localVariables[param] is Card))
+                    // {
+                    //     throw new ArgumentException($"El parámetro '{param}' debe ser de tipo 'Card'.");
+                    // }
 
                     // Añadir la acción para métodos con parámetros
                     actions.Add((cards, ctx) =>

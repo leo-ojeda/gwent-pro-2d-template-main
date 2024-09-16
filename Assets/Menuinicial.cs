@@ -76,6 +76,12 @@ public class Menuinicial : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
         cardList.Add(new Card( "Leñador", 7,  "Leader",  new string[]{"Melee"},  "Forest",new List<EffectActivation>()," "));
     }
+    public void Deck4()
+    {
+        cardList = new List<Card>();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex -2);
+        cardList.Add(new Card( "DSL", 0,  "",  new string[]{""},  "",new List<EffectActivation>()," "));
+    }
     IEnumerator Sound()
     {
        yield return new WaitForSeconds(0.4f);

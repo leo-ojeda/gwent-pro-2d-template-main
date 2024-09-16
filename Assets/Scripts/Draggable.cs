@@ -13,7 +13,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!isDraggable) return; // Si la carta no es arrastrable, salir del método
+        if (!isDraggable || this.tag == "cementery") return; // Si la carta no es arrastrable, salir del método
 
         placeholder = new GameObject();
         placeholder.transform.SetParent(this.transform.parent);
@@ -34,7 +34,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!isDraggable) return; // Si la carta no es arrastrable, salir del método
+        if (!isDraggable || this.tag == "cementery") return; // Si la carta no es arrastrable, salir del método
 
         this.transform.position = eventData.position;
 
@@ -65,7 +65,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!isDraggable) return; // Si la carta no es arrastrable, salir del método
+       if (!isDraggable || this.tag == "cementery") return; // Si la carta no es arrastrable, salir del método
 
         this.transform.SetParent(parentToReturnTo);
         this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
@@ -78,5 +78,5 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         isDraggable = draggable;
     }
-   
+
 }

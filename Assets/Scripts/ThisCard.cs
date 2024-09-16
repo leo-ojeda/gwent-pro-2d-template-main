@@ -70,6 +70,7 @@ public class ThisCard : MonoBehaviour
     void Start()
     {
         InitialPower = -1;
+        
         FieldP1 = GameObject.Find("Field P1");
 
 
@@ -346,14 +347,6 @@ public class ThisCard : MonoBehaviour
         audioSource.Play();
         return x;
     }
-    // public Card SetCardData(Card card)
-    // {
-    //     thisCard[0] = card;
-    //     Debug.Log(card);
-    //     return card;
-    // }
-
-
 
 
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class CardToHand : MonoBehaviour
 {
     public GameObject Hand;
+    public GameObject HandAI;
     public GameObject Graveyard;
     public GameObject It;
     public static GameObject ItName;
@@ -75,10 +76,8 @@ public class CardToHand : MonoBehaviour
             }
             else
             {
-                
-                context.GraveyardOfPlayer("Jugador 1").Add(hand[hand.Count - 1]); 
-                hand.RemoveAt(hand.Count - 1); 
-
+                context.GraveyardOfPlayer("Jugador 1").Add(hand[hand.Count - 1]);
+                hand.RemoveAt(hand.Count - 1);
                 It.transform.SetParent(Graveyard.transform);
                 It.transform.localScale = Vector3.one;
                 It.transform.position = new Vector3(transform.position.x, transform.position.y, -48);

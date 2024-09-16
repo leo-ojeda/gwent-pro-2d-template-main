@@ -148,6 +148,7 @@ public class PlayerDeck : MonoBehaviour
             }
 
             StartCoroutine(StartGame());
+            
         }
 
     }

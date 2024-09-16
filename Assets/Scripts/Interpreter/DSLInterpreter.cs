@@ -79,7 +79,7 @@ public class DSLInterpreter : MonoBehaviour
             }
             catch (Exception ex)
             {
-                errorMessages.Add($" {ex.Message} at position {lexerStream.CurrentToken.Pos}");
+                errorMessages.Add($" {ex.Message} ");//at position {lexerStream.CurrentToken.Pos}");
                 parser.SkipToNextStatement();
             }
         }
