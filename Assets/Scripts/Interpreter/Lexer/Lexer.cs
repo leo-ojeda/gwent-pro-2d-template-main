@@ -3,6 +3,8 @@ using System.Text;
 using System;
 using DSL.Parser;
 using UnityEngine;
+using Unity.VisualScripting;
+
 
 namespace DSL.Lexer
 {
@@ -62,7 +64,7 @@ namespace DSL.Lexer
               {"true", TokenType.True},
               {"PostAction", TokenType.PostAction},
               {"Owner", TokenType.Owner},
-              {"unit", TokenType.Unit},
+              //{"unit", TokenType.Unit},
               {"Selector", TokenType.Selector},
         };
 
@@ -119,14 +121,62 @@ namespace DSL.Lexer
                         AdvanceChar();
                         break;
                     case '(':
-                        CurrentToken = new Token(TokenType.OpenParen, "(", CurrentPos);
-                        CheckBalance(CurrentToken);
-                        AdvanceChar();
+                        // Contador de paréntesis avanzados
+                        int parenthesesCount = 0;
+
+
+                        // Avanza mientras siga encontrando '('
+                        while (_currentChar == '(')
+                        {
+                            AdvanceChar();
+                            parenthesesCount++;
+                        }
+
+                        // Verifica si el siguiente carácter es un número
+                        if (char.IsDigit(_currentChar))
+                        {
+                            // Retrocede tantos caracteres como hayas avanzado
+                            for (int i = 0; i < parenthesesCount; i++)
+                            {
+                                RetornoChar();
+                            }
+
+                            // Procesa el número completo
+                            CurrentToken = NumberToken();
+                             //AdvanceChar();
+                        }
+                        else
+                        {
+                            // Retrocede todos los caracteres avanzados
+                            for (int i = 1; i < parenthesesCount; i++)
+                            {
+                                RetornoChar();
+                            }
+
+                            // Crea el token de paréntesis abierto y verifica el balance
+                            CurrentToken = new Token(TokenType.OpenParen, "(", CurrentPos);
+                            CheckBalance(CurrentToken);
+                        }
+
                         break;
+
                     case ')':
-                        CurrentToken = new Token(TokenType.CloseParen, ")", CurrentPos);
-                        CheckBalance(CurrentToken);
+                        // Captura el paréntesis de cierre
                         AdvanceChar();
+
+                        // Verifica si después del paréntesis viene un número
+                        if (char.IsDigit(_currentChar))
+                        {
+                            RetornoChar();
+                            NumberToken(); // Procesa el número completo
+                        }
+                        else
+                        {
+                            CurrentToken = new Token(TokenType.CloseParen, ")", CurrentPos);
+                            CheckBalance(CurrentToken);
+
+                        }
+
                         break;
                     case ':':
                         CurrentToken = new Token(TokenType.Colon, ":", CurrentPos);
@@ -157,6 +207,10 @@ namespace DSL.Lexer
                         CurrentToken = new Token(TokenType.Minus, "-", CurrentPos);
                         AdvanceChar();
                         break;
+                    case '^':
+                        CurrentToken = new Token(TokenType.Pow, "^", CurrentPos);
+                        AdvanceChar();
+                        break;
                     case '*':
                         CurrentToken = new Token(TokenType.Multiply, "*", CurrentPos);
                         AdvanceChar();
@@ -165,10 +219,10 @@ namespace DSL.Lexer
                         CurrentToken = new Token(TokenType.Slash, "/", CurrentPos);
                         AdvanceChar();
                         break;
-                    case '%':
-                        CurrentToken = new Token(TokenType.Modulus, "%", CurrentPos);
-                        AdvanceChar();
-                        break;
+                    // case '%':
+                    //     CurrentToken = new Token(TokenType.Modulus, "%", CurrentPos);
+                    //     AdvanceChar();
+                    //     break;
                     case '.':
                         CurrentToken = new Token(TokenType.Dot, ".", CurrentPos);
                         AdvanceChar();
@@ -245,9 +299,28 @@ namespace DSL.Lexer
                     case '@':
                         if (LookAhead() == '@')
                         {
-                            CurrentToken = new Token(TokenType.DoubleAt, "@@", CurrentPos);
-                            AdvanceChar();
-                            AdvanceChar();
+                            // Verifica si el token anterior es un string
+                            if (CurrentToken != null && CurrentToken.Type == TokenType.String)
+
+                            {
+
+
+                                AdvanceChar(); // Avanzar para saltar el primer '@'
+                                AdvanceChar(); // Avanzar para saltar el segundo '@'
+
+                                SkipWhiteSpaces(); // Omitir cualquier espacio en blanco antes del siguiente string
+
+                                // Leer el siguiente string y concatenarlo
+                                var nextStringToken = StringToken(); // Obtener el siguiente string
+                                var concatenatedValue = CurrentToken.Value.Trim() + nextStringToken.Value.Trim(); // Concatenar eliminando espacios
+
+                                // Crear un nuevo token con el valor concatenado
+                                CurrentToken = new Token(TokenType.String, concatenatedValue, CurrentPos);
+                            }
+                            else
+                            {
+                                ThrowLexerError("Se esperaba un string antes de '@@'");
+                            }
                         }
                         else
                         {
@@ -255,6 +328,9 @@ namespace DSL.Lexer
                             AdvanceChar();
                         }
                         break;
+
+
+
                     case '!':
                         if (LookAhead() == '=')
                         {
@@ -268,8 +344,34 @@ namespace DSL.Lexer
                         }
                         break;
                     case '"':
-                        CurrentToken = StringToken();
+                        // Leer la primera cadena
+                        var stringToken = StringToken(); // Obtener el primer token de cadena
+
+                        // Comprobar si hay `@@` para concatenar
+                        while (_currentChar == '@' && LookAhead() == '@')
+                        {
+
+                            AdvanceChar(); // Saltar primer '@'
+                            AdvanceChar(); // Saltar segundo '@'
+
+                            SkipWhiteSpaces(); // Omitir cualquier espacio en blanco entre las cadenas
+
+                            // Leer la siguiente cadena y concatenarla
+                            string nextString = StringToken().Value.Trim(); // Eliminar espacios alrededor de la cadena
+
+                            // Concatenar el valor de ambas cadenas
+                            string concatenatedValue = stringToken.Value.Trim() + nextString; // También eliminar espacios de la primera cadena
+
+                            // Crear un nuevo token con el valor concatenado
+                            stringToken = new Token(TokenType.String, concatenatedValue, CurrentPos);
+                        }
+
+                        // Asignar el token final con el valor concatenado a CurrentToken
+                        CurrentToken = stringToken;
                         break;
+
+
+
                     default:
                         if (IsDigit(_currentChar))
                         {
@@ -361,41 +463,101 @@ namespace DSL.Lexer
             }
         }
 
-
-
         // Procesa un token numérico
+        private ExpressionEvaluator _expressionEvaluator = new ExpressionEvaluator();
+
         private Token NumberToken()
         {
+            
             StringBuilder sb = new StringBuilder();
-            while (IsDigit(_currentChar))
+            
+            int parenthesesBalance = 0; // Para controlar el balance de paréntesis
+
+            // Captura la expresión completa, incluyendo operadores, paréntesis y números
+            while (IsDigit(_currentChar) || _currentChar == '+' || _currentChar == '-' ||
+                   _currentChar == '*' || _currentChar == '/' || _currentChar == '^' ||
+                   _currentChar == '.' || _currentChar == ' ' || _currentChar == '(' || _currentChar == ')')
             {
+                // Controlar el balance de paréntesis
+                if (_currentChar == '(') parenthesesBalance++;
+                if (_currentChar == ')') parenthesesBalance--;
+
                 sb.Append(_currentChar);
                 AdvanceChar();
+
+                // Salir si hay un desbalance en los paréntesis
+                if (parenthesesBalance < 0)
+                {
+                    ThrowLexerError("Desbalance de paréntesis: más paréntesis de cierre que apertura.");
+                    return new Token(TokenType.Number, "0", CurrentPos); // Retorna un valor por defecto en caso de error
+                }
             }
-            return new Token(TokenType.Number, sb.ToString(), CurrentPos);
+
+            // Finaliza el procesamiento si el balance de paréntesis no es cero
+            if (parenthesesBalance != 0)
+            {
+                ThrowLexerError("Desbalance de paréntesis en la expresión.");
+                return new Token(TokenType.Number, "0", CurrentPos); // Retorna un valor por defecto en caso de error
+            }
+
+            string expression = sb.ToString().Trim();
+            Debug.Log(expression);
+
+            // Evaluar la expresión aritmética capturada y obtener el resultado final
+            string evaluatedResult;
+            try
+            {
+                evaluatedResult = _expressionEvaluator.EvaluateExpression(expression);
+            }
+            catch (Exception ex)
+            {
+                ThrowLexerError("Error al evaluar la expresión: " + ex.Message);
+                return new Token(TokenType.Number, "0", CurrentPos); // Retorna un valor por defecto en caso de error
+            }
+            Debug.Log(evaluatedResult);
+
+            // Crear el token usando el valor evaluado
+
+            return new Token(TokenType.Number, evaluatedResult, CurrentPos);
         }
+
+
+
+
+
 
         // Procesa un token de cadena (string)
         private Token StringToken()
         {
-            StringBuilder sb = new StringBuilder();
-            AdvanceChar(); // omite el primer '"'
+            StringBuilder stringBuilder = new StringBuilder();
 
-            while (_currentChar != '\0' && _currentChar != '"')
-            {
-                sb.Append(_currentChar);
-                AdvanceChar();
-            }
-
+            // Asumo que la cadena comienza con comillas
             if (_currentChar == '"')
             {
-                AdvanceChar(); // omite el segundo '"'
-                return new Token(TokenType.String, sb.ToString(), CurrentPos);
+                AdvanceChar(); // Omitir la comilla de apertura
+
+                while (_currentChar != '"' && _currentChar != '\0')
+                {
+                    stringBuilder.Append(_currentChar);
+                    AdvanceChar();
+                }
+
+                if (_currentChar == '"')
+                {
+                    AdvanceChar(); // Omitir la comilla de cierre
+                    SkipWhiteSpaces();
+                }
+                else
+                {
+                    ThrowLexerError("Cadena no cerrada.");
+                }
             }
             else
             {
-                throw new Error("Cadena no terminada", CurrentPos);
+                ThrowLexerError("Se esperaba una comilla para la cadena.");
             }
+
+            return new Token(TokenType.String, stringBuilder.ToString(), CurrentPos);
         }
 
 
@@ -422,6 +584,40 @@ namespace DSL.Lexer
             }
             _currentCharIndex++;
         }
+        private void RetornoChar()
+        {
+            if (_currentChar == '\n')
+            {
+                _line--;
+                _col = 0;
+            }
+            else
+            {
+                _col--;
+            }
+            _currentCharIndex--;
+        }
+        private char LookAhead(int offset = 1)
+        {
+            // Guardar el estado actual
+            int currentIndex = _currentCharIndex;
+
+            // Mover el índice al próximo carácter sin cambiar el estado actual
+            int lookAheadIndex = _currentCharIndex + offset;
+
+            // Asegurarse de que el índice está dentro del rango válido
+            if (lookAheadIndex >= _text.Length)
+            {
+                return '\0'; // Retorna un carácter nulo si se excede el rango
+            }
+
+            // Obtener el carácter en el índice de adelanto
+            char lookAheadChar = _text[lookAheadIndex];
+
+            // Restaurar el estado original
+            return lookAheadChar;
+        }
+
 
         // Omitir cualquier carácter de espacio en blanco (incluye saltos de línea y espacios)
         private void SkipWhiteSpaces()

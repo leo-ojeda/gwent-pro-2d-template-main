@@ -15,13 +15,13 @@ public class CardDatabase : MonoBehaviour
 
     void InitializeCardList()
     {
-        var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, ""), new PostAction("", null));
-        var boostEffectR = new EffectActivation(EffectLibrary.BoostPowerR(2), new Selector("Field", false, ""), new PostAction("", null));
-        var boostEffectS = new EffectActivation(EffectLibrary.BoostPowerS(3), new Selector("Field", false, ""), new PostAction("", null));
-        var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, ""), new PostAction("", null));
-        var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, ""), new PostAction("", null));
-        var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("Field", false, ""), new PostAction("", null));
-        var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, ""), new PostAction("", null));
+        var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
+        var boostEffectR = new EffectActivation(EffectLibrary.BoostPowerR(2), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
+        var boostEffectS = new EffectActivation(EffectLibrary.BoostPowerS(3), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
+        var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, (card) => card.Type == "Silver"), new PostAction("", null));
+        var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, null), new PostAction("", null));
+        var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("Field", false, null), new PostAction("", null));
+        var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
 
 
 

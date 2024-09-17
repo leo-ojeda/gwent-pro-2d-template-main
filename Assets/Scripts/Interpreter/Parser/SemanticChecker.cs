@@ -111,20 +111,45 @@ public class SemanticChecker
     {
         List<string> errors = new List<string>();
 
-        // Verificar que la fuente del selector no sea null
+        // Verificar que la fuente del selector no sea null o vacía
         if (string.IsNullOrEmpty(selector.source))
         {
-            errors.Add("Selector source cannot be null.");
+            errors.Add("Selector source cannot be null or empty.");
         }
 
-        // Si es único o tiene predicado, asegurarse que estén correctamente definidos
-        if (selector.single && string.IsNullOrEmpty(selector.predicate))
+        // Si 'single' es true, debe tener un predicado definido
+        if (selector.single && selector.predicate == null)
         {
-            errors.Add("If 'single' is true, predicate must be defined.");
+            errors.Add("If 'single' is true, a valid predicate must be defined.");
+        }
+
+        // Si hay un predicado, verificar que no sea null y sea una función válida
+        if (selector.predicate != null)
+        {
+            // try
+            // {
+            //     
+            //      var testCard = new Card { Faction = "Monster", Power = 0 };
+            //     bool result = selector.predicate(testCard);
+            //
+            //     if (!result && !result) // Esto es una verificación básica, podrías personalizarla
+            //     {
+            //         errors.Add("The predicate function does not return a valid result.");
+            //     }
+            // }
+            // catch (Exception ex)
+            // {
+            //     errors.Add($"Error evaluating predicate: {ex.Message}");
+            // }
+        }
+        else
+        {
+            errors.Add("The predicate function Null.");
         }
 
         return errors;
     }
+
 
     public List<string> ValidatePostAction(PostAction postAction)
     {

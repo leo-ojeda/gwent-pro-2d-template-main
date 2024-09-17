@@ -601,7 +601,7 @@ namespace DSL.Parser
         }
         private void ParseWhileLoop(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, List<Parameter> parameters)
         {
-            //While no debe estar duplicado
+
             Consume(TokenType.While);
             Consume(TokenType.OpenParen);
 
@@ -761,6 +761,15 @@ namespace DSL.Parser
             }
             else if (Match(TokenType.While))
             {
+                // Verificar que no exista un 'while' previamente
+                if (localVariables.ContainsKey("whileLoop"))
+                {
+                    throw new ArgumentException("Ya existe un bucle 'while' en el contexto actual.");
+                }
+
+                // Marcar que el bucle 'while' ha sido procesado
+                localVariables["whileLoop"] = true;
+
                 ParseWhileLoop(actions, localVariables, parameters);  // Manejo del bucle 'while'
             }
             else if (Match(TokenType.For))
@@ -1123,7 +1132,7 @@ namespace DSL.Parser
 
             string source = null;
             bool single = false;
-            string predicate = null;
+            Func<Card, bool> predicate = null;
 
             bool hasSource = false;
             bool hasSingle = false;
@@ -1267,68 +1276,109 @@ namespace DSL.Parser
         }
 
 
-        private string ParsePredicate() //Debe mejorarse
+        private Func<Card, bool> ParsePredicate()
         {
-
             Consume(TokenType.Predicate);
             Consume(TokenType.Colon);
             Consume(TokenType.OpenParen);
 
-            var predicate = new StringBuilder();
-
-            // Consumimos el token Unit (ej. 'unit')
-            var paramToken = Consume(TokenType.Unit); // Esto debería ser 'unit' o cualquier otro parámetro específico
-            predicate.Append(paramToken.Value);
+            // Procesar el token de la variable de la lambda (ejemplo, 'unit')
+            var paramToken = Consume(TokenType.Identifier);
+            string paramName = paramToken.Value;
 
             Consume(TokenType.CloseParen);
 
-            if (Match(TokenType.Arrow))
-            {
-                Consume(TokenType.Arrow);
-                predicate.Append(" => ");
-
-                // Consumimos el cuerpo de la expresión lambda
-                while (!Match(TokenType.CloseBrace))
-                {
-                    var token = Consume(LookAhead().Type);
-
-                    // Maneja identificadores específicos y operadores
-                    if (token.Type == TokenType.Unit || token.Type == TokenType.Identifier ||
-                        token.Type == TokenType.String || token.Type == TokenType.Number ||
-                        token.Type == TokenType.Faction || token.Type == TokenType.Power || token.Type == TokenType.False || token.Type == TokenType.True) // <-- Aseguramos que Faction es válido
-                    {
-                        predicate.Append(token.Value);
-                    }
-                    else if (IsOperator(token.Type))
-                    {
-                        predicate.Append($" {token.Value} ");
-                    }
-                    else if (token.Type == TokenType.EqualsEquals)
-                    {
-                        predicate.Append(" == ");
-                    }
-                    else if (token.Type == TokenType.And)
-                    {
-                        predicate.Append(" && ");
-                    }
-                    else if (token.Type == TokenType.Or)
-                    {
-                        predicate.Append(" || ");
-                    }
-                    else
-                    {
-                        throw new Error($"Unexpected token '{token.Value}' at position {token.Pos}.");
-                    }
-                }
-            }
-            else
+            if (!Match(TokenType.Arrow))
             {
                 throw new Error("Expected '=>' after the parameter list in the predicate.");
             }
+            Consume(TokenType.Arrow);
 
-            return predicate.ToString().Trim(); // Retorna el predicado como una cadena de texto
+            // Parsear el cuerpo del predicado
+            var conditions = new List<Func<Card, bool>>();
+
+            while (!Match(TokenType.CloseBrace))
+            {
+                var token = Consume(LookAhead().Type);
+
+                if (token.Value == paramName) // Comprobamos si es 'unit'
+                {
+                    Consume(TokenType.Dot);  // Consumimos el punto (ejemplo: 'unit.')
+
+                    var propertyToken = LookAhead(); // Esperamos 'Faction' o 'Power'
+
+                    // Comprobar que venga un operador de comparación después de la propiedad
+
+                    // Procesar la comparación
+                    if (propertyToken.Value == "Faction")
+                    {
+                        Consume(TokenType.Faction);
+                        var operatorToken = Consume(LookAhead().Type);
+                        if (!IsOperator(operatorToken.Type))
+                        {
+                            throw new Error($"Expected operator after '{propertyToken.Value}' at position {token.Pos}.");
+                        }
+                        var comparisonValue = Consume(TokenType.String).Value;
+                        conditions.Add(card => EvaluateComparison(card.Faction, comparisonValue, operatorToken));
+                        
+                    }
+                    else if (propertyToken.Value == "Power")
+                    {
+                        Consume(TokenType.Power);
+                        var operatorToken = Consume(LookAhead().Type);
+                        if (!IsOperator(operatorToken.Type))
+                        {
+                            throw new Error($"Expected operator after '{propertyToken.Value}' at position {token.Pos}.");
+                        }
+                        var comparisonValue = int.Parse(Consume(TokenType.Number).Value);
+                        conditions.Add(card => EvaluateComparison(card.Power, comparisonValue, operatorToken));
+                    }
+                    else
+                    {
+                        throw new Error($"Unexpected property '{propertyToken.Value}' in predicate.");
+                    }
+                }
+                
+                else
+                {
+                    throw new Error($"Unexpected token '{token.Value}' at position {token.Pos}.");
+                }
+            }
+
+            // Verificar que se haya cerrado correctamente
+            if (!Match(TokenType.CloseBrace))
+            {
+                throw new Error("Expected '}' to close the predicate.");
+            }
+
+            // Retornar la función que evalúa todas las condiciones combinadas
+            return card =>
+            {
+                return conditions.All(condition => condition(card));
+            };
         }
 
+        // Función auxiliar para parsear la siguiente condición
+        private bool EvaluateComparison<T>(T left, T right, Token operatorToken) where T : IComparable
+        {
+            switch (operatorToken.Type)
+            {
+                case TokenType.EqualsEquals:
+                    return left.CompareTo(right) == 0;
+                case TokenType.Less:
+                    return left.CompareTo(right) < 0;
+                case TokenType.Greater:
+                    return left.CompareTo(right) > 0;
+                case TokenType.LessOrEqual:
+                    return left.CompareTo(right) <= 0;
+                case TokenType.GreaterOrEqual:
+                    return left.CompareTo(right) >= 0;
+                default:
+                    throw new Error($"Unexpected operator '{operatorToken.Value}' in predicate.");
+            }
+        }
+
+        // Función auxiliar para parsear la siguiente condición
 
         private bool IsOperator(TokenType type)
         {
@@ -1338,7 +1388,7 @@ namespace DSL.Parser
                    type == TokenType.And || type == TokenType.Or ||
                    type == TokenType.Plus || type == TokenType.Minus ||
                    type == TokenType.Multiply || type == TokenType.Slash ||
-                   type == TokenType.Modulus || type == TokenType.Dot;
+                     type == TokenType.Dot;
         }
 
         private Token Consume(TokenType type)
@@ -1385,6 +1435,7 @@ namespace DSL.Parser
         {
             Consume(propertyType);
             Consume(TokenType.Colon);
+            
 
             // Usar ConsumeAny para manejar números
             Token valueToken = ConsumeAny(TokenType.Number);

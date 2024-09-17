@@ -33,8 +33,6 @@ public class EffectActivation
     public Selector selector;
     public PostAction postAction;
 
-    //public EffectActivation() { }
-
     public EffectActivation(Effect effect, Selector selector, PostAction postAction)
     {
         this.effect = effect;
@@ -54,7 +52,6 @@ public class Effect
     public string name;
     public List<Parameter> parameters;
     public Action<List<Card>, Context> action;
-
 
     public Effect()
     {
@@ -76,7 +73,7 @@ public class Parameter
     public ParamType type;
     public object value;
 
-    public Parameter(string paramName,ParamType type, object value)
+    public Parameter(string paramName, ParamType type, object value)
     {
         this.paramName = paramName;
         this.type = type;
@@ -96,11 +93,11 @@ public class Selector
 {
     public string source;
     public bool single;
-    public string predicate;
+    public Func<Card, bool> predicate; // Cambio a una función que toma una Card y devuelve un bool
 
     public Selector() { }
 
-    public Selector(string source, bool single, string predicate)
+    public Selector(string source, bool single, Func<Card, bool> predicate)
     {
         this.source = source;
         this.single = single;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DSL.Lexer
 {
-    public class LexerStream 
+    public class LexerStream
     {
         private readonly List<Token> _tokens = new();
         private int _position = 0;
@@ -14,13 +14,11 @@ namespace DSL.Lexer
 
         public LexerStream(string input)
         {
-            // Llena la lista de tokens al iniciar el LexerStream
             FillTokenList(new Lexer(input), _tokens);
         }
 
         public void NextToken()
         {
-            // Avanzar la posición en la lista de tokens
             if (_position < _tokens.Count - 1)
             {
                 _position++;
@@ -33,9 +31,11 @@ namespace DSL.Lexer
             while (lexer.CurrentToken.Type != TokenType.EOF)
             {
                 tokenList.Add(lexer.CurrentToken);
+               // Debug.Log($"Token añadido: {lexer.CurrentToken.Type} - {lexer.CurrentToken.Value}");
                 lexer.NextToken();
             }
-            tokenList.Add(new Token(TokenType.EOF, "", lexer.CurrentToken.Pos)); // Añadir token EOF explícitamente
+            tokenList.Add(new Token(TokenType.EOF, "", lexer.CurrentToken.Pos));
+            Debug.Log("Token EOF añadido.");
         }
 
         public Token Peek(int step)
@@ -51,7 +51,18 @@ namespace DSL.Lexer
         public void Advance(int steps = 1)
         {
             _position = Math.Clamp(_position + steps, 0, _tokens.Count - 1);
-           // Debug.Log($"Avanza a la posicion {_position}, token de la posicion actual: {CurrentToken}");
+        }
+
+        // Nuevo método LookAhead
+        public Token LookAhead(int offset)
+        {
+            int lookaheadPosition = _position + offset;
+            if (lookaheadPosition < 0 || lookaheadPosition >= _tokens.Count)
+            {
+                return new Token(TokenType.EOF, "", new Position(0, 0));
+            }
+            return _tokens[lookaheadPosition];
         }
     }
+
 }

@@ -22,7 +22,8 @@ namespace DSL.Lexer
         Minus,          // -
         Multiply,       // *
         Slash,          // /
-        Modulus,        // %
+        //Modulus,        // %
+        Pow,    //^
         Increment,      // ++
 
         // Operadores de comparación
@@ -81,7 +82,7 @@ namespace DSL.Lexer
         Return,
         Owner,
         PostAction,
-        Unit,
+        //Unit,
 
         // Contexto del juego
         TriggerPlayer,
