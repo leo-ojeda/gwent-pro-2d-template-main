@@ -177,7 +177,7 @@ public class SemanticChecker
     // Verifica que el tipo de carta sea válido
     private bool ValidType(string type)
     {
-        return type == "Oro" || type == "Plata" || type == "Lider" || type == "Clima" || type == "Aumento";
+        return type == "Golden" || type == "Silver" || type == "Leader" || type == "Clima" || type == "Increase";
     }
 
     // Verifica tipos en expresiones, asignaciones, y operadores

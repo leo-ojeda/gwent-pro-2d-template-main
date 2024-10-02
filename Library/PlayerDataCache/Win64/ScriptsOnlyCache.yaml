@@ -115,9 +115,6 @@ ScriptsOnlyBuild:
     fullTypeName: TurnSystem
     methodName: EndYourOpponentTurn
   - assembly: Assembly-CSharp
-    fullTypeName: PlayerDeck
-    methodName: Shuffle
-  - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
     methodName: Atras
   - assembly: Assembly-CSharp
@@ -129,6 +126,9 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
     methodName: Deck3
+  - assembly: Assembly-CSharp
+    fullTypeName: Menuinicial
+    methodName: Deck4
   - assembly: Assembly-CSharp
     fullTypeName: Menuinicial
     methodName: Atras1
@@ -186,9 +186,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 6038}
     - Class: 114
-      Script: {instanceID: 7082}
+      Script: {instanceID: 7084}
     - Class: 114
-      Script: {instanceID: 7358}
+      Script: {instanceID: 7360}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -258,6 +258,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 6038}
     - Class: 114
       Script: {instanceID: 6788}
+    - Class: 114
+      Script: {instanceID: 7084}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -324,7 +326,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 6038}
     - Class: 114
-      Script: {instanceID: 7082}
+      Script: {instanceID: 7084}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -492,9 +494,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 6528}
     - Class: 114
-      Script: {instanceID: 6894}
+      Script: {instanceID: 6896}
     - Class: 114
-      Script: {instanceID: 7082}
+      Script: {instanceID: 7084}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -1356,7 +1358,7 @@ ScriptsOnlyBuild:
     className: ScrollRect
   - hash:
       serializedVersion: 2
-      Hash: a3f05aa7ed1ff9143f11d9c56b80c235
+      Hash: b899181781013942efacb61b7efd0ce4
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: CardDatabase

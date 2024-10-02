@@ -40,7 +40,7 @@ public class AI : MonoBehaviour
     public static int EnemyPowerTotal;
     private Card Leader;
 
-    private Card cardToSummon; 
+    private Card cardToSummon;
     private List<Card> summonableCards = new List<Card>();
 
     public TextMeshProUGUI AINcard;
@@ -342,7 +342,7 @@ public class AI : MonoBehaviour
 
         foreach (var card in fieldCards)
         {
-            if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase")
+            if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase" || card.Power < 0)
             {
                 card.Power = 0;
                 continue;

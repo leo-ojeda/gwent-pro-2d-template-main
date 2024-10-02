@@ -70,9 +70,6 @@ public class Context : MonoBehaviour
 }
 
 
-
-
-
 public static class CardListExtensions
 {
     public static void Shuffle(this List<Card> cards)
@@ -120,8 +117,6 @@ public static class CardListExtensions
         return cards.Where(predicate).ToList();
     }
     
-
-
 }
 
 

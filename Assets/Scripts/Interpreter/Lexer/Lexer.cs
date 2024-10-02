@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Text;
 using System;
-using DSL.Parser;
 using UnityEngine;
-using Unity.VisualScripting;
+using UnityEngine.UI;
+
 
 
 namespace DSL.Lexer
 {
-    internal class Lexer
+    public class Lexer
     {
+        //public Text texts;
         private readonly string _text;
         private int _currentCharIndex;
         private int _col;
@@ -92,7 +93,7 @@ namespace DSL.Lexer
                     CurrentToken = new Token(TokenType.EOF, "", CurrentPos);
                     if (groupTokens.Count != 0)
                     {
-                        ThrowLexerError($"Caracter sin emparejar {groupTokens.Peek().Value} en {groupTokens.Peek().Pos}");
+                        ThrowLexerError($"Caracter sin emparejar {groupTokens.Peek().Value}"); //en {groupTokens.Peek().Pos}");
                     }
                     return;
                 }
@@ -143,7 +144,7 @@ namespace DSL.Lexer
 
                             // Procesa el número completo
                             CurrentToken = NumberToken();
-                             //AdvanceChar();
+                            //AdvanceChar();
                         }
                         else
                         {
@@ -161,7 +162,7 @@ namespace DSL.Lexer
                         break;
 
                     case ')':
-                        // Captura el paréntesis de cierre
+                        
                         AdvanceChar();
 
                         // Verifica si después del paréntesis viene un número
@@ -379,7 +380,7 @@ namespace DSL.Lexer
                         }
                         else if (IsLetter(_currentChar))
                         {
-                            CurrentToken = VariableOrIdentifierToken();
+                            CurrentToken = IdentifierToken();
                         }
                         else
                         {
@@ -390,7 +391,7 @@ namespace DSL.Lexer
             }
             catch (Error ex)
             {
-                Debug.LogError($"Lexer Error: {ex.Message}");
+                ThrowLexerError($"Lexer Error: {ex.Message}");
                 AdvanceChar();
             }
         }
@@ -399,9 +400,20 @@ namespace DSL.Lexer
         private void ThrowLexerError(string message)
         {
             string errorMessage = $"Error léxico: {message}. Se encontró '{_currentChar}' en la posición {CurrentPos}.";
+
+            // Mostrar el error en la consola
             Debug.LogError(errorMessage);
+
+            // Si el componente Text está asignado, añadir el error al texto actual
+            //if (texts != null)
+            //{
+            //    texts.text += errorMessage + "\n"; // Añadir el nuevo error al final del texto actual
+            //}
+
+            // Lanzar la excepción
             throw new Error(errorMessage, CurrentPos);
         }
+
 
 
         // Método para obtener el próximo carácter sin avanzar la posición actual.
@@ -468,9 +480,9 @@ namespace DSL.Lexer
 
         private Token NumberToken()
         {
-            
+
             StringBuilder sb = new StringBuilder();
-            
+
             int parenthesesBalance = 0; // Para controlar el balance de paréntesis
 
             // Captura la expresión completa, incluyendo operadores, paréntesis y números
@@ -501,7 +513,7 @@ namespace DSL.Lexer
             }
 
             string expression = sb.ToString().Trim();
-            Debug.Log(expression);
+//            Debug.Log(expression);
 
             // Evaluar la expresión aritmética capturada y obtener el resultado final
             string evaluatedResult;
@@ -514,14 +526,12 @@ namespace DSL.Lexer
                 ThrowLexerError("Error al evaluar la expresión: " + ex.Message);
                 return new Token(TokenType.Number, "0", CurrentPos); // Retorna un valor por defecto en caso de error
             }
-            Debug.Log(evaluatedResult);
+           // Debug.Log(evaluatedResult);
 
             // Crear el token usando el valor evaluado
 
             return new Token(TokenType.Number, evaluatedResult, CurrentPos);
         }
-
-
 
 
 
@@ -597,26 +607,7 @@ namespace DSL.Lexer
             }
             _currentCharIndex--;
         }
-        private char LookAhead(int offset = 1)
-        {
-            // Guardar el estado actual
-            int currentIndex = _currentCharIndex;
 
-            // Mover el índice al próximo carácter sin cambiar el estado actual
-            int lookAheadIndex = _currentCharIndex + offset;
-
-            // Asegurarse de que el índice está dentro del rango válido
-            if (lookAheadIndex >= _text.Length)
-            {
-                return '\0'; // Retorna un carácter nulo si se excede el rango
-            }
-
-            // Obtener el carácter en el índice de adelanto
-            char lookAheadChar = _text[lookAheadIndex];
-
-            // Restaurar el estado original
-            return lookAheadChar;
-        }
 
 
         // Omitir cualquier carácter de espacio en blanco (incluye saltos de línea y espacios)

@@ -70,7 +70,7 @@ public class ThisCard : MonoBehaviour
     void Start()
     {
         InitialPower = -1;
-        
+
         FieldP1 = GameObject.Find("Field P1");
 
 
@@ -114,6 +114,33 @@ public class ThisCard : MonoBehaviour
         Efect = thisCard[0].OnActivation;
 
         ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
+        if (ThisSprite == null)
+        {
+            // if (thisCard[0].Type == "Clima")
+            // {
+            //     ThisSprite = Resources.Load<Sprite>("Clima");
+            // }
+            //  if (thisCard[0].Type == "Clima")
+            // {
+            //     ThisSprite = Resources.Load<Sprite>("Clima");
+            // }
+            //  if (thisCard[0].Type == "Clima")
+            // {
+            //     ThisSprite = Resources.Load<Sprite>("Clima");
+            // }
+            //  if (thisCard[0].Type == "Clima")
+            // {
+            //     ThisSprite = Resources.Load<Sprite>("Clima");
+            // }
+            //  if (thisCard[0].Type == "Clima")
+            // {
+            //     ThisSprite = Resources.Load<Sprite>("Clima");
+            // }
+            // else
+            // {
+            ThisSprite = Resources.Load<Sprite>("none");
+            //}
+        }
 
         NameText.text = "" + CardName;
         PowerText.text = "" + Power;
@@ -125,7 +152,7 @@ public class ThisCard : MonoBehaviour
         foreach (var efectActivation in Efect)
         {
             efectText += "Effect: " + efectActivation.effect.name;
-            efectText += ":  " + efectActivation.selector.source;
+            //  efectText += ":  " + efectActivation.selector.source;
         }
         EfectText.text = efectText;
 
@@ -237,7 +264,7 @@ public class ThisCard : MonoBehaviour
         List<Card> fieldCards = context.playerFields[Owner];
         foreach (var card in fieldCards)
         {
-            if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase")
+            if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase" || card.Power < 0)
             {
                 card.Power = 0;
                 continue;
@@ -289,6 +316,8 @@ public class ThisCard : MonoBehaviour
                 case "board":
                     targets = context.board;
                     break;
+                // case "parent":                    
+                //     break;
                 default:
                     targets = new List<Card>(); // Lista vacía si el source no se reconoce
                     break;

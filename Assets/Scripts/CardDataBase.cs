@@ -1,17 +1,25 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
+using System.Linq;
 
 public class CardDatabase : MonoBehaviour
 {
     public static List<Card> cardList = new List<Card>();
+    private static List<Card> updatedCardListBackup = new List<Card>();
 
     void Awake()
     {
-
+        RestoreCardList();
         InitializeCardList();
+        //UpdateCardDatabase(validCards);
+        List<Card> filteredCards = cardList
+            .Where(card => card.Faction != "Fire" && card.Faction != "Torment" && card.Faction != "Forest")
+            .ToList();
 
     }
+
 
     void InitializeCardList()
     {
@@ -86,5 +94,31 @@ public class CardDatabase : MonoBehaviour
         cardList.Add(new Card("Espadachin H", 6, "Golden", new string[] { "M" }, "Forest", new List<EffectActivation> { boostEffectM }, " "));
         cardList.Add(new Card("Ballestero Superior", 5, "Golden", new string[] { "R" }, "Forest", new List<EffectActivation>(), " "));
 
+
+
     }
+
+    public void UpdateCardDatabase(List<Card> validCards)
+    {
+        foreach (var card in validCards)
+        {
+            if (!cardList.Any(c => c.Name == card.Name))
+            {
+                Debug.Log(card.Name);
+                cardList.Add(card);
+                updatedCardListBackup.Add(new Card(card.Name, card.Power, card.Type, card.Range, card.Faction, card.OnActivation, card.Owner)); 
+            }
+        }
+    }
+
+    // Método para restaurar las cartas añadidas en UpdateCardDatabase
+    private void RestoreCardList()
+    {
+        // Limpiar las cartas que no estaban en la lista inicial
+        cardList.RemoveAll(card => updatedCardListBackup.Any(c => c.Name == card.Name));
+
+        // Restaurar las cartas desde la copia de respaldo
+        cardList.AddRange(updatedCardListBackup.Select(card => new Card(card.Name, card.Power, card.Type, card.Range, card.Faction, card.OnActivation, card.Owner)).ToList());
+    }
+
 }

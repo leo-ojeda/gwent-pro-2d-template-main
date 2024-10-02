@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Linq;
 
 public class DSLInterpreter : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class DSLInterpreter : MonoBehaviour
         LexerStream lexerStream = new LexerStream(userInput);
         Parser parser = new Parser(lexerStream);
         SemanticChecker semanticChecker = new SemanticChecker();
+        var cardDatabase = FindObjectOfType<CardDatabase>(); // Obtener la instancia de CardDatabase
 
         List<Card> validCards = new List<Card>();
         List<Effect> validEffects = new List<Effect>();
@@ -41,7 +43,11 @@ public class DSLInterpreter : MonoBehaviour
                     List<string> semanticErrors = semanticChecker.ValidateCard(cardNode);
                     if (semanticErrors.Count == 0)
                     {
-                        validCards.Add(cardNode);
+                        // Agregar la carta solo si no está en la lista
+                        if (!validCards.Any(c => c.Name == cardNode.Name))
+                        {
+                            validCards.Add(cardNode);
+                        }
                     }
                     else
                     {
@@ -52,18 +58,27 @@ public class DSLInterpreter : MonoBehaviour
                 {
                     // Parsear efectos
                     var effects = parser.ParseEffects();
-                    validEffects.AddRange(effects);
 
-                    // Registrar cada efecto en el singleton EffectRegistry
                     foreach (var effect in effects)
                     {
-                        try
+                        // Chequear si el efecto ya está en la lista de efectos válidos
+                        if (!validEffects.Any(e => e.name == effect.name))
                         {
-                            EffectRegistry.Instance.RegisterEffect(effect);
+                            try
+                            {
+                                // Registrar el efecto en el EffectRegistry
+                                EffectRegistry.Instance.RegisterEffect(effect);
+                                validEffects.Add(effect);
+                            }
+                            catch (Exception ex)
+                            {
+                                errorMessages.Add($"Error registering effect '{effect.name}': {ex.Message}");
+                            }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            errorMessages.Add($"Error registering effect '{effect.name}': {ex.Message}");
+                            // Mensaje indicando que el efecto ya está en la lista
+                            errorMessages.Add($"Effect '{effect.name}' is already added to the valid effects list.");
                         }
                     }
                 }
@@ -74,29 +89,91 @@ public class DSLInterpreter : MonoBehaviour
             }
             catch (Error lexEx)
             {
-                errorMessages.Add($" {lexEx.Message}");
+                errorMessages.Add($"Lexer error: {lexEx.Message}");
                 parser.SkipToNextStatement();
             }
             catch (Exception ex)
             {
-                errorMessages.Add($" {ex.Message} ");//at position {lexerStream.CurrentToken.Pos}");
+                errorMessages.Add($"Parsing error: {ex.Message}");
                 parser.SkipToNextStatement();
             }
         }
 
-        // Validar efectos de cada carta después del parseo y registro
-        foreach (var card in validCards)
+        List<Card> cardsToUpdate = new List<Card>();
+        foreach (var card in validCards.ToList())
         {
-            var cardErrors = semanticChecker.ValidateCard(card);
-            errorMessages.AddRange(cardErrors);
+            bool hasValidEffects = true;
+
+            foreach (var activation in card.OnActivation)
+            {
+                // Buscar el efecto en la lista de efectos válidos
+                var validEffect = validEffects.FirstOrDefault(e => e.name == activation.effect.name);
+
+                if (validEffect != null)
+                {
+                    // Crear una nueva instancia del efecto para esta activación
+                    var effectInstance = new Effect(validEffect.name, validEffect.parameters, validEffect.action);
+
+                    // Verificar si el efecto tiene parámetros antes de intentar asignarles valores
+                    if (effectInstance.parameters != null)
+                    {
+                        foreach (var param in effectInstance.parameters)
+                        {
+                            Debug.Log($"Nombre del parámetro: {param.paramName}, Tipo del parámetro: {param.type}");
+
+                            // Si el parámetro es "Amount", asignar el valor de activation.effect.parameters["Amount"]
+                            if (param.paramName == "Amount" || param.paramName == "amount")
+                            {
+                                // Buscar el parámetro 'Amount' en los parámetros de la activación
+                                var amountParam = activation.effect.parameters.FirstOrDefault(p => p.paramName == "Amount" || p.paramName == "amount");
+
+                                if (amountParam != null)
+                                {
+                                    param.value = amountParam.value; // Asignar el valor de 'Amount' del efecto de la activación
+                                    Debug.Log($"Valor de 'Amount' asignado: {param.value}");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("El parámetro 'Amount' no se encontró en la activación.");
+                                }
+                            }
+
+                            Debug.Log(card.Name + $"Valor del parámetro: {param.value}");
+
+                        }
+
+                    }
+
+                    // Asignar el efecto instanciado a la activación
+                    activation.effect = effectInstance;
+                }
+                else
+                {
+                    errorMessages.Add($"Effect '{activation.effect.name}' is not in the list of valid effects.");
+                    hasValidEffects = false;
+                    break;
+                }
+            }
+
+            if (hasValidEffects)
+            {
+                // Si todos los efectos son válidos, añadir la carta a la lista de actualización
+                cardsToUpdate.Add(card);
+            }
+        }
+
+
+
+
+        // Actualizar la base de datos con las cartas válidas
+        if (cardDatabase != null && cardsToUpdate.Count > 0)
+        {
+            cardDatabase.UpdateCardDatabase(cardsToUpdate);
         }
 
         // Mostrar los resultados o errores en la UI
         DisplayResults(validCards, validEffects, errorMessages);
     }
-
-
-
     private static string PreprocessInput(string input)
     {
         // Reemplazar múltiples espacios con un solo espacio, pero conservar saltos de línea

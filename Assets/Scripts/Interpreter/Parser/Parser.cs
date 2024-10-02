@@ -10,7 +10,7 @@ namespace DSL.Parser
 
     public class Parser
     {
-        private Context Context;
+        //private Context Context;
         private readonly LexerStream _lexerStream;
 
         public Parser(LexerStream lexerStream)
@@ -18,32 +18,7 @@ namespace DSL.Parser
             _lexerStream = lexerStream;
         }
 
-        //public List<Card> ParseCards()
-        //{
-        //    List<Card> cards = new List<Card>();
-        //    while (!IsEndOfInput())
-        //    {
-        //        try
-        //        {
-        //            var card = ParseCard();
-        //            cards.Add(card);
-        //        }
-        //        catch (Error)
-        //        {
-        //            SkipToNextStatement();
-        //        }
-        //        catch (Exception)
-        //        {
-        //            SkipToNextStatement();
-        //        }
-        //    }
-        //
-        //    // Crear una instancia de SemanticChecker para verificar las cartas
-        //    SemanticChecker checker = new SemanticChecker();
-        // checker.CheckCards(cards);
-        //
-        //    return cards;
-        //}
+
 
         public bool IsEndOfInput()
         {
@@ -97,6 +72,7 @@ namespace DSL.Parser
                         {
                             ThrowSyntaxError($"Invalid type '{type}'. Expected one of: Oro, Plata, Lider, Clima, Aumento.");
                         }
+                        type = TransformType(type);
 
                         Consume(TokenType.Comma);
                     }
@@ -188,6 +164,19 @@ namespace DSL.Parser
                 throw;
             }
 
+        }
+        private string TransformType(string type)
+        {
+            var typeMapping = new Dictionary<string, string>
+    {
+        { "Oro", "Golden" },
+        { "Plata", "Silver" },
+        { "Lider", "Leader" },
+        { "Clima", "Weather" },
+        { "Aumento", "Increase" }
+    };
+
+            return typeMapping.ContainsKey(type) ? typeMapping[type] : type;
         }
 
 
@@ -587,13 +576,14 @@ namespace DSL.Parser
             // Añadir las acciones para ser ejecutadas en el contexto del bucle 'for'
             actions.Add((cards, ctx) =>
             {
-                var cardList = (List<Card>)localVariables[listName];  // Obtener la lista de cartas
+                //var cardList = (List<Card>)localVariables[listName];  // Obtener la lista de cartas
 
-                foreach (var card in cardList)
+                foreach (var card in cards)
                 {
-                    localVariables[targetVar] = card;  // Asignar cada carta a la variable local 'target'
+                    //localVariables[targetVar] = card;  // Asignar cada carta a la variable local 'target'
                     foreach (var action in loopActions)
                     {
+                        //Debug.Log("123for");
                         action(cards, ctx);  // Ejecutar las acciones del bloque 'for'
                     }
                 }
@@ -639,7 +629,8 @@ namespace DSL.Parser
             }
 
 
-            int loopValue = (int)localVariables[loopVar];  // Inicializar valor de la variable del bucle
+            int loopValue = (int)localVariables[loopVar];
+            Debug.Log("tiene hambre" + loopValue); // Inicializar valor de la variable del bucle
             int conditionValue;
 
             // Si 'conditionVar' es un número literal
@@ -663,6 +654,7 @@ namespace DSL.Parser
 
                     // Usar el valor del parámetro si está definido
                     conditionValue = (int)parameter.value;
+                    Debug.Log("pepinillo" + conditionValue);
                 }
                 // Si 'conditionVar' es una variable local
                 else if (localVariables.ContainsKey(conditionVar))
@@ -677,17 +669,47 @@ namespace DSL.Parser
             }
             actions.Add((cards, ctx) =>
             {
+                var parameter = parameters.FirstOrDefault(p => p.paramName == conditionVar && p.type == ParamType.Number);
 
+                if (parameter != null)
+                {
+                    // Si el valor aún es null, lanzamos una excepción para indicar que el valor aún no está definido
+                    if (parameter.value == null)
+                    {
+                        throw new ArgumentException($"El parámetro '{conditionVar}' no tiene un valor definido.");
+                    }
+
+                    // Usar el valor del parámetro si está definido
+                    conditionValue = (int)parameter.value;
+
+                }
+                // Si 'conditionVar' es una variable local
+                else if (localVariables.ContainsKey(conditionVar))
+                {
+                    conditionValue = (int)localVariables[conditionVar];  // Usar el valor de la variable local
+                }
+                else
+                {
+                    // Lanzar excepción si 'conditionVar' no es un número, parámetro ni variable local
+                    throw new ArgumentException($"'{conditionVar}' no está definido como un número, variable local o parámetro.");
+                }
+
+                //  Debug.Log("123while");
+                //  Debug.Log("loop Value" + loopValue);
+                //  Debug.Log("valor de condicion" + conditionValue);
                 // Ejecutar el bucle 'while'
                 while (loopValue < conditionValue)
                 {
+                    // Debug.Log("456while");
                     foreach (var action in whileActions)
                     {
+                        //Debug.Log("789while");
                         action(cards, ctx);  // Ejecutar las acciones del bucle
                     }
                     loopValue++;
-                    localVariables[loopVar] = loopValue;  // Actualizamos el valor en 'localVariables'
+                    //localVariables[loopVar] = loopValue;  // Actualizamos el valor en 'localVariables'
                 }
+                loopValue = (int)localVariables[loopVar];
             });
         }
 
@@ -725,7 +747,8 @@ namespace DSL.Parser
                     {
                         Consume(TokenType.Identifier);  // Consumimos 'context'
                         var result = ContextAssignment(actions, localVariables, identifier);  // Asignamos el resultado de 'ContextAssignment'
-                        localVariables[identifier] = result;  // Guardar el resultado en las variables locales
+                        localVariables[identifier] = result;
+                        // Guardar el resultado en las variables locales
                     }
                     // Asignación de 'target' a una variable local
                     else if (nextToken == "target")
@@ -739,7 +762,7 @@ namespace DSL.Parser
                     {
                         var numberValue = Consume(TokenType.Number).Value;
                         int parsedValue = int.Parse(numberValue);
-                        Debug.Log(identifier);
+                        //                        Debug.Log(identifier);
                         localVariables[identifier] = parsedValue;
 
                         actions.Add((cards, ctx) =>
@@ -786,15 +809,54 @@ namespace DSL.Parser
         {
             Consume(TokenType.Dot);
             var propertyOrMethod = ConsumePropertyOrMethod();
+            var owner = "";
+            var param = "";
+            Token method;
+            Card card = null;
+
+            localVariables[identifier] = card;
+            //Debug.Log("el owner es"+localVariables[owner]);
+            if (identifier != "context" || identifier != "target")
+            {
+
+            }
+
 
             switch (propertyOrMethod.Type)
             {
                 case TokenType.DeckOfPlayer:
-                case TokenType.HandOfPlayer:
-                case TokenType.FieldOfPlayer:
-                case TokenType.GraveyardOfPlayer:
                     Consume(TokenType.OpenParen);
-                    var owner = Consume(TokenType.Identifier).Value;
+                    owner = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+
+                    // Verificar si el 'owner' ha sido previamente asignado desde 'target.Owner'
+                    if (!localVariables.ContainsKey(owner))
+                    {
+                        throw new ArgumentException($"El identificador '{owner}' debe haber sido asignado desde 'target.Owner'.");
+                    }
+                    if (identifier != "context" || identifier != "target")
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            localVariables[identifier] = ctx.DeckOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+
+                    }
+                    else
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            ctx.DeckOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+                    }
+
+                    Consume(TokenType.SemiColon);
+                    break;
+                case TokenType.HandOfPlayer:
+                    Consume(TokenType.OpenParen);
+                    owner = Consume(TokenType.Identifier).Value;
                     Consume(TokenType.CloseParen);
 
                     // Verificar si el 'owner' ha sido previamente asignado desde 'target.Owner'
@@ -803,58 +865,558 @@ namespace DSL.Parser
                         throw new ArgumentException($"El identificador '{owner}' debe haber sido asignado desde 'target.Owner'.");
                     }
 
-                    actions.Add((cards, ctx) =>
+                    if (identifier != "context" || identifier != "target")
                     {
-                        // Asignar el resultado del método 'DeckOfPlayer', 'HandOfPlayer', etc., a la variable local 'identifier'
-                        var result = ctx.GetType().GetMethod(propertyOrMethod.Value)?.Invoke(ctx, new object[] { localVariables[owner] });
-                        localVariables[identifier] = result;  // Asignar el resultado a la variable local identificada (e.g., deck)
-                    });
+                        actions.Add((cards, ctx) =>
+                        {
+                            localVariables[identifier] = ctx.HandOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
 
-                    Consume(TokenType.SemiColon);  // Consumir el ';' al final de la asignación
-                    return identifier;
+                    }
+                    else
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            ctx.HandOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+                    }
+                    Consume(TokenType.SemiColon);
+                    break;
+                case TokenType.FieldOfPlayer:
+                    Consume(TokenType.OpenParen);
+                    owner = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+
+                    // Verificar si el 'owner' ha sido previamente asignado desde 'target.Owner'
+                    if (!localVariables.ContainsKey(owner))
+                    {
+                        throw new ArgumentException($"El identificador '{owner}' debe haber sido asignado desde 'target.Owner'.");
+                    }
+
+                    if (identifier != "context" || identifier != "target")
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            localVariables[identifier] = ctx.FieldOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+
+                    }
+                    else
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            ctx.FieldOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+                    }
+                    Consume(TokenType.SemiColon);
+                    break;
+                case TokenType.GraveyardOfPlayer:
+                    Consume(TokenType.OpenParen);
+                    owner = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+
+                    // Verificar si el 'owner' ha sido previamente asignado desde 'target.Owner'
+                    if (!localVariables.ContainsKey(owner))
+                    {
+                        throw new ArgumentException($"El identificador '{owner}' debe haber sido asignado desde 'target.Owner'.");
+                    }
+
+                    if (identifier != "context" || identifier != "target")
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            localVariables[identifier] = ctx.GraveyardOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+
+                    }
+                    else
+                    {
+                        actions.Add((cards, ctx) =>
+                        {
+                            ctx.GraveyardOfPlayer(owner);
+                            Debug.Log("context." + propertyOrMethod.Value + "(" + localVariables[owner] + ")" + ";");
+                        });
+                    }
+                    Consume(TokenType.SemiColon);
+                    break;
 
                 // Manejo de otros métodos y propiedades como Deck, Hand, Field, etc.
                 case TokenType.Deck:
-                case TokenType.Hand:
-                case TokenType.Field:
-                case TokenType.Graveyard:
-                case TokenType.Board:
-                    if (Match(TokenType.Dot))
+                    Consume(TokenType.Dot);
+                    method = ConsumeMethod();
+
+                    switch (method.Type)
                     {
-                        Consume(TokenType.Dot);
-                        var method = ConsumeMethod();
+                        case TokenType.Pop:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+                            if (identifier != "context" || identifier != "target")
+                            {
+                                actions.Add((cards, ctx) =>
+                               {
+                                   localVariables[identifier] = ctx.Deck.Pop();
 
-                        switch (method.Type)
-                        {
-                            case TokenType.Pop:
-                            case TokenType.Shuffle:
-                                Consume(TokenType.OpenParen);
-                                Consume(TokenType.CloseParen);
-
+                                   Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                               });
+                            }
+                            else
+                            {
                                 actions.Add((cards, ctx) =>
                                 {
-                                    ctx.GetType().GetMethod(method.Value)?.Invoke(ctx, null);
-                                });
-                                break;
+                                    ctx.Deck.Pop();
 
-                            case TokenType.Push:
-                            case TokenType.Add:
-                            case TokenType.Remove:
-                            case TokenType.SemiColon:
-                                Consume(TokenType.OpenParen);
-                                var param = Consume(TokenType.Identifier).Value;
-                                if (!localVariables.ContainsKey(param))
-                                    throw new ArgumentException($"'{param}' no está definido.");
-                                Consume(TokenType.CloseParen);
-
-                                actions.Add((cards, ctx) =>
-                                {
-                                    ctx.GetType().GetMethod(method.Value)?.Invoke(ctx, new object[] { localVariables[param] });
+                                    Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
                                 });
-                                break;
-                        }
+                            }
+
+                            Consume(TokenType.SemiColon);
+
+                            break;
+                        case TokenType.Shuffle:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Deck.Shuffle();
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+
+                        case TokenType.Push:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+
+
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Deck.Push((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Add:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Deck.Add((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Remove:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            //   if (!(localVariables[param] is Card))
+                            //       throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Deck.Remove((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
                     }
-                    Consume(TokenType.SemiColon);  // Consumir el ';' al final de la asignación
+                    break;
+                case TokenType.Hand:
+                    Consume(TokenType.Dot);
+                    method = ConsumeMethod();
+
+                    switch (method.Type)
+                    {
+                        case TokenType.Pop:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+                            if (identifier != "context" || identifier != "target")
+                            {
+                                actions.Add((cards, ctx) =>
+                               {
+                                   localVariables[identifier] = ctx.Hand.Pop();
+
+                                   Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                               });
+                            }
+                            else
+                            {
+                                actions.Add((cards, ctx) =>
+                                {
+                                    ctx.Hand.Pop();
+
+                                    Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                                });
+                            }
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Shuffle:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Hand.Shuffle();
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+
+                        case TokenType.Push:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Hand.Push((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Add:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Hand.Add((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Remove:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            //  if (!(localVariables[param] is Card))
+                            //      throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Hand.Remove((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+                    }
+                    break;
+                case TokenType.Field:
+                    Consume(TokenType.Dot);
+                    method = ConsumeMethod();
+
+                    switch (method.Type)
+                    {
+                        case TokenType.Pop:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+                            if (identifier != "context" || identifier != "target")
+                            {
+                                actions.Add((cards, ctx) =>
+                               {
+                                   localVariables[identifier] = ctx.Field.Pop();
+
+                                   Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                               });
+                            }
+                            else
+                            {
+                                actions.Add((cards, ctx) =>
+                                {
+                                    ctx.Field.Pop();
+
+                                    Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                                });
+                            }
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Shuffle:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Field.Shuffle();
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+
+                        case TokenType.Push:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            //  if (!(localVariables[param] is Card))
+                            //      throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Field.Push((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Add:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            //  if (!(localVariables[param] is Card))
+                            //      throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Field.Add((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Remove:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Field.Remove((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+                    }
+                    break;
+                case TokenType.Graveyard:
+                    Consume(TokenType.Dot);
+                    method = ConsumeMethod();
+
+                    switch (method.Type)
+                    {
+                        case TokenType.Pop:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            if (identifier != "context" || identifier != "target")
+                            {
+                                actions.Add((cards, ctx) =>
+                               {
+                                   localVariables[identifier] = ctx.Graveyard.Pop();
+
+                                   Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                               });
+                            }
+                            else
+                            {
+                                actions.Add((cards, ctx) =>
+                                {
+                                    ctx.Graveyard.Pop();
+
+                                    Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                                });
+                            }
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Shuffle:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Graveyard.Shuffle();
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+
+                        case TokenType.Push:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Graveyard.Push((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Add:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Graveyard.Add((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Remove:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.Graveyard.Remove((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+                    }
+                    break;
+                case TokenType.Board:
+                    Consume(TokenType.Dot);
+                    method = ConsumeMethod();
+
+                    switch (method.Type)
+                    {
+                        case TokenType.Pop:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            if (identifier != "context" || identifier != "target")
+                            {
+                                actions.Add((cards, ctx) =>
+                               {
+                                   localVariables[identifier] = ctx.board.Pop();
+
+                                   Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                               });
+                            }
+                            else
+                            {
+                                actions.Add((cards, ctx) =>
+                                {
+                                    ctx.board.Pop();
+
+                                    Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                                });
+                            }
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Shuffle:
+                            Consume(TokenType.OpenParen);
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.board.Shuffle();
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "();");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+
+                        case TokenType.Push:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.board.Push((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Add:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.board.Add((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+                        case TokenType.Remove:
+                            Consume(TokenType.OpenParen);
+                            param = Consume(TokenType.Identifier).Value;
+                            if (!localVariables.ContainsKey(param))
+                                throw new ArgumentException($"'{param}' no está definido.");
+                            // if (!(localVariables[param] is Card))
+                            //     throw new ArgumentException($"El valor de '{param}' debe ser de tipo 'Card'.");
+                            Consume(TokenType.CloseParen);
+
+                            actions.Add((cards, ctx) =>
+                            {
+                                ctx.board.Remove((Card)localVariables[param]);//localVariables[param]
+                                Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
+                            });
+                            Consume(TokenType.SemiColon);
+                            break;
+
+                    }
                     break;
 
                 default:
@@ -862,9 +1424,9 @@ namespace DSL.Parser
                     break;
             }
 
-            return propertyOrMethod.Value;
+            //return propertyOrMethod.Value;
+            return identifier;
         }
-
         private string TargetAssignment(List<Action<List<Card>, Context>> actions, Dictionary<string, object> localVariables, string identifier, List<Parameter> parameters)
         {
             Consume(TokenType.Dot);
@@ -943,9 +1505,12 @@ namespace DSL.Parser
                         // Agregar la acción que incrementa o decrementa el poder
                         actions.Add((cards, ctx) =>
                         {
+
                             foreach (var card in cards)
                             {
                                 card.Power += operation * value;
+                                // Debug.Log(card.Name);
+                                // Debug.Log(card.Power);
                             }
                         });
 
@@ -973,39 +1538,100 @@ namespace DSL.Parser
             // Consumir el punto y el método siguiente
             Consume(TokenType.Dot);
             var method = ConsumeMethod();
+            List<Card> target = (List<Card>)localVariables[identifier];
+            var param = "";
 
             // Verificar si el método es de un objeto que no requiere parámetros, como 'Pop' o 'Shuffle'
             switch (method.Type)
             {
-                case TokenType.Pop:
-                case TokenType.Shuffle:
-                    Consume(TokenType.OpenParen);
-                    Consume(TokenType.CloseParen);
+                //case TokenType.Pop:
+                //case TokenType.Shuffle:
+                //    Consume(TokenType.OpenParen);
+                //    Consume(TokenType.CloseParen);
 
-                    // Añadir la acción para métodos sin parámetros
-                    actions.Add((cards, ctx) =>
-                    {
-                        var target = localVariables[identifier];
-                        // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
-                        target.GetType().GetMethod(method.Value)?.Invoke(target, null);
-                    });
-                    break;
+                // Añadir la acción para métodos sin parámetros
+                //Card card = null;
+                //actions.Add((cards, ctx) =>
+                //{
+                //    // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                //    target.Push(card);
+                //});
+                // break;
 
                 // Métodos que requieren un parámetro como 'Push', 'Add', 'SendBottom', 'Remove', etc.
                 case TokenType.Push:
-                case TokenType.Add:
-                case TokenType.SendBottom:
-                case TokenType.Remove:
-                case TokenType.Find:
                     Consume(TokenType.OpenParen);
-                    var param = Consume(TokenType.Identifier).Value;
+                    param = Consume(TokenType.Identifier).Value;
                     Consume(TokenType.CloseParen);
-
-                    // Validamos que el parámetro esté definido previamente en las variables locales
                     if (!localVariables.ContainsKey(param))
                     {
                         throw new ArgumentException($"El parámetro '{param}' no está definido.");
                     }
+                    actions.Add((cards, ctx) =>
+                    {
+                        // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                        target.Push((Card)localVariables[param]);
+                    });
+
+                    break;
+                case TokenType.Add:
+                    Consume(TokenType.OpenParen);
+                    param = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+                    if (!localVariables.ContainsKey(param))
+                    {
+                        throw new ArgumentException($"El parámetro '{param}' no está definido.");
+                    }
+                    actions.Add((cards, ctx) =>
+                   {
+                       // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                       target.Add((Card)localVariables[param]);
+                   });
+                    break;
+                case TokenType.SendBottom:
+                    Consume(TokenType.OpenParen);
+                    param = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+                    if (!localVariables.ContainsKey(param))
+                    {
+                        throw new ArgumentException($"El parámetro '{param}' no está definido.");
+                    }
+                    actions.Add((cards, ctx) =>
+                      {
+                          // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                          target.SendBottom((Card)localVariables[param]);
+                      });
+                    break;
+                case TokenType.Remove:
+                    Consume(TokenType.OpenParen);
+                    param = Consume(TokenType.Identifier).Value;
+                    Consume(TokenType.CloseParen);
+                    if (!localVariables.ContainsKey(param))
+                    {
+                        throw new ArgumentException($"El parámetro '{param}' no está definido.");
+                    }
+                    actions.Add((cards, ctx) =>
+                          {
+                              // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                              target.Remove((Card)localVariables[param]);
+                          });
+                    break;
+                    //case TokenType.Find:
+                    //    actions.Add((cards, ctx) =>
+                    //              {
+                    //                  // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                    //                  target.Find(cardp);
+                    //              });
+                    //    break;
+                    //Consume(TokenType.OpenParen);
+                    //var param = Consume(TokenType.Identifier).Value;
+                    //Consume(TokenType.CloseParen);
+
+                    // Validamos que el parámetro esté definido previamente en las variables locales
+                   // if (!localVariables.ContainsKey(param))
+                   // {
+                   //     throw new ArgumentException($"El parámetro '{param}' no está definido.");
+                   // }
 
                     // Validar que el parámetro sea del tipo esperado (por ejemplo, tipo 'Card')
                     // if (!(localVariables[param] is Card))
@@ -1014,15 +1640,15 @@ namespace DSL.Parser
                     // }
 
                     // Añadir la acción para métodos con parámetros
-                    actions.Add((cards, ctx) =>
-                    {
-                        var target = localVariables[identifier];
-                        var card = (Card)localVariables[param];
-
-                        // Invocar el método, como 'deck.Push(target)'
-                        target.GetType().GetMethod(method.Value)?.Invoke(target, new object[] { card });
-                    });
-                    break;
+                   // var targets = localVariables[identifier];
+                   // var card = (Card)localVariables[param];
+                   // actions.Add((cards, ctx) =>
+                   // {
+//
+                   //     // Invocar el método, como 'deck.Push(target)'
+                   //     targets.GetType().GetMethod(method.Value)?.Invoke(targets, new object[] { card });
+                   // });
+                   // break;
 
                 default:
                     ThrowSyntaxError($"Método inesperado '{method.Value}' encontrado.");
@@ -1205,7 +1831,7 @@ namespace DSL.Parser
 
         private bool ValidSource(string source)
         {
-            var validSources = new HashSet<string> { "board", "field", "otherField", "hand", "otherHand", "deck", "otherDeck", "parent" };
+            var validSources = new HashSet<string> { "board", "Field", "otherField", "Hand", "otherHand", "Deck", "otherDeck", "parent", "Graveyard" };
             return validSources.Contains(source);
         }
 
@@ -1320,7 +1946,7 @@ namespace DSL.Parser
                         }
                         var comparisonValue = Consume(TokenType.String).Value;
                         conditions.Add(card => EvaluateComparison(card.Faction, comparisonValue, operatorToken));
-                        
+
                     }
                     else if (propertyToken.Value == "Power")
                     {
@@ -1338,7 +1964,7 @@ namespace DSL.Parser
                         throw new Error($"Unexpected property '{propertyToken.Value}' in predicate.");
                     }
                 }
-                
+
                 else
                 {
                     throw new Error($"Unexpected token '{token.Value}' at position {token.Pos}.");
@@ -1435,7 +2061,7 @@ namespace DSL.Parser
         {
             Consume(propertyType);
             Consume(TokenType.Colon);
-            
+
 
             // Usar ConsumeAny para manejar números
             Token valueToken = ConsumeAny(TokenType.Number);
@@ -1508,6 +2134,7 @@ namespace DSL.Parser
                             if (int.TryParse(amountValue, out int parsedAmount))
                             {
                                 amount = parsedAmount;
+                                parameters.Add(new Parameter("Amount", ParamType.Number, parsedAmount));
                             }
                             else
                             {

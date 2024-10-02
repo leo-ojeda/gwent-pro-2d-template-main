@@ -93,7 +93,7 @@ public class Selector
 {
     public string source;
     public bool single;
-    public Func<Card, bool> predicate; // Cambio a una función que toma una Card y devuelve un bool
+    public Func<Card, bool> predicate; 
 
     public Selector() { }
 
