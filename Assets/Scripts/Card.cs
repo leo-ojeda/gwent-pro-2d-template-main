@@ -29,9 +29,9 @@ public class Card
 [System.Serializable]
 public class EffectActivation
 {
-    public Effect effect;
-    public Selector selector;
-    public PostAction postAction;
+    public Effect effect;      // Efecto principal
+    public Selector selector;  // Selector para el efecto principal
+    public PostAction postAction;  // PostAction con selector propio
 
     public EffectActivation(Effect effect, Selector selector, PostAction postAction)
     {
@@ -42,7 +42,16 @@ public class EffectActivation
 
     public void Activate(List<Card> targets, Context context)
     {
+        
         effect.action?.Invoke(targets, context);
+
+        
+       // if (postAction != null)
+       // {
+       //     // Obtener las cartas que serán afectadas por el PostAction usando su selector
+       //     var postActionTargets = targets.FindAll(postAction.selector.predicate);
+       //     postAction.action?.Invoke(postActionTargets, context);
+       // }
     }
 }
 
@@ -62,6 +71,28 @@ public class Effect
     {
         this.name = name;
         this.parameters = parameters ?? new List<Parameter>();
+        this.action = action;
+    }
+}
+
+[System.Serializable]
+public class PostAction
+{
+    public string name;
+    public List<Parameter> parameters;
+    public Selector selector;  // El PostAction tiene su propio selector
+    public Action<List<Card>, Context> action;
+
+    public PostAction()
+    {
+        parameters = new List<Parameter>();
+    }
+
+    public PostAction(string name, List<Parameter> parameters, Selector selector, Action<List<Card>, Context> action)
+    {
+        this.name = name;
+        this.parameters = parameters ?? new List<Parameter>();
+        this.selector = selector;
         this.action = action;
     }
 }
@@ -93,7 +124,7 @@ public class Selector
 {
     public string source;
     public bool single;
-    public Func<Card, bool> predicate; 
+    public Func<Card, bool> predicate;
 
     public Selector() { }
 
@@ -102,18 +133,5 @@ public class Selector
         this.source = source;
         this.single = single;
         this.predicate = predicate;
-    }
-}
-
-[System.Serializable]
-public class PostAction
-{
-    public string Type { get; set; }
-    public Selector Selector { get; set; }
-
-    public PostAction(string type, Selector selector)
-    {
-        Type = type;
-        Selector = selector;
     }
 }

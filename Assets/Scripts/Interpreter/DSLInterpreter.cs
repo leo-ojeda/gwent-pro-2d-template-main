@@ -100,6 +100,7 @@ public class DSLInterpreter : MonoBehaviour
         }
 
         List<Card> cardsToUpdate = new List<Card>();
+
         foreach (var card in validCards.ToList())
         {
             bool hasValidEffects = true;
@@ -139,13 +140,59 @@ public class DSLInterpreter : MonoBehaviour
                             }
 
                             Debug.Log(card.Name + $"Valor del parámetro: {param.value}");
-
                         }
-
                     }
 
                     // Asignar el efecto instanciado a la activación
                     activation.effect = effectInstance;
+
+                    // Verificar y asignar PostAction de manera similar a Effect
+                    if (activation.postAction != null)
+                    {
+                        var validPostAction = validEffects.FirstOrDefault(e => e.name == activation.postAction.name);
+
+                        if (validPostAction != null)
+                        {
+                            // Crear una nueva instancia del PostAction para esta activación
+                            var postActionInstance = new PostAction(validPostAction.name, validPostAction.parameters, activation.postAction.selector, validPostAction.action);
+
+                            // Verificar si el PostAction tiene parámetros
+                            if (postActionInstance.parameters != null)
+                            {
+                                foreach (var param in postActionInstance.parameters)
+                                {
+                                    Debug.Log($"Nombre del parámetro (PostAction): {param.paramName}, Tipo del parámetro: {param.type}");
+
+                                    // Asignar valores de parámetros en PostAction
+                                    if (param.paramName == "Amount" || param.paramName == "amount")
+                                    {
+                                        var amountParam = activation.postAction.parameters.FirstOrDefault(p => p.paramName == "Amount" || p.paramName == "amount");
+
+                                        if (amountParam != null)
+                                        {
+                                            param.value = amountParam.value; // Asignar valor de 'Amount' del PostAction de la activación
+                                            Debug.Log($"Valor de 'Amount' en PostAction asignado: {param.value}");
+                                        }
+                                        else
+                                        {
+                                            Debug.LogWarning("El parámetro 'Amount' no se encontró en el PostAction.");
+                                        }
+                                    }
+
+                                    Debug.Log(card.Name + $" Valor del parámetro (PostAction): {param.value}");
+                                }
+                            }
+
+                            // Asignar el PostAction instanciado a la activación
+                            activation.postAction = postActionInstance;
+                        }
+                        else
+                        {
+                            errorMessages.Add($"PostAction '{activation.postAction.name}' is not in the list of valid postActions.");
+                            hasValidEffects = false;
+                            break;
+                        }
+                    }
                 }
                 else
                 {
@@ -157,10 +204,11 @@ public class DSLInterpreter : MonoBehaviour
 
             if (hasValidEffects)
             {
-                // Si todos los efectos son válidos, añadir la carta a la lista de actualización
+                // Si todos los efectos y postActions son válidos, añadir la carta a la lista de actualización
                 cardsToUpdate.Add(card);
             }
         }
+
 
 
 

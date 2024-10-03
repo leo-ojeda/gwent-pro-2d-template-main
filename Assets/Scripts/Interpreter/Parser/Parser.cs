@@ -747,7 +747,7 @@ namespace DSL.Parser
                     {
                         Consume(TokenType.Identifier);  // Consumimos 'context'
                         var result = ContextAssignment(actions, localVariables, identifier);  // Asignamos el resultado de 'ContextAssignment'
-                        localVariables[identifier] = result;
+                        //localVariables[identifier] = result;
                         // Guardar el resultado en las variables locales
                     }
                     // Asignación de 'target' a una variable local
@@ -779,6 +779,7 @@ namespace DSL.Parser
                 }
                 else if (Match(TokenType.Dot)) // Métodos encadenados como 'Pop', 'Push'
                 {
+
                     MethodChain(identifier, localVariables, actions);  // Manejar métodos encadenados
                 }
             }
@@ -836,6 +837,7 @@ namespace DSL.Parser
                     }
                     if (identifier != "context" || identifier != "target")
                     {
+                        
                         actions.Add((cards, ctx) =>
                         {
                             localVariables[identifier] = ctx.DeckOfPlayer(owner);
@@ -1532,13 +1534,21 @@ namespace DSL.Parser
             // Si el identificador no está en localVariables, lanzar un error
             if (identifier == null || !localVariables.ContainsKey(identifier))
             {
+                Debug.Log("eldiablo");
                 throw new ArgumentException($"La variable '{identifier}' no está definida.");
             }
 
             // Consumir el punto y el método siguiente
             Consume(TokenType.Dot);
+            Debug.Log(localVariables[identifier]);
             var method = ConsumeMethod();
-            List<Card> target = (List<Card>)localVariables[identifier];
+            
+            var target = (List<Card>)localVariables[identifier];
+        
+            
+
+
+            Debug.Log("pepinillo");
             var param = "";
 
             // Verificar si el método es de un objeto que no requiere parámetros, como 'Pop' o 'Shuffle'
@@ -1585,7 +1595,7 @@ namespace DSL.Parser
                     actions.Add((cards, ctx) =>
                    {
                        // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
-                       target.Add((Card)localVariables[param]);
+                       //target.Add((Card)localVariables[param]);
                    });
                     break;
                 case TokenType.SendBottom:
@@ -1616,44 +1626,45 @@ namespace DSL.Parser
                               target.Remove((Card)localVariables[param]);
                           });
                     break;
-                    //case TokenType.Find:
-                    //    actions.Add((cards, ctx) =>
-                    //              {
-                    //                  // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
-                    //                  target.Find(cardp);
-                    //              });
-                    //    break;
-                    //Consume(TokenType.OpenParen);
-                    //var param = Consume(TokenType.Identifier).Value;
-                    //Consume(TokenType.CloseParen);
+                //case TokenType.Find:
+                //    actions.Add((cards, ctx) =>
+                //              {
+                //                  // Invocar el método 'Pop' o 'Shuffle' en el objeto (por ejemplo, 'deck')
+                //                  target.Find(cardp);
+                //              });
+                //    break;
+                //Consume(TokenType.OpenParen);
+                //var param = Consume(TokenType.Identifier).Value;
+                //Consume(TokenType.CloseParen);
 
-                    // Validamos que el parámetro esté definido previamente en las variables locales
-                   // if (!localVariables.ContainsKey(param))
-                   // {
-                   //     throw new ArgumentException($"El parámetro '{param}' no está definido.");
-                   // }
+                // Validamos que el parámetro esté definido previamente en las variables locales
+                // if (!localVariables.ContainsKey(param))
+                // {
+                //     throw new ArgumentException($"El parámetro '{param}' no está definido.");
+                // }
 
-                    // Validar que el parámetro sea del tipo esperado (por ejemplo, tipo 'Card')
-                    // if (!(localVariables[param] is Card))
-                    // {
-                    //     throw new ArgumentException($"El parámetro '{param}' debe ser de tipo 'Card'.");
-                    // }
+                // Validar que el parámetro sea del tipo esperado (por ejemplo, tipo 'Card')
+                // if (!(localVariables[param] is Card))
+                // {
+                //     throw new ArgumentException($"El parámetro '{param}' debe ser de tipo 'Card'.");
+                // }
 
-                    // Añadir la acción para métodos con parámetros
-                   // var targets = localVariables[identifier];
-                   // var card = (Card)localVariables[param];
-                   // actions.Add((cards, ctx) =>
-                   // {
-//
-                   //     // Invocar el método, como 'deck.Push(target)'
-                   //     targets.GetType().GetMethod(method.Value)?.Invoke(targets, new object[] { card });
-                   // });
-                   // break;
+                // Añadir la acción para métodos con parámetros
+                // var targets = localVariables[identifier];
+                // var card = (Card)localVariables[param];
+                // actions.Add((cards, ctx) =>
+                // {
+                //
+                //     // Invocar el método, como 'deck.Push(target)'
+                //     targets.GetType().GetMethod(method.Value)?.Invoke(targets, new object[] { card });
+                // });
+                // break;
 
                 default:
                     ThrowSyntaxError($"Método inesperado '{method.Value}' encontrado.");
                     break;
             }
+           
             Consume(TokenType.SemiColon);
         }
 
@@ -1844,6 +1855,8 @@ namespace DSL.Parser
 
             string type = null;
             Selector selector = null;
+            List<Parameter> parameters = new List<Parameter>();
+            Action<List<Card>, Context> action = null;
             // por arreglar
             int? amount = null;
 
@@ -1898,7 +1911,7 @@ namespace DSL.Parser
                 Consume(TokenType.Comma);
             }
 
-            return new PostAction(type, selector);
+            return new PostAction(type, parameters, selector, action);
         }
 
 

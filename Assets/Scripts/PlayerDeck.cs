@@ -108,8 +108,10 @@ public class PlayerDeck : MonoBehaviour
                             }
                             else
                             {
-                               // Debug.LogError("la definicion de la carta no es correcta");
-                               // Debug.Log(randomCard.Name);
+                                //Debug.LogError("la definicion de la carta no es correcta");
+                                randomIndex = Random.Range(0, CardDatabase.cardList.Count);
+                                randomCard = CardDatabase.cardList[randomIndex];
+                                // Debug.Log(randomCard.Name);
                             }
 
 
@@ -191,7 +193,7 @@ public class PlayerDeck : MonoBehaviour
             TurnSystem.StartTurn = false;
         }
     }
-   
+
 
     IEnumerator StartGame()
     {
@@ -202,7 +204,7 @@ public class PlayerDeck : MonoBehaviour
             Instantiate(CardToHand, transform.position, transform.rotation);
         }
     }
-    
+
     IEnumerator Draw(int x)
     {
         for (int i = 0; i < x; i++)

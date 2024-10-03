@@ -155,24 +155,28 @@ public class SemanticChecker
     {
         List<string> errors = new List<string>();
 
-        // Verificar que el tipo de la post-action no sea null
-        if (string.IsNullOrEmpty(postAction.Type))
+        // Verificar que el nombre del PostAction no sea null o vacío
+        if (string.IsNullOrEmpty(postAction.name))
         {
-            errors.Add("PostAction type cannot be null.");
+            errors.Add("PostAction name cannot be null or empty.");
         }
+      
 
         // Verificar que el selector esté correctamente definido
-        if (postAction.Selector == null)
+        if (postAction.selector == null)
         {
             errors.Add("PostAction must have a valid selector.");
         }
         else
         {
-            errors.AddRange(ValidateSelector(postAction.Selector));
+            // Validar el selector usando un método auxiliar si existe
+            errors.AddRange(ValidateSelector(postAction.selector));
         }
 
+       
         return errors;
     }
+
 
     // Verifica que el tipo de carta sea válido
     private bool ValidType(string type)

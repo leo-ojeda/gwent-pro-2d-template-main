@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
+using System.Linq;
 
 
 
@@ -22,6 +23,7 @@ public class ThisCard : MonoBehaviour
     public string CardType;
     public int Power;
     public int InitialPower;
+
     public List<EffectActivation> Efect;
     public string[] Range;
     public string Faction;
@@ -56,11 +58,10 @@ public class ThisCard : MonoBehaviour
     void SelectCard()
     {
 
-        if (n < CardDatabase.cardList.Count)
-        {
+       
             // Se asigna la carta correspondiente desde la base de datos
-            thisCard.Add(CardDatabase.cardList[n]);
-        }
+            thisCard.Add(CardDatabase.cardList[0]);
+        
 
     }
     void Awake()
@@ -70,6 +71,7 @@ public class ThisCard : MonoBehaviour
     void Start()
     {
         InitialPower = -1;
+
 
         FieldP1 = GameObject.Find("Field P1");
 
@@ -90,6 +92,7 @@ public class ThisCard : MonoBehaviour
         Zone = true;
         Owner = "Jugador 1";
         PowerTotal = 0;
+        
 
     }
     void Update()
@@ -107,11 +110,14 @@ public class ThisCard : MonoBehaviour
         }
         thisCard[0].Owner = Owner;
         CardName = thisCard[0].Name;
-        CardType = thisCard[0].Type;
+        CardType = thisCard[0].Type;       
         Power = thisCard[0].Power;
         Range = thisCard[0].Range;
         Faction = thisCard[0].Faction;
         Efect = thisCard[0].OnActivation;
+
+
+
 
         ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
         if (ThisSprite == null)
@@ -152,7 +158,7 @@ public class ThisCard : MonoBehaviour
         foreach (var efectActivation in Efect)
         {
             efectText += "Effect: " + efectActivation.effect.name;
-            //  efectText += ":  " + efectActivation.selector.source;
+            efectText += ":  " + efectActivation.selector.source;
         }
         EfectText.text = efectText;
 
@@ -200,6 +206,7 @@ public class ThisCard : MonoBehaviour
             // Actualizar el poder anterior
             InitialPower = thisCard[0].Power;
         }
+
 
         // Verificar si tienes suficiente mana para invocar cartas
         Draggable h = GetComponent<Draggable>();
@@ -279,7 +286,6 @@ public class ThisCard : MonoBehaviour
 
     void ActivateEffects(Card card)
     {
-
         // Asegurarse de que TriggerPlayer esté configurado
         context.TriggerPlayer = card.Owner;
 
@@ -287,6 +293,7 @@ public class ThisCard : MonoBehaviour
         {
             List<Card> targets;
 
+            // Obtener la lista de objetivos según el source del selector
             switch (effectActivation.selector.source)
             {
                 case "Field":
@@ -316,15 +323,92 @@ public class ThisCard : MonoBehaviour
                 case "board":
                     targets = context.board;
                     break;
-                // case "parent":                    
-                //     break;
+                case "parent":
+                    // Aquí podrías obtener los targets del padre, si es necesario
+                    targets = new List<Card>(); // Este debe ser reemplazado con el contexto adecuado para "parent"
+                    break;
                 default:
                     targets = new List<Card>(); // Lista vacía si el source no se reconoce
                     break;
             }
 
+            // Filtrar los objetivos según el Predicate
+            if (effectActivation.selector.predicate != null)
+            {
+                targets = targets.Where(effectActivation.selector.predicate).ToList();
+            }
+
+            // Si Single es verdadero, selecciona solo el primer objetivo (si hay alguno)
+            if (effectActivation.selector.single && targets.Count > 0)
+            {
+                targets = targets.Take(1).ToList();
+            }
+
             // Aplicar el efecto a los objetivos seleccionados
             effectActivation.Activate(targets, context);
+
+            // Si hay un PostAction, se aplica a los mismos targets
+            if (effectActivation.postAction != null)
+            {
+                // Definir el source del PostAction
+                string postActionSource = effectActivation.postAction.selector.source;
+
+                List<Card> postActionTargets;
+
+                // Manejar el source del PostAction
+                switch (postActionSource)
+                {
+                    case "Field":
+                        postActionTargets = context.Field;
+                        break;
+                    case "Deck":
+                        postActionTargets = context.Deck;
+                        break;
+                    case "Hand":
+                        postActionTargets = context.Hand;
+                        break;
+                    case "Graveyard":
+                        postActionTargets = context.Graveyard;
+                        break;
+                    case "otherField":
+                        context.TriggerPlayer = "Jugador 2";
+                        postActionTargets = context.Field;
+                        break;
+                    case "otherDeck":
+                        context.TriggerPlayer = "Jugador 2";
+                        postActionTargets = context.Deck;
+                        break;
+                    case "otherHand":
+                        context.TriggerPlayer = "Jugador 2";
+                        postActionTargets = context.Hand;
+                        break;
+                    case "board":
+                        postActionTargets = context.board;
+                        break;
+                    case "parent":
+                        // Se refiere al mismo source que el del padre
+                        postActionTargets = targets; // Usa los mismos targets del efecto principal
+                        break;
+                    default:
+                        postActionTargets = new List<Card>(); // Lista vacía si el source no se reconoce
+                        break;
+                }
+
+                // Filtrar los objetivos del PostAction según el Predicate
+                if (effectActivation.postAction.selector.predicate != null)
+                {
+                    postActionTargets = postActionTargets.Where(effectActivation.postAction.selector.predicate).ToList();
+                }
+
+                // Si Single es verdadero, selecciona solo el primer objetivo (si hay alguno)
+                if (effectActivation.postAction.selector.single && postActionTargets.Count > 0)
+                {
+                    postActionTargets = postActionTargets.Take(1).ToList();
+                }
+
+                // Activar el PostAction en los objetivos seleccionados
+                effectActivation.postAction.action?.Invoke(postActionTargets, context);
+            }
         }
     }
 

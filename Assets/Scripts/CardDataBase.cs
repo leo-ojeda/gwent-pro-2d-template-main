@@ -14,22 +14,22 @@ public class CardDatabase : MonoBehaviour
         RestoreCardList();
         InitializeCardList();
         //UpdateCardDatabase(validCards);
-        List<Card> filteredCards = cardList
-            .Where(card => card.Faction != "Fire" && card.Faction != "Torment" && card.Faction != "Forest")
-            .ToList();
+        //List<Card> filteredCards = cardList
+        //    .Where(card => card.Faction != "Fire" && card.Faction != "Torment" && card.Faction != "Forest")
+        //    .ToList();
 
     }
 
 
     void InitializeCardList()
     {
-        var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
-        var boostEffectR = new EffectActivation(EffectLibrary.BoostPowerR(2), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
-        var boostEffectS = new EffectActivation(EffectLibrary.BoostPowerS(3), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
-        var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, (card) => card.Type == "Silver"), new PostAction("", null));
-        var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, null), new PostAction("", null));
-        var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("Field", false, null), new PostAction("", null));
-        var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, (card) => card.Type == "Silver"), new PostAction("", null));
+        var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, (card) => card.Range.Contains("M") ), null);
+        var boostEffectR = new EffectActivation(EffectLibrary.BoostPowerR(2), new Selector("Field", false, (card) => card.Range.Contains("R")), null);
+        var boostEffectS = new EffectActivation(EffectLibrary.BoostPowerS(3), new Selector("Field", false, (card) => card.Range.Contains("S")), null);
+        var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, (card) => card.Type == "Silver"), null);
+        var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, null), null);
+        var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("Field", false, null), null);
+        var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, (card) => card.Type == "Silver"), null);
 
 
 
@@ -106,7 +106,7 @@ public class CardDatabase : MonoBehaviour
             {
                 Debug.Log(card.Name);
                 cardList.Add(card);
-                updatedCardListBackup.Add(new Card(card.Name, card.Power, card.Type, card.Range, card.Faction, card.OnActivation, card.Owner)); 
+                updatedCardListBackup.Add(new Card(card.Name, card.Power, card.Type, card.Range, card.Faction, card.OnActivation, card.Owner));
             }
         }
     }
