@@ -11,6 +11,7 @@ public class Card
     public string[] Range;
     public string Owner;
     public List<EffectActivation> OnActivation;
+   
 
     public Card() { }
 
@@ -29,9 +30,9 @@ public class Card
 [System.Serializable]
 public class EffectActivation
 {
-    public Effect effect;      // Efecto principal
-    public Selector selector;  // Selector para el efecto principal
-    public PostAction postAction;  // PostAction con selector propio
+    public Effect effect;
+    public Selector selector;
+    public PostAction postAction;
 
     public EffectActivation(Effect effect, Selector selector, PostAction postAction)
     {
@@ -42,16 +43,9 @@ public class EffectActivation
 
     public void Activate(List<Card> targets, Context context)
     {
-        
+
         effect.action?.Invoke(targets, context);
 
-        
-       // if (postAction != null)
-       // {
-       //     // Obtener las cartas que serán afectadas por el PostAction usando su selector
-       //     var postActionTargets = targets.FindAll(postAction.selector.predicate);
-       //     postAction.action?.Invoke(postActionTargets, context);
-       // }
     }
 }
 
@@ -80,7 +74,7 @@ public class PostAction
 {
     public string name;
     public List<Parameter> parameters;
-    public Selector selector;  // El PostAction tiene su propio selector
+    public Selector selector;
     public Action<List<Card>, Context> action;
 
     public PostAction()

@@ -78,7 +78,6 @@ public class EffectLibrary
             Debug.Log(context.TriggerPlayer);
 
             Card topCard = context.Deck.Pop();
-            CardToHand.InstantiateCard(context.CardPrefab, context.Hands, topCard);
             context.Hand.Add(topCard);
             context.Hand.Shuffle();
             Debug.Log("Draw card: " + topCard.Name);

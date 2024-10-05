@@ -120,8 +120,9 @@ public class AICardToHand : MonoBehaviour
         if (this.tag == "AIClone")
         {
             //Debug.Log("Activo");
-            ThisCard[0] = context.playerDecks[Owner][numberofCardsInDeck - 1];
-            context.playerDecks[Owner].RemoveAt(numberofCardsInDeck - 1);
+            ThisCard[0] = context.playerDecks[Owner].Pop();//[numberofCardsInDeck - 1];
+            //context.playerDecks[Owner].RemoveAt(numberofCardsInDeck - 1);
+            context.board.Add(ThisCard[0]);
             context.playerHands["Jugador 2"].Add(ThisCard[0]);
             numberofCardsInDeck -= 1;
             AI.deckSize -= 1;

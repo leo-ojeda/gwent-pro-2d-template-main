@@ -279,7 +279,7 @@ public class TurnSystem : MonoBehaviour
                 {
 
                     PlayMusic("s3200");
-                    context.board.Clear();
+                    //context.board.Clear();
                     context.playerFields.Clear();
                     context.playerFields["Jugador 1"] = new List<Card>();
                     context.playerFields["Jugador 2"] = new List<Card>();

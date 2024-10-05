@@ -10,6 +10,8 @@ using System.Linq;
 public class ThisCard : MonoBehaviour
 {
     Context context;
+    //CardToHand cardToHand;
+    public GameObject CardPrefab;
     public List<Card> thisCard;
     public List<Card> Card;
     public int n;
@@ -54,19 +56,25 @@ public class ThisCard : MonoBehaviour
     private AudioSource audioSource;
     public GameObject State;
     public GameObject FieldP1;
+    public GameObject Cards;
+    public List<Card> wcard;
+
+
 
     void SelectCard()
     {
 
-       
-            // Se asigna la carta correspondiente desde la base de datos
-            thisCard.Add(CardDatabase.cardList[0]);
-        
+
+        // Se asigna la carta correspondiente desde la base de datos
+        thisCard.Add(CardDatabase.cardList[0]);
+        wcard.Add(CardDatabase.cardList[0]);
+
 
     }
     void Awake()
     {
         thisCard = new List<Card>();
+        wcard = new List<Card>();
     }
     void Start()
     {
@@ -92,11 +100,14 @@ public class ThisCard : MonoBehaviour
         Zone = true;
         Owner = "Jugador 1";
         PowerTotal = 0;
-        
+
+
+
 
     }
     void Update()
     {
+
 
         CalculatePowerTotal();
         Hand = GameObject.Find("Hand");
@@ -108,9 +119,11 @@ public class ThisCard : MonoBehaviour
         {
             CardToHand.ItName.name = thisCard[0].Name;
         }
+
+
         thisCard[0].Owner = Owner;
         CardName = thisCard[0].Name;
-        CardType = thisCard[0].Type;       
+        CardType = thisCard[0].Type;
         Power = thisCard[0].Power;
         Range = thisCard[0].Range;
         Faction = thisCard[0].Faction;
@@ -119,33 +132,59 @@ public class ThisCard : MonoBehaviour
 
 
 
+
         ThisSprite = Resources.Load<Sprite>(thisCard[0].Name);
         if (ThisSprite == null)
         {
-            // if (thisCard[0].Type == "Clima")
-            // {
-            //     ThisSprite = Resources.Load<Sprite>("Clima");
-            // }
-            //  if (thisCard[0].Type == "Clima")
-            // {
-            //     ThisSprite = Resources.Load<Sprite>("Clima");
-            // }
-            //  if (thisCard[0].Type == "Clima")
-            // {
-            //     ThisSprite = Resources.Load<Sprite>("Clima");
-            // }
-            //  if (thisCard[0].Type == "Clima")
-            // {
-            //     ThisSprite = Resources.Load<Sprite>("Clima");
-            // }
-            //  if (thisCard[0].Type == "Clima")
-            // {
-            //     ThisSprite = Resources.Load<Sprite>("Clima");
-            // }
-            // else
-            // {
-            ThisSprite = Resources.Load<Sprite>("none");
-            //}
+
+            if (thisCard[0].Type == "Clima")
+            {
+                ThisSprite = Resources.Load<Sprite>("Clima");
+            }
+            else if (thisCard[0].Type == "increase")
+            {
+                ThisSprite = Resources.Load<Sprite>("Incremento");
+            }
+            else if (thisCard[0].Type == "Silver")
+            {
+
+                if (thisCard[0].Range.Contains("M"))
+                {
+                    ThisSprite = Resources.Load<Sprite>("Melee");
+                }
+                else if (thisCard[0].Range.Contains("R"))
+                {
+                    ThisSprite = Resources.Load<Sprite>("Ranged");
+                }
+                else if (thisCard[0].Range.Contains("S"))
+                {
+                    ThisSprite = Resources.Load<Sprite>("Siege");
+                }
+            }
+            else if (thisCard[0].Type == "Golden")
+            {
+
+                if (thisCard[0].Range.Contains("M"))
+                {
+                    ThisSprite = Resources.Load<Sprite>("MeleeG");
+                }
+                else if (thisCard[0].Range.Contains("R"))
+                {
+                    ThisSprite = Resources.Load<Sprite>("RangedG");
+                }
+                else if (thisCard[0].Range.Contains("S"))
+                {
+                    ThisSprite = Resources.Load<Sprite>("SiegeGif");
+                }
+            }
+            else if (thisCard[0].Type == "Leader")
+            {
+                ThisSprite = Resources.Load<Sprite>("Leader");
+            }
+            else
+            {
+                ThisSprite = Resources.Load<Sprite>("none");
+            }
         }
 
         NameText.text = "" + CardName;
@@ -158,7 +197,7 @@ public class ThisCard : MonoBehaviour
         foreach (var efectActivation in Efect)
         {
             efectText += "Effect: " + efectActivation.effect.name;
-            efectText += ":  " + efectActivation.selector.source;
+            // efectText += ":  " + efectActivation.selector.source;
         }
         EfectText.text = efectText;
 
@@ -167,13 +206,15 @@ public class ThisCard : MonoBehaviour
         cardB = cardBack;
         if (tag == "Three")
         {
-            thisCard[0] = CardToHand.card;
+            thisCard[0] = wcard[0];
+            Debug.Log(wcard[0].Name);
         }
 
         if (tag == "first")
         {
             // Debug.Log("entro");
             thisCard[0] = context.playerDecks[Owner].Pop();
+            context.board.Add(thisCard[0]);
             context.playerHands[Owner].Add(thisCard[0]);
             NumberOfCardsIdDeck -= 1;
             PlayerDeck.deck -= 1;
@@ -204,7 +245,7 @@ public class ThisCard : MonoBehaviour
             }
 
             // Actualizar el poder anterior
-            InitialPower = thisCard[0].Power;
+            //InitialPower = thisCard[0].Power;
         }
 
 
@@ -229,6 +270,13 @@ public class ThisCard : MonoBehaviour
 
         // Realizar operaciones para cada zona de batalla
         OperationsForBattleZones();
+        //if (tag == "Three")
+        //{
+        //    thisCard[0] = wcard;
+        //    Debug.Log("ultima"+wcard.Name);
+        //}
+
+
     }
     public void Summon(Card SummonedCard)
     {
@@ -238,7 +286,7 @@ public class ThisCard : MonoBehaviour
         PlayMusic("100");
 
         context.TriggerPlayer = SummonedCard.Owner;
-        context.board.Add(SummonedCard);
+        //context.board.Add(SummonedCard);
         context.playerFields[SummonedCard.Owner].Add(SummonedCard);
         // Field.Add(SummonedCard);
         context.playerHands[Owner].Remove(SummonedCard);
@@ -268,26 +316,46 @@ public class ThisCard : MonoBehaviour
     {
         PowerTotal = 0;
 
-        List<Card> fieldCards = context.playerFields[Owner];
-        foreach (var card in fieldCards)
+
+        List<Card> fieldCards = context.playerFields[Owner].ToList();
+        List<Card> HandCards = context.playerHands[Owner].ToList();
+
+
+        foreach (var card in fieldCards.ToList())
         {
+
             if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase" || card.Power < 0)
             {
                 card.Power = 0;
                 continue;
             }
 
+
+            var CardBoard = context.board.FirstOrDefault(c => c.Name == card.Name && c.Power == card.Power);
+
+            if (CardBoard == null)
+            {
+
+                context.playerFields[Owner].Remove(card);
+                context.playerHands[Owner].Remove(card);
+                Debug.Log("Carta eliminada del campo: " + card.Name + " con poder: " + card.Power);
+                continue;
+            }
+
+            // Sumar el poder de la carta al total
             PowerTotal += card.Power;
         }
 
+        // Si quieres depurar, puedes habilitar este mensaje para revisar el total de poder
         //Debug.Log("PowerTotal Recalculado a: " + PowerTotal);
     }
-
-
     void ActivateEffects(Card card)
     {
         // Asegurarse de que TriggerPlayer esté configurado
         context.TriggerPlayer = card.Owner;
+        // int handCountBefore = context.Hand.Count;
+        var handBefore = new List<Card>(context.Hand);
+        var boardBefore = new List<Card>(context.board);
 
         foreach (var effectActivation in card.OnActivation)
         {
@@ -410,6 +478,30 @@ public class ThisCard : MonoBehaviour
                 effectActivation.postAction.action?.Invoke(postActionTargets, context);
             }
         }
+        context.TriggerPlayer = card.Owner;
+        var handAfter = new List<Card>(context.Hand);
+        var newCards = FindNewCards(handBefore, handAfter);
+
+
+        var boardAfter = new List<Card>(context.board);
+        // Buscar las cartas que se eliminaron del campo
+        var removedCards = FindRemovedCards(boardBefore, boardAfter);
+        // Eliminar solo la cantidad correcta de GameObjects correspondientes a las cartas eliminadas
+        RemoveCardsboard(removedCards);
+
+        // Iterar sobre todas las nuevas cartas encontradas
+        foreach (var newCard in newCards)
+        {
+            if (newCard != null)
+            {
+                Debug.Log("Nueva carta añadida: " + newCard.Name);
+
+                // Instanciar el prefab para la nueva carta
+                Instantiate(CardPrefab, transform.position, transform.rotation);
+                // Configurar el prefab si es necesario, por ejemplo:
+                //newCardPrefab.GetComponent<ThisCard>().thisCard.Add(newCard);
+            }
+        }
     }
 
 
@@ -460,6 +552,137 @@ public class ThisCard : MonoBehaviour
         audioSource.Play();
         return x;
     }
+    //mejorar por si la carta tiene el mismo nombre
+    List<Card> FindNewCards(List<Card> before, List<Card> after)
+    {
+        // Crear una copia de la lista "after" para no modificar el original
+        var newCards = new List<Card>(after);
+
+        // Remover las cartas de "before" que también están en "after"
+        foreach (var card in before)
+        {
+            // Remover solo una instancia de la carta que coincida por nombre
+            var cardToRemove = newCards.FirstOrDefault(c => c.Name == card.Name);
+            if (cardToRemove != null)
+            {
+                newCards.Remove(cardToRemove);
+            }
+        }
+
+        // Actualizar cada carta nueva encontrada
+        foreach (var newCard in newCards)
+        {
+            newCard.Owner = "Jugador 1"; // Asignar el dueño a "Jugador 1"
+            context.playerDecks[Owner].Insert(0, newCard); // Insertar la carta en el mazo del jugador
+            context.playerHands[Owner].Remove(newCard); // Remover la carta de la mano del jugador
+        }
+
+        // Retornar la lista de cartas nuevas (las que no estaban en "before")
+        return newCards;
+    }
+    List<Card> FindRemovedCards(List<Card> before, List<Card> after)
+    {
+        var removedCards = new List<Card>(before);
+
+        // Eliminar las cartas que están tanto en "before" como en "after"
+        foreach (var card in after)
+        {
+            var cardToRemove = removedCards.FirstOrDefault(c => c.Name == card.Name);
+            if (cardToRemove != null)
+            {
+
+                removedCards.Remove(cardToRemove);
+            }
+        }
+        //  Debug.Log("Cartas removidas:");
+        //  foreach (var removedCard in removedCards)
+        //  {
+        //      Debug.Log("Carta removida: " + removedCard.Name);
+        //  }
+
+        return removedCards; // Lista de cartas que ya no están en el campo
+    }
+
+    // Método para eliminar solo la cantidad correcta de cartas del campo
+    void RemoveCardsboard(List<Card> removedCards)
+    {
+        GameObject[] zones = {
+        GameObject.Find("Field P1/MeleeZone 1"),
+        GameObject.Find("Field P1/RangeZone 1"),
+        GameObject.Find("Field P1/SiegeZone 1"),
+        GameObject.Find("Field P1/IncreaseZone"),
+        GameObject.Find("Field P1/ClimaZone"),
+        GameObject.Find("Field P2/MeleeZone AI"),
+        GameObject.Find("Field P2/RangeZone AI"),
+        GameObject.Find("Field P2/SiegeZone AI"),
+        GameObject.Find("Field P2/IncreaseZone AI"),
+        GameObject.Find("Field P2/ClimaZone AI")
+    };
+
+        // Debug para ver las cartas que se intentan remover
+        Debug.Log("Intentando remover las siguientes cartas:");
+        foreach (var card in removedCards)
+        {
+            Debug.Log("Carta: " + card.Name);
+        }
+
+        foreach (var card in removedCards)
+        {
+            int countToRemove = removedCards.Count(c => c.Name == card.Name);
+            int removedCount = 0;
+
+            // Debug para saber cuántas veces se tiene que remover una carta
+            Debug.Log("Intentando remover " + countToRemove + " instancias de la carta: " + card.Name);
+
+            foreach (var zone in zones)
+            {
+                if (zone == null)
+                {
+                    Debug.LogWarning("Zona no encontrada o no asignada correctamente.");
+                    continue;
+                }
+
+                // Debug para ver en qué zona estamos buscando
+                Debug.Log("Buscando en la zona: " + zone.name);
+
+                // Buscar todos los objetos de carta en esta zona
+                foreach (Transform cardObj in zone.transform)
+                {
+                    // Si el nombre del GameObject coincide con el nombre de la carta removida
+                    if (cardObj.name == card.Name && removedCount < countToRemove)
+                    {
+                        // Debug antes de destruir el objeto
+                        Debug.Log("Destruyendo carta: " + cardObj.name + " de la zona: " + zone.name);
+
+                        Destroy(cardObj.gameObject); // Destruir el GameObject
+                        removedCount++;
+
+                        // Si hemos eliminado suficientes cartas, dejamos de buscar
+                        if (removedCount >= countToRemove)
+                        {
+                            Debug.Log("Se han eliminado suficientes instancias de la carta: " + card.Name);
+                            break;
+                        }
+                    }
+                }
+
+                // Si hemos eliminado suficientes cartas, dejamos de buscar en otras zonas
+                if (removedCount >= countToRemove)
+                {
+                    break;
+                }
+            }
+
+            // Debug si no se encuentra ninguna carta para eliminar
+            if (removedCount == 0)
+            {
+                Debug.LogWarning("No se encontraron cartas para eliminar con el nombre: " + card.Name);
+            }
+        }
+    }
+
+
+
 
 
 }

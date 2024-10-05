@@ -23,12 +23,12 @@ public class CardDatabase : MonoBehaviour
 
     void InitializeCardList()
     {
-        var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, (card) => card.Range.Contains("M") ), null);
+        var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, (card) => card.Range.Contains("M")), null);
         var boostEffectR = new EffectActivation(EffectLibrary.BoostPowerR(2), new Selector("Field", false, (card) => card.Range.Contains("R")), null);
         var boostEffectS = new EffectActivation(EffectLibrary.BoostPowerS(3), new Selector("Field", false, (card) => card.Range.Contains("S")), null);
         var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, (card) => card.Type == "Silver"), null);
         var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, null), null);
-        var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("Field", false, null), null);
+        var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("otherField", false, (card) => card.Power > 4), null);
         var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, (card) => card.Type == "Silver"), null);
 
 
@@ -42,7 +42,7 @@ public class CardDatabase : MonoBehaviour
         cardList.Add(new Card("Gran Mago", 3, "Silver", new string[] { "R" }, "Torment", new List<EffectActivation>(), "  "));
         cardList.Add(new Card("Defensor de Hechizo", 4, "Silver", new string[] { "R" }, "Torment", new List<EffectActivation>(), " "));
         cardList.Add(new Card("Asediador", 5, "Golden", new string[] { "S" }, "Torment", new List<EffectActivation> { boostEffectS }, ""));
-        cardList.Add(new Card("Caballero del Trueno", 0, "Leader", new string[] { "M" }, "Torment", new List<EffectActivation>(), ""));
+        cardList.Add(new Card("Caballero del Trueno", 0, "Leader", new string[] { "M" }, "Torment", new List<EffectActivation> { returnToDeckEffect }, ""));
         cardList.Add(new Card("Espada Oscura", 6, "Golden", new string[] { "M" }, "Torment", new List<EffectActivation> { }, " "));
         cardList.Add(new Card("Caballero Luna", 5, "Golden", new string[] { "M" }, "Torment", new List<EffectActivation> { drawEffect }, ""));
         cardList.Add(new Card("Aplastador", 5, "Golden", new string[] { "R" }, "Torment", new List<EffectActivation>(), " "));
@@ -120,5 +120,6 @@ public class CardDatabase : MonoBehaviour
         // Restaurar las cartas desde la copia de respaldo
         cardList.AddRange(updatedCardListBackup.Select(card => new Card(card.Name, card.Power, card.Type, card.Range, card.Faction, card.OnActivation, card.Owner)).ToList());
     }
+
 
 }

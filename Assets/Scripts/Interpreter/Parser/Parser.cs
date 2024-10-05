@@ -1115,7 +1115,7 @@ namespace DSL.Parser
 
                             actions.Add((cards, ctx) =>
                             {
-                                ctx.Hand.Add((Card)localVariables[param]);//localVariables[param]
+                                ctx.Hand.Add((Card)localVariables[param]);//localVariables[param]                               
                                 Debug.Log("context." + propertyOrMethod.Value + "." + method.Value + "(" + localVariables[param] + ");");
                             });
                             Consume(TokenType.SemiColon);

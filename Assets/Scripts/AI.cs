@@ -7,6 +7,7 @@ using TMPro;
 public class AI : MonoBehaviour
 {
     Context context;
+    public GameObject CardPrefab;
     private string Owner;
     public List<Card> Deck = new List<Card>();
     public List<Card> CardsInHand = new List<Card>();
@@ -310,7 +311,7 @@ public class AI : MonoBehaviour
                     }
 
                     TurnSystem.CurrentEnemyMana = 0;
-                    context.board.Add(cardInHand);
+                    //context.board.Add(cardInHand);
                     context.playerFields[cardInHand.Owner].Add(cardInHand);
                     // context.playerHands[cardInHand.Owner].Remove(cardInHand);
                     ActivateEffects(cardInHand);
@@ -338,22 +339,35 @@ public class AI : MonoBehaviour
     {
         EnemyPowerTotal = 0;
 
-        List<Card> fieldCards = context.playerFields[Owner];
+        List<Card> fieldCards = context.playerFields[Owner].ToList();
 
-        foreach (var card in fieldCards)
+        // Recorre todas las cartas en el campo
+        foreach (var card in fieldCards.ToList())
         {
+            // Verifica si la carta debe influir en el poder total
             if (card.Type == "Leader" || card.Type == "Clima" || card.Type == "Increase" || card.Power < 0)
             {
                 card.Power = 0;
                 continue;
             }
 
+
+            var CardBoard = context.board.FirstOrDefault(c => c.Name == card.Name && c.Power == card.Power);
+
+            if (CardBoard == null)
+            {
+                // Si no hay coincidencias, eliminar la carta del campo
+                context.playerFields[Owner].Remove(card);
+                Debug.Log("Carta eliminada del campo: " + card.Name + " con poder: " + card.Power);
+                continue; // Saltar a la siguiente carta
+            }
+
+            // Sumar el poder de la carta al total
             EnemyPowerTotal += card.Power;
         }
 
-        //Debug.Log("PowerTotal recalculado a: " + PowerTotal);
-    }
 
+    }
 
     void UpdateHand()
     {
@@ -420,9 +434,11 @@ public class AI : MonoBehaviour
     }
     void ActivateEffects(Card card)
     {
-
         // Asegurarse de que TriggerPlayer esté configurado
         context.TriggerPlayer = card.Owner;
+        // int handCountBefore = context.Hand.Count;
+        var handBefore = new List<Card>(context.Hand);
+        var boardBefore = new List<Card>(context.board);
 
         foreach (var effectActivation in card.OnActivation)
         {
@@ -462,8 +478,236 @@ public class AI : MonoBehaviour
                     break;
             }
 
+            // Filtrar los objetivos según el Predicate
+            if (effectActivation.selector.predicate != null)
+            {
+                targets = targets.Where(effectActivation.selector.predicate).ToList();
+            }
+
+            // Si Single es verdadero, selecciona solo el primer objetivo (si hay alguno)
+            if (effectActivation.selector.single && targets.Count > 0)
+            {
+                targets = targets.Take(1).ToList();
+            }
+
             // Aplicar el efecto a los objetivos seleccionados
             effectActivation.Activate(targets, context);
+
+            // Si hay un PostAction, se aplica a los mismos targets
+            if (effectActivation.postAction != null)
+            {
+                // Definir el source del PostAction
+                string postActionSource = effectActivation.postAction.selector.source;
+
+                List<Card> postActionTargets;
+
+                // Manejar el source del PostAction
+                switch (postActionSource)
+                {
+                    case "Field":
+                        postActionTargets = context.Field;
+                        break;
+                    case "Deck":
+                        postActionTargets = context.Deck;
+                        break;
+                    case "Hand":
+                        postActionTargets = context.Hand;
+                        break;
+                    case "Graveyard":
+                        postActionTargets = context.Graveyard;
+                        break;
+                    case "otherField":
+                        context.TriggerPlayer = "Jugador 1";
+                        postActionTargets = context.Field;
+                        break;
+                    case "otherDeck":
+                        context.TriggerPlayer = "Jugador 1";
+                        postActionTargets = context.Deck;
+                        break;
+                    case "otherHand":
+                        context.TriggerPlayer = "Jugador 1";
+                        postActionTargets = context.Hand;
+                        break;
+                    case "board":
+                        postActionTargets = context.board;
+                        break;
+                    case "parent":
+                        // Se refiere al mismo source que el del padre
+                        postActionTargets = targets; // Usa los mismos targets del efecto principal
+                        break;
+                    default:
+                        postActionTargets = new List<Card>(); // Lista vacía si el source no se reconoce
+                        break;
+                }
+
+                // Filtrar los objetivos del PostAction según el Predicate
+                if (effectActivation.postAction.selector.predicate != null)
+                {
+                    postActionTargets = postActionTargets.Where(effectActivation.postAction.selector.predicate).ToList();
+                }
+
+                // Si Single es verdadero, selecciona solo el primer objetivo (si hay alguno)
+                if (effectActivation.postAction.selector.single && postActionTargets.Count > 0)
+                {
+                    postActionTargets = postActionTargets.Take(1).ToList();
+                }
+
+                // Activar el PostAction en los objetivos seleccionados
+                effectActivation.postAction.action?.Invoke(postActionTargets, context);
+            }
+        }
+        context.TriggerPlayer = card.Owner;
+        var handAfter = new List<Card>(context.Hand);
+        var newCards = FindNewCards(handBefore, handAfter);
+
+
+        var boardAfter = new List<Card>(context.board);
+        // Buscar las cartas que se eliminaron del campo
+        var removedCards = FindRemovedCards(boardBefore, boardAfter);
+        // Eliminar solo la cantidad correcta de GameObjects correspondientes a las cartas eliminadas
+        RemoveCardsboard(removedCards);
+
+        // Iterar sobre todas las nuevas cartas encontradas
+        foreach (var newCard in newCards)
+        {
+            if (newCard != null)
+            {
+                Debug.Log("Nueva carta añadida: " + newCard.Name);
+
+                // Instanciar el prefab para la nueva carta
+                Instantiate(CardPrefab, transform.position, transform.rotation);
+                // Configurar el prefab si es necesario, por ejemplo:
+                //newCardPrefab.GetComponent<ThisCard>().thisCard.Add(newCard);
+            }
         }
     }
+    List<Card> FindNewCards(List<Card> before, List<Card> after)
+    {
+        // Crear una copia de la lista "after" para no modificar el original
+        var newCards = new List<Card>(after);
+
+        // Remover las cartas de "before" que también están en "after"
+        foreach (var card in before)
+        {
+            // Remover solo una instancia de la carta que coincida por nombre
+            var cardToRemove = newCards.FirstOrDefault(c => c.Name == card.Name);
+            if (cardToRemove != null)
+            {
+                newCards.Remove(cardToRemove);
+            }
+        }
+
+        // Actualizar cada carta nueva encontrada
+        foreach (var newCard in newCards)
+        {
+            newCard.Owner = "Jugador 2"; // Asignar el dueño a "Jugador 2"
+            context.playerDecks[Owner].Insert(0, newCard); // Insertar la carta en el mazo del jugador
+            context.playerHands[Owner].Remove(newCard); // Remover la carta de la mano del jugador
+        }
+
+        // Retornar la lista de cartas nuevas (las que no estaban en "before")
+        return newCards;
+    }
+    List<Card> FindRemovedCards(List<Card> before, List<Card> after)
+    {
+        var removedCards = new List<Card>(before);
+
+        // Eliminar las cartas que están tanto en "before" como en "after"
+        foreach (var card in after)
+        {
+            var cardToRemove = removedCards.FirstOrDefault(c => c.Name == card.Name);
+            if (cardToRemove != null)
+            {
+
+                removedCards.Remove(cardToRemove);
+            }
+        }
+        //  Debug.Log("Cartas removidas:");
+        //  foreach (var removedCard in removedCards)
+        //  {
+        //      Debug.Log("Carta removida: " + removedCard.Name);
+        //  }
+
+        return removedCards; // Lista de cartas que ya no están en el campo
+    }
+
+    // Método para eliminar solo la cantidad correcta de cartas del campo
+    void RemoveCardsboard(List<Card> removedCards)
+    {
+        GameObject[] zones = {
+        GameObject.Find("Field P1/MeleeZone 1"),
+        GameObject.Find("Field P1/RangeZone 1"),
+        GameObject.Find("Field P1/SiegeZone 1"),
+        GameObject.Find("Field P1/IncreaseZone"),
+        GameObject.Find("Field P1/ClimaZone"),
+        GameObject.Find("Field P2/MeleeZone AI"),
+        GameObject.Find("Field P2/RangeZone AI"),
+        GameObject.Find("Field P2/SiegeZone AI"),
+        GameObject.Find("Field P2/IncreaseZone AI"),
+        GameObject.Find("Field P2/ClimaZone AI")
+    };
+
+        // Debug para ver las cartas que se intentan remover
+        Debug.Log("Intentando remover las siguientes cartas:");
+        foreach (var card in removedCards)
+        {
+            Debug.Log("Carta: " + card.Name);
+        }
+
+        foreach (var card in removedCards)
+        {
+            int countToRemove = removedCards.Count(c => c.Name == card.Name);
+            int removedCount = 0;
+
+            // Debug para saber cuántas veces se tiene que remover una carta
+            Debug.Log("Intentando remover " + countToRemove + " instancias de la carta: " + card.Name);
+
+            foreach (var zone in zones)
+            {
+                if (zone == null)
+                {
+                    Debug.LogWarning("Zona no encontrada o no asignada correctamente.");
+                    continue;
+                }
+
+                // Debug para ver en qué zona estamos buscando
+                Debug.Log("Buscando en la zona: " + zone.name);
+
+                // Buscar todos los objetos de carta en esta zona
+                foreach (Transform cardObj in zone.transform)
+                {
+                    // Si el nombre del GameObject coincide con el nombre de la carta removida
+                    if (cardObj.name == card.Name && removedCount < countToRemove)
+                    {
+                        // Debug antes de destruir el objeto
+                        Debug.Log("Destruyendo carta: " + cardObj.name + " de la zona: " + zone.name);
+
+                        Destroy(cardObj.gameObject); // Destruir el GameObject
+                        removedCount++;
+
+                        // Si hemos eliminado suficientes cartas, dejamos de buscar
+                        if (removedCount >= countToRemove)
+                        {
+                            Debug.Log("Se han eliminado suficientes instancias de la carta: " + card.Name);
+                            break;
+                        }
+                    }
+                }
+
+                // Si hemos eliminado suficientes cartas, dejamos de buscar en otras zonas
+                if (removedCount >= countToRemove)
+                {
+                    break;
+                }
+            }
+
+            // Debug si no se encuentra ninguna carta para eliminar
+            if (removedCount == 0)
+            {
+                Debug.LogWarning("No se encontraron cartas para eliminar con el nombre: " + card.Name);
+            }
+        }
+    }
+
+
 }

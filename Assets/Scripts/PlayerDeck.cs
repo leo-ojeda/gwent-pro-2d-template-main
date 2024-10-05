@@ -11,7 +11,7 @@ public class PlayerDeck : MonoBehaviour
     public List<Card> Deck = new List<Card>();
     public List<Card> Container = new List<Card>();
     //public static List<Card> staticDeck = new List<Card>();
-    public int x;
+   // public int x;
 
     public static int deck;
     public GameObject CardInDeck1;
@@ -174,12 +174,14 @@ public class PlayerDeck : MonoBehaviour
 
             StartCoroutine(StartGame());
         }
+        Debug.Log("boniato");
+    
+        context.playerDecks["Jugador 1"] = Deck;
     }
     // Update is called once per frame
     void Update()
     {
         //staticDeck = Deck;
-        context.playerDecks["Jugador 1"] = Deck;
         Ncard.text = "" + Deck.Count;
 
         CardInDeck1.SetActive(deck >= 20);

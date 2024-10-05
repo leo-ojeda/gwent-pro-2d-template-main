@@ -929,6 +929,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f682d2ed5d27248acd9f7b6bfaaa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CardPrefab: {fileID: 6836572182295039329, guid: 164dbf53d3179e24a8cd84b21fefed48, type: 3}
   thisCard:
   - Name: 
     Type: 
@@ -962,6 +963,15 @@ MonoBehaviour:
   BattleZone: {fileID: 0}
   State: {fileID: 5607529946208689612}
   FieldP1: {fileID: 0}
+  Cards: {fileID: 0}
+  wcard:
+    Name: 
+    Type: 
+    Faction: 
+    Power: 0
+    Range: []
+    Owner: 
+    OnActivation: []
 --- !u!114 &2912969443987201344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1000,6 +1010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hand: {fileID: 0}
+  HandAI: {fileID: 0}
   Graveyard: {fileID: 0}
   It: {fileID: 6836572182295039329}
 --- !u!114 &4144451246730729825

@@ -8157,7 +8157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b29a6793df6f2645ac2e15dd463b255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardPrefab: {fileID: 6836572182295039329, guid: c3e028090c92c2a4ea0f886fdccaa1fe, type: 3}
+  CardPrefab: {fileID: 6836572182295039329, guid: 164dbf53d3179e24a8cd84b21fefed48, type: 3}
   Hands: {fileID: 107663652}
 --- !u!1 &1131555076
 GameObject:
@@ -8487,6 +8487,10 @@ PrefabInstance:
       propertyPath: PowerText
       value: 
       objectReference: {fileID: 460845469}
+    - target: {fileID: -8622820398394419312, guid: b8d59aecb8b8f3141949ddf0e78115f1, type: 3}
+      propertyPath: CardPrefab
+      value: 
+      objectReference: {fileID: 6836572182295039329, guid: 164dbf53d3179e24a8cd84b21fefed48, type: 3}
     - target: {fileID: -8622820398394419312, guid: b8d59aecb8b8f3141949ddf0e78115f1, type: 3}
       propertyPath: RangedText
       value: 
@@ -9870,6 +9874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bb52bff7c3d8ca49ab4688839f31493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CardPrefab: {fileID: 6249498607933185291, guid: 9dd26aa9cdc6db64fafe8d2d7b569ba5, type: 3}
   Deck:
   - Name: 
     Type: 
@@ -10937,7 +10942,6 @@ MonoBehaviour:
     Range: []
     Owner: 
     OnActivation: []
-  x: 0
   CardInDeck1: {fileID: 1376025720}
   CardInDeck2: {fileID: 1131555076}
   CardInDeck3: {fileID: 1607057773}

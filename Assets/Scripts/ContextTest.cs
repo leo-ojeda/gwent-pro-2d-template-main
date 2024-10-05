@@ -46,7 +46,7 @@ public class ContextTest : MonoBehaviour
         //      Debug.Log($"No se encontró un mazo para el jugador {playerId}.");
         //  }
 //
-        // Debug.Log(context.Board.Count);
+         //Debug.Log(context.board.Count);
         //Debug.Log(context.Deck.Count);
         //Debug.Log(context.Hand.Count);
         //Debug.Log(" vamo a calmarno" + context.DeckOfPlayer("Jugador 1").Count);
