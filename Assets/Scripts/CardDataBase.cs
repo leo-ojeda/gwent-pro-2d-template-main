@@ -26,11 +26,12 @@ public class CardDatabase : MonoBehaviour
         var boostEffectM = new EffectActivation(EffectLibrary.BoostPowerM(1), new Selector("Field", false, (card) => card.Range.Contains("M")), null);
         var boostEffectR = new EffectActivation(EffectLibrary.BoostPowerR(2), new Selector("Field", false, (card) => card.Range.Contains("R")), null);
         var boostEffectS = new EffectActivation(EffectLibrary.BoostPowerS(3), new Selector("Field", false, (card) => card.Range.Contains("S")), null);
-        var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, (card) => card.Type == "Silver"), null);
+        var damageEffect = new EffectActivation(EffectLibrary.Damage(1), new Selector("otherField", false, (card) => card.Power < 5), null);
+        var damagelvlup = new EffectActivation(EffectLibrary.Damage(5), new Selector("otherField", false, (card) => card.Type == "Golden"), new PostAction(EffectLibrary.ReturnToDeck().name, EffectLibrary.ReturnToDeck().parameters, EffectLibrary.ReturnToDeck().action, new Selector("otherField", false, (card) => card.Power < 2)));
         var drawEffect = new EffectActivation(EffectLibrary.Draw(), new Selector("Deck", true, null), null);
         var returnToDeckEffect = new EffectActivation(EffectLibrary.ReturnToDeck(), new Selector("otherField", false, (card) => card.Power > 4), null);
         var IncreaseEffect = new EffectActivation(EffectLibrary.Increase(2), new Selector("Field", false, (card) => card.Type == "Silver"), null);
-
+        var Drawlvlup = new EffectActivation(EffectLibrary.Drawlvl(5), new Selector("Deck", false, null), new PostAction(EffectLibrary.ReturnToDeck().name, EffectLibrary.ReturnToDeck().parameters, EffectLibrary.ReturnToDeck().action, new Selector("otherField", false, (card) => card.Range.Contains("M"))));
 
 
         cardList.Add(new Card("none", 0, "none", new string[] { "none" }, "none", new List<EffectActivation>(), " "));
@@ -63,7 +64,7 @@ public class CardDatabase : MonoBehaviour
         cardList.Add(new Card("Ola de LLamas", 0, "Increase", new string[] { "M", "R", "S" }, "Fire", new List<EffectActivation> { IncreaseEffect }, " "));
         cardList.Add(new Card("LLuvia de fuego", 0, "Clima", new string[] { "M", "R", "S" }, "Fire", new List<EffectActivation> { damageEffect }, " "));
         cardList.Add(new Card("Dragon Guardian", 4, "Silver", new string[] { "M" }, "Fire", new List<EffectActivation>(), " "));
-        cardList.Add(new Card("Samurai", 0, "Leader", new string[] { "M" }, "Fire", new List<EffectActivation>(), " "));
+        cardList.Add(new Card("Samurai", 0, "Leader", new string[] { "M" }, "Fire", new List<EffectActivation>{damagelvlup}, " "));
         cardList.Add(new Card("Mini Ninja", 5, "Golden", new string[] { "M" }, "Fire", new List<EffectActivation> { drawEffect }, " "));
         cardList.Add(new Card("Arquero", 3, "Silver", new string[] { "R" }, "Fire", new List<EffectActivation>(), " "));
         cardList.Add(new Card("Destructor", 6, "Golden", new string[] { "R" }, "Fire", new List<EffectActivation> { damageEffect }, " "));
@@ -76,7 +77,7 @@ public class CardDatabase : MonoBehaviour
         cardList.Add(new Card("Antorcha Superior", 5, "Silver", new string[] { "R" }, "Fire", new List<EffectActivation>(), " "));
         cardList.Add(new Card("Haku", 3, "Silver", new string[] { "M" }, "Forest", new List<EffectActivation>(), " "));
         cardList.Add(new Card("Lanza hojas", 4, "Silver", new string[] { "S" }, "Forest", new List<EffectActivation>(), " "));
-        cardList.Add(new Card("Leñador", 0, "Leader", new string[] { "M" }, "Forest", new List<EffectActivation>(), " "));
+        cardList.Add(new Card("Leñador", 0, "Leader", new string[] { "M" }, "Forest", new List<EffectActivation> { Drawlvlup }, " "));
         cardList.Add(new Card("Cazador", 5, "Golden", new string[] { "R" }, "Forest", new List<EffectActivation> { boostEffectR }, " "));
         cardList.Add(new Card("Lanza hojas inferior", 3, "Silver", new string[] { "R" }, "Forest", new List<EffectActivation>(), " "));
         cardList.Add(new Card("Densidad", 0, "Clima", new string[] { "M", "R", "S" }, "Forest", new List<EffectActivation> { damageEffect }, " "));
@@ -104,7 +105,7 @@ public class CardDatabase : MonoBehaviour
         {
             if (!cardList.Any(c => c.Name == card.Name))
             {
-                Debug.Log(card.Name);
+               // Debug.Log(card.Name);
                 cardList.Add(card);
                 updatedCardListBackup.Add(new Card(card.Name, card.Power, card.Type, card.Range, card.Faction, card.OnActivation, card.Owner));
             }

@@ -89,12 +89,12 @@ public class DSLInterpreter : MonoBehaviour
             }
             catch (Error lexEx)
             {
-                errorMessages.Add($"Lexer error: {lexEx.Message}");
+                errorMessages.Add($"{lexEx.Message}");
                 parser.SkipToNextStatement();
             }
             catch (Exception ex)
             {
-                errorMessages.Add($"Parsing error: {ex.Message}");
+                errorMessages.Add($" {ex.Message}");
                 parser.SkipToNextStatement();
             }
         }
@@ -154,7 +154,7 @@ public class DSLInterpreter : MonoBehaviour
                         if (validPostAction != null)
                         {
                             // Crear una nueva instancia del PostAction para esta activación
-                            var postActionInstance = new PostAction(validPostAction.name, validPostAction.parameters, activation.postAction.selector, validPostAction.action);
+                            var postActionInstance = new PostAction(validPostAction.name, validPostAction.parameters, validPostAction.action, activation.postAction.selector);
 
                             // Verificar si el PostAction tiene parámetros
                             if (postActionInstance.parameters != null)

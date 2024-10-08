@@ -213,7 +213,7 @@ public class ThisCard : MonoBehaviour
         if (tag == "first")
         {
             // Debug.Log("entro");
-            thisCard[0] = context.playerDecks[Owner].Pop();
+            thisCard[0] = context.playerDecks[Owner].Pop().Clone();
             context.board.Add(thisCard[0]);
             context.playerHands[Owner].Add(thisCard[0]);
             NumberOfCardsIdDeck -= 1;
@@ -604,6 +604,7 @@ public class ThisCard : MonoBehaviour
     }
 
     // Método para eliminar solo la cantidad correcta de cartas del campo
+    // Método para eliminar solo la cantidad correcta de cartas del campo y moverlas al cementerio
     void RemoveCardsboard(List<Card> removedCards)
     {
         GameObject[] zones = {
@@ -618,6 +619,16 @@ public class ThisCard : MonoBehaviour
         GameObject.Find("Field P2/IncreaseZone AI"),
         GameObject.Find("Field P2/ClimaZone AI")
     };
+
+        // Cementerios para Jugador 1 y Jugador 2
+        GameObject playerCemetery = GameObject.Find("Cementery");
+        GameObject enemyCemetery = GameObject.Find("EnemyCementery");
+
+        if (playerCemetery == null || enemyCemetery == null)
+        {
+            Debug.LogError("Cementerios no encontrados.");
+            return;
+        }
 
         // Debug para ver las cartas que se intentan remover
         Debug.Log("Intentando remover las siguientes cartas:");
@@ -651,35 +662,44 @@ public class ThisCard : MonoBehaviour
                     // Si el nombre del GameObject coincide con el nombre de la carta removida
                     if (cardObj.name == card.Name && removedCount < countToRemove)
                     {
-                        // Debug antes de destruir el objeto
-                        Debug.Log("Destruyendo carta: " + cardObj.name + " de la zona: " + zone.name);
+                        // Decidir a qué cementerio mover la carta en función del propietario
+                        GameObject cemetery = (card.Owner == "Jugador 1") ? playerCemetery : enemyCemetery;
 
-                        Destroy(cardObj.gameObject); // Destruir el GameObject
+                        // Cambiar la carta a la posición del cementerio
+                        cardObj.SetParent(cemetery.transform);
+                        cardObj.position = cemetery.transform.position;
+
+                        // Actualizar la lista de cementerios del contexto
+                        context.playerGraveyards[card.Owner].Add(card);
+
+                        Debug.Log("Moviendo carta: " + cardObj.name + " al cementerio de: " + card.Owner);
+
                         removedCount++;
 
                         // Si hemos eliminado suficientes cartas, dejamos de buscar
                         if (removedCount >= countToRemove)
                         {
-                            Debug.Log("Se han eliminado suficientes instancias de la carta: " + card.Name);
+                            Debug.Log("Se han movido suficientes instancias de la carta: " + card.Name + " al cementerio.");
                             break;
                         }
                     }
                 }
 
-                // Si hemos eliminado suficientes cartas, dejamos de buscar en otras zonas
+                // Si hemos movido suficientes cartas, dejamos de buscar en otras zonas
                 if (removedCount >= countToRemove)
                 {
                     break;
                 }
             }
 
-            // Debug si no se encuentra ninguna carta para eliminar
+            // Debug si no se encuentra ninguna carta para mover al cementerio
             if (removedCount == 0)
             {
-                Debug.LogWarning("No se encontraron cartas para eliminar con el nombre: " + card.Name);
+                Debug.LogWarning("No se encontraron cartas para mover con el nombre: " + card.Name);
             }
         }
     }
+
 
 
 

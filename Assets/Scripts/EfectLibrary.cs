@@ -14,9 +14,9 @@ public class EffectLibrary
         (targets, context) =>
         {
             foreach (var target in targets)
-            {                              
-                    target.Power += boostAmount;
-                    Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);               
+            {
+                target.Power += boostAmount;
+                Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
             }
         });
     }
@@ -29,9 +29,9 @@ public class EffectLibrary
         (targets, context) =>
         {
             foreach (var target in targets)
-            {              
-                    target.Power += boostAmount;
-                    Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);               
+            {
+                target.Power += boostAmount;
+                Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
             }
         });
     }
@@ -44,9 +44,9 @@ public class EffectLibrary
         (targets, context) =>
         {
             foreach (var target in targets)
-            {           
-                    target.Power += boostAmount;
-                    Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);            
+            {
+                target.Power += boostAmount;
+                Debug.Log("Boosted power of " + target.Name + " by " + boostAmount);
             }
         });
     }
@@ -83,6 +83,26 @@ public class EffectLibrary
             Debug.Log("Draw card: " + topCard.Name);
         });
     }
+    public static Effect Drawlvl(int numberOfCards)
+    {
+        return new Effect("Draw", new List<Parameter>(),
+        (targets, context) =>
+        {
+            Debug.Log(context.TriggerPlayer); 
+
+            int cardsToDraw = Mathf.Min(numberOfCards, context.Deck.Count);
+            for (int i = 0; i < cardsToDraw; i++)
+            {
+                Card topCard = context.Deck.Pop();
+                context.Hand.Add(topCard);
+                Debug.Log("Draw card: " + topCard.Name);
+            }
+
+            // Mezclar la mano después de robar las cartas
+            context.Hand.Shuffle();
+        });
+    }
+
 
     public static Effect ReturnToDeck()
     {
@@ -111,8 +131,8 @@ public class EffectLibrary
             foreach (var target in targets)
             {
                 for (int i = 0; i < amount; i++)
-                {  
-                        target.Power += 1;          
+                {
+                    target.Power += 1;
                 }
                 Debug.Log("Increase power of " + target.Name + " by " + amount);
             }

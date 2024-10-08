@@ -630,7 +630,7 @@ namespace DSL.Parser
 
 
             int loopValue = (int)localVariables[loopVar];
-            Debug.Log("tiene hambre" + loopValue); // Inicializar valor de la variable del bucle
+           
             int conditionValue;
 
             // Si 'conditionVar' es un número literal
@@ -654,7 +654,7 @@ namespace DSL.Parser
 
                     // Usar el valor del parámetro si está definido
                     conditionValue = (int)parameter.value;
-                    Debug.Log("pepinillo" + conditionValue);
+                  
                 }
                 // Si 'conditionVar' es una variable local
                 else if (localVariables.ContainsKey(conditionVar))
@@ -1534,13 +1534,13 @@ namespace DSL.Parser
             // Si el identificador no está en localVariables, lanzar un error
             if (identifier == null || !localVariables.ContainsKey(identifier))
             {
-                Debug.Log("eldiablo");
+                
                 throw new ArgumentException($"La variable '{identifier}' no está definida.");
             }
 
             // Consumir el punto y el método siguiente
             Consume(TokenType.Dot);
-            Debug.Log(localVariables[identifier]);
+           
             var method = ConsumeMethod();
             
             var target = (List<Card>)localVariables[identifier];
@@ -1548,7 +1548,7 @@ namespace DSL.Parser
             
 
 
-            Debug.Log("pepinillo");
+          
             var param = "";
 
             // Verificar si el método es de un objeto que no requiere parámetros, como 'Pop' o 'Shuffle'
@@ -1911,7 +1911,7 @@ namespace DSL.Parser
                 Consume(TokenType.Comma);
             }
 
-            return new PostAction(type, parameters, selector, action);
+            return new PostAction(type, parameters, action, selector);
         }
 
 

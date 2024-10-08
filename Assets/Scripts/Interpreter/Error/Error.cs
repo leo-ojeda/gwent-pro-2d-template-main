@@ -18,17 +18,6 @@ namespace DSL.Lexer
         {
         }
 
-        // Sobrescribe el método ToString para dar información detallada sobre el error
-        //  public override string ToString()
-        //  {
-        //      if (Position != null)
-        //      {
-        //          return $"LexerError: {Message} en {Position}";
-        //      }
-        //      else
-        //      {
-        //          return $"LexerError: {Message}";
-        //      }
-        //  }
+       
     }
 }

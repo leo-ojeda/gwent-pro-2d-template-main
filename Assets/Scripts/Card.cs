@@ -11,7 +11,7 @@ public class Card
     public string[] Range;
     public string Owner;
     public List<EffectActivation> OnActivation;
-   
+
 
     public Card() { }
 
@@ -24,6 +24,10 @@ public class Card
         Faction = faction;
         OnActivation = onActivation;
         Owner = owner;
+    }
+    public Card Clone()
+    {        
+        return new Card(Name, Power, Type, (string[])Range.Clone(), Faction, new List<EffectActivation>(OnActivation), Owner);
     }
 }
 
@@ -82,7 +86,7 @@ public class PostAction
         parameters = new List<Parameter>();
     }
 
-    public PostAction(string name, List<Parameter> parameters, Selector selector, Action<List<Card>, Context> action)
+    public PostAction(string name, List<Parameter> parameters,  Action<List<Card>, Context> action, Selector selector)
     {
         this.name = name;
         this.parameters = parameters ?? new List<Parameter>();

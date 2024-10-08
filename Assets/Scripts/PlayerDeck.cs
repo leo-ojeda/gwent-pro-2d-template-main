@@ -69,14 +69,14 @@ public class PlayerDeck : MonoBehaviour
                         {
                             if (randomCard.Type == "Leader")
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 cardAdded = true;
                             }
                             if (randomCard.Type == "Golden") //&& !goldenCount.ContainsKey(randomCard.Name))
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 goldenCount[randomCard.Name] = 1;
@@ -84,7 +84,7 @@ public class PlayerDeck : MonoBehaviour
                             }
                             else if (randomCard.Type == "Silver")// && (!silverCount.ContainsKey(randomCard.Name) || silverCount[randomCard.Name] < 3))
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 silverCount[randomCard.Name] = silverCount.GetValueOrDefault(randomCard.Name, 0) + 1;
@@ -92,7 +92,7 @@ public class PlayerDeck : MonoBehaviour
                             }
                             else if (randomCard.Type == "Clima")// && (!magicCount.ContainsKey(randomCard.Name) || magicCount[randomCard.Name] < 2))
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 magicCount[randomCard.Name] = magicCount.GetValueOrDefault(randomCard.Name, 0) + 1;
@@ -100,7 +100,7 @@ public class PlayerDeck : MonoBehaviour
                             }
                             else if (randomCard.Type == "Increase")
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 magicCount[randomCard.Name] = magicCount.GetValueOrDefault(randomCard.Name, 0) + 1;
@@ -122,7 +122,7 @@ public class PlayerDeck : MonoBehaviour
                         // Lógica para otros casos de cartas y facciones
                         if (randomCard.Type == "Leader" && !leaderCardAdded && randomCard.Faction == Leader.Faction)
                         {
-                            Deck[i] = randomCard;
+                            Deck[i] = randomCard.Clone();
                             context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                             context.playerDecks["Jugador 1"].Add(Deck[i]);
                             leaderCardAdded = true;
@@ -132,7 +132,7 @@ public class PlayerDeck : MonoBehaviour
                         {
                             if (!goldenCount.ContainsKey(randomCard.Name))
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 goldenCount[randomCard.Name] = 1;
@@ -143,7 +143,7 @@ public class PlayerDeck : MonoBehaviour
                         {
                             if (!magicCount.ContainsKey(randomCard.Name) || magicCount[randomCard.Name] < 2)
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 magicCount[randomCard.Name] = magicCount.GetValueOrDefault(randomCard.Name, 0) + 1;
@@ -154,7 +154,7 @@ public class PlayerDeck : MonoBehaviour
                         {
                             if (!silverCount.ContainsKey(randomCard.Name) || silverCount[randomCard.Name] < 3)
                             {
-                                Deck[i] = randomCard;
+                                Deck[i] = randomCard.Clone();
                                 context.playerDecks["Jugador 1"] = context.playerDecks.GetValueOrDefault("Jugador 1", new List<Card>());
                                 context.playerDecks["Jugador 1"].Add(Deck[i]);
                                 silverCount[randomCard.Name] = silverCount.GetValueOrDefault(randomCard.Name, 0) + 1;
@@ -174,7 +174,7 @@ public class PlayerDeck : MonoBehaviour
 
             StartCoroutine(StartGame());
         }
-        Debug.Log("boniato");
+       
     
         context.playerDecks["Jugador 1"] = Deck;
     }
